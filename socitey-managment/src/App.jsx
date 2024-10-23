@@ -1,22 +1,24 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import RegistrationPage from "./Components/RegistrationPage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import CreateSocietyForm from "./Models/CreateSocietyForm";
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import RegistrationForm from './components/RegistrationPage'
+import Login from './components/Login'
+import ForgetPassword from './components/ForgetPassword'
+import OtpVerification from './components/OtpVerification'
+
 
 function App() {
   return (
-    <>
+    <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<RegistrationPage />} />
-          <Route path="/create" element={<CreateSocietyForm />} />
+          <Route path='/' element={<RegistrationForm/>}/>
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/password' element={<ForgetPassword/>}/>
+          <Route path='/otp' element={<OtpVerification/>}/>
         </Routes>
       </BrowserRouter>
-    </>
-  );
+    
+    </div>
+  )
 }
 
-export default App;
+export default App
