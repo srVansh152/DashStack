@@ -21,10 +21,10 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/society', require('./routes/society'));
 
 // Important numbers routes
-// app.use('/api/important-numbers', require('./routes/importantNumber'));
+app.use('/api/important-numbers', require('./routes/importantNumber'));
 
 // Resident management routes
-// app.use('/api/residents', require('./routes/resident'));
+app.use('/api/residents', require('./routes/resident'));
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -45,6 +45,4 @@ process.on('SIGINT', () => {
     });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+
