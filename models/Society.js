@@ -7,3 +7,4 @@ const societySchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Society', societySchema);
+
