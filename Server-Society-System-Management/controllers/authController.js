@@ -45,7 +45,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create and save the new user
+    // Create and save the new admin user
     const newUser = new User({
       firstname,
       lastname,
@@ -56,11 +56,11 @@ exports.register = async (req, res) => {
       city,
       society,
       password,
+      role: 'admin'  // Assign role as admin by default
     });
 
     await newUser.save();
 
-    // Respond with user details and token
     res.status(201).json({
       _id: newUser._id,
       firstname: newUser.firstname,
@@ -71,6 +71,7 @@ exports.register = async (req, res) => {
       state: newUser.state,
       city: newUser.city,
       society: newUser.society,
+      role: newUser.role,  // Include role in the response
       token: generateToken(newUser),
     });
   } catch (error) {

@@ -7,10 +7,16 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   phone: { type: String, unique: true, sparse: true }, // Optional for phone number login
   country: { type: String, required: true },
-  state: { type: String, required: true },  // Added state field
-  city: { type: String, required: true },   // Added city field
+  state: { type: String, required: true },
+  city: { type: String, required: true },
   society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society' },
   password: { type: String, required: [true, 'Password is required'] },
+  
+  role: { 
+    type: String, 
+    enum: ['user', 'admin', 'security'], 
+    default: 'user'  // Default role is 'user'
+  },
 
   // OTP fields for password reset
   resetOtp: String,
