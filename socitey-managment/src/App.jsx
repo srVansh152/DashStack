@@ -6,13 +6,16 @@ import OtpVerification from './components/OtpVerification'
 import DashboardLayout from './Components/DashboardLayout'
 import ResetPassword from './Components/ResetPassword'
 import Editprofile from './Components/Editprofile'
+import Aside from './Components/Aside'
 
 
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+        <Aside/>
+        <div className="main w-[83%] ml-[17%]">
+        <BrowserRouter>
         <Routes>
           <Route path='/' element={<RegistrationForm/>}/>
           <Route path='/login' element={<Login/>}/>
@@ -24,7 +27,9 @@ function App() {
           <Route path='/editprofile' element={<Editprofile/>}/>
 
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+    
+        </div>
     
     </div>
   )

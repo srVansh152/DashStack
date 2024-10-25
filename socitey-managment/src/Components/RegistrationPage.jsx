@@ -152,8 +152,8 @@ export default function RegistrationPage() {
                     vasantnagar township
                   </option>
                 </select>
-                <div onClick={() => openModal()} style={{cursor:"pointer"}}>Create New Society</div>
               </div>
+                <option onClick={() => openModal()} style={{cursor:"pointer"}}>Create New Society</option>
             </div>
             <div className="space-y-2">
               <label
