@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Component() {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
@@ -75,9 +76,9 @@ export default function Component() {
           </span>
           <button className="text-sm text-orange-500 hover:text-orange-600">Resend OTP</button>
         </div>
-        <button className="w-full bg-orange-500 text-white py-3 rounded-md hover:bg-orange-600 transition duration-300">
+        <Link to="/reset" className="w-full flex justify-center  bg-orange-500 text-white py-3 rounded-md hover:bg-orange-600 transition duration-300">
           Verify
-          </button>
+          </Link>
       </div>
     </div>
   </div>

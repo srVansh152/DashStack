@@ -4,6 +4,9 @@ import Login from './components/Login'
 import ForgetPassword from './components/ForgetPassword'
 import OtpVerification from './components/OtpVerification'
 import DashboardLayout from './Components/DashboardLayout'
+import ResetPassword from './Components/ResetPassword'
+import Editprofile from './Components/Editprofile'
+
 
 
 function App() {
@@ -16,6 +19,10 @@ function App() {
           <Route path='/password' element={<ForgetPassword/>}/>
           <Route path='/otp' element={<OtpVerification/>}/>
           <Route path='/dashboard' element={<DashboardLayout/>}/>
+
+          <Route path='/reset' element={<ResetPassword/>}/>
+          <Route path='/editprofile' element={<Editprofile/>}/>
+
         </Routes>
       </BrowserRouter>
     
