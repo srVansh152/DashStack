@@ -416,7 +416,7 @@ const getStatusColor = (status) => {
 };
 
 const sidebarItems = [
-    { icon: Activity, label: 'Dashboard' },
+    { icon: Activity, label: <Link to='/dashboard'>Dashboard</Link> },
     { icon: Users, label: 'Resident Management' },
     { icon: DollarSign, label: 'Financial Management' },
     { icon: Package, label: 'Facility Management' },

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router-dom';
 
 const DashboardLayout = () => {
-    const [activeMenu, setActiveMenu] = useState('Dashboard');
-    const [hoveredMenu, setHoveredMenu] = useState(null);
+   
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [openModel, setOpenModel] = useState(false);
+
+    const handleAddDetails = () => {
+        setOpenModel(true);
+    };
 
     const activities = [
         {
@@ -107,24 +111,7 @@ const DashboardLayout = () => {
 
     return (
         <div className="flex h-screen bg-gray-50">
-            <div className="w-64 bg-white border-r shadow-sm">
-                <div className="p-4">
-                    <h1 className="text-2xl font-bold text-orange-500 cursor-pointer hover:text-orange-600 transition-colors">DashStack</h1>
-                </div>
-                <nav className="mt-4">
-                    {sidebarItems.map((item, index) => (
-                        <SidebarItem
-                            key={index}
-                            {...item}
-                            active={activeMenu === item.label}
-                            hovered={hoveredMenu === item.label}
-                            onClick={() => setActiveMenu(item.label)}
-                            onMouseEnter={() => setHoveredMenu(item.label)}
-                            onMouseLeave={() => setHoveredMenu(null)}
-                        />
-                    ))}
-                </nav>
-            </div>
+           
             <div className="flex-1 overflow-auto">
                 <header className="bg-white p-4 border-b flex justify-between items-center shadow-sm sticky top-0">
                     <div className="flex items-center">
@@ -228,19 +215,22 @@ const DashboardLayout = () => {
                                 </div>
                             )}
                         </div>
+
                         <Link to='/editprofile'>
-                        <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
-                            <img
-                                src="/api/placeholder/32/32"
-                                alt="Profile"
-                                className="w-8 h-8 rounded-full border-2 border-transparent hover:border-orange-500 transition-all"
-                            />
-                            <div>
-                                <p className="text-sm font-medium">Moni Roy</p>
-                                <p className="text-xs text-gray-500">admin</p>
+
+                            <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
+                                <img
+                                    src="/api/placeholder/32/32"
+                                    alt="Profile"
+                                    className="w-8 h-8 rounded-full border-2 border-transparent hover:border-orange-500 transition-all"
+                                />
+                                <div>
+                                    <p className="text-sm font-medium">Moni Roy</p>
+                                    <p className="text-xs text-gray-500">admin</p>
+                                </div>
                             </div>
-                        </div>
                         </Link>
+
                     </div>
                 </header>
                 <main className="p-6">
@@ -294,7 +284,9 @@ const DashboardLayout = () => {
                             <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-6">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="text-xl font-semibold">Important Numbers</h2>
-                                    <button className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
+                                    <button className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600" onClick={() => {
+                                        handleAddDetails();
+                                    }}>
                                         Add
                                     </button>
                                 </div>
@@ -411,27 +403,75 @@ const DashboardLayout = () => {
                     </div>
                 </main>
             </div>
+            {openModel && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                    <div className="fixed inset-0 flex items-center justify-center z-50">
+                        <div className="w-[400px] bg-white rounded-lg shadow-lg p-6">
+                            <h1 className="font-title text-lg font-semibold text-neutral-900 mb-4">Add Important Number</h1>
+                            <form className="space-y-4">
+                                <div>
+                                    <label className="block text-neutral-700 text-sm font-medium">
+                                        Full Name<span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Full Name"
+                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-neutral-700 text-sm font-medium">
+                                        Phone Number<span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="+91"
+                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-neutral-700 text-sm font-medium">
+                                        Work<span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Work"
+                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    />
+                                </div>
+
+                                <div className="flex justify-between mt-6">
+                                    <button
+                                        type="button"
+                                        className="px-6 py-2 border border-neutral-300 rounded-full text-neutral-500 hover:bg-neutral-100 w-[47%]" onClick={() => setOpenModel(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-6 py-2 bg-[#F6F8FB] text-black rounded-full  w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div
+                            className="onsite-modal-overlay"
+
+                        ></div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-const SidebarItem = ({ icon: Icon, label, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
-    <button
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 relative
-      ${active ? 'bg-orange-50 text-orange-500 font-medium' : 'text-gray-600 hover:bg-orange-50/50 hover:text-orange-500'}
-      ${hovered ? 'shadow-sm' : ''}
-    `}
-    >
-        <Icon className={`w-5 h-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`} />
-        <span>{label}</span>
-        {active && (
-            <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
-        )}
-    </button>
-);
+
 
 const StatsCard = ({ label, value, icon: Icon, color }) => (
     <div className="bg-white rounded-lg p-6 flex justify-between items-center shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
@@ -518,17 +558,8 @@ const getStatusColor = (status) => {
     return colors[status];
 };
 
-const sidebarItems = [
-    { icon: Activity, label: 'Dashboard' },
-    { icon: Users, label: 'Resident Management' },
-    { icon: DollarSign, label: 'Financial Management' },
-    { icon: Package, label: 'Facility Management' },
-    { icon: Bell, label: 'Complaint Tracking' },
-    { icon: Settings, label: 'Security Management' },
-    { icon: Users, label: 'Security Guard' },
-    { icon: Bell, label: 'Announcement' },
-    { icon: LogOut, label: 'Logout' }
-];
+
+
 
 const statsCards = [
     { label: 'Total Balance', value: '₹ 2,22,520', icon: DollarSign, color: 'bg-orange-500' },
