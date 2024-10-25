@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Pencil } from 'lucide-react';
 
 
-const DashboardLayout = () => {
+const Update = () => {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
     const [hoveredMenu, setHoveredMenu] = useState(null);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -247,65 +247,68 @@ const DashboardLayout = () => {
                 </header>
                 
 
-<div className="">
-<div className='w-full'>
-  <img src="/image/blacnk.png" alt="" />
-</div>
-<div className="w-[1000px] mx-auto mt-[-100px] flex     p-4">
-  <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg">
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
-        <Link to='/update'>
-        <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg flex items-center">
-          <Pencil className="w-4 h-4 mr-2" />
-          Edit Profile
-        </button>
-        </Link>
-      </div>
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/3 mb-6 md:mb-0 flex flex-col items-center">
-          <div className="relative w-40 h-40">
-            <img
-              src="/image/profile.png"
-              alt="Profile"
-              className="rounded-full object-cover"
-            />
-            <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md">
-             <button>
-             <Pencil className="w-5 h-5 text-gray-600" />
-             </button>
-            </div>
-          </div>
-          <h2 className="text-xl font-semibold text-center mt-4">Arlene McCoy</h2>
+                <div className="">
+  <div className='w-full'>
+    <img src="/image/blacnk.png" alt="" />
+  </div>
+  <div className="w-[1000px] mx-auto mt-[-100px] flex p-4">
+    <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg">
+      <div className="p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
         </div>
-        <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { label: 'First Name', value: '' },
-            { label: 'Last Name', value: '' },
-            { label: 'Phone Number', value: '' },
-            { label: 'Email Address', value: '' },
-            { label: 'Select Society', value: '' },
-            { label: 'Country', value: '' },
-            { label: 'State', value: '' },
-            { label: 'City', value: '' },
-          ].map((field) => (
-            <div key={field.label}>
-              <label className="block text-sm font-medium text-gray-700">{field.label}*</label>
-              <input
-                type="text"
-                className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                value={field.value}
-                readOnly
+        <div className="flex flex-col md:flex-row">
+          <div className="md:w-1/3 mb-6 md:mb-0 flex flex-col items-center">
+            <div className="relative w-40 h-40">
+              <img
+                src="/image/profile.png"
+                alt="Profile"
+                className="rounded-full object-cover"
               />
+              <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md">
+                <button>
+                  <Pencil className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
             </div>
-          ))}
+            <h2 className="text-xl font-semibold text-center mt-4">Arlene McCoy</h2>
+          </div>
+          <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: 'First Name', value: '' },
+              { label: 'Last Name', value: '' },
+              { label: 'Phone Number', value: '' },
+              { label: 'Email Address', value: '' },
+              { label: 'Select Society', value: '' },
+              { label: 'Country', value: '' },
+              { label: 'State', value: '' },
+              { label: 'City', value: '' },
+            ].map((field) => (
+              <div key={field.label}>
+                <label className="block text-sm font-medium text-gray-700">{field.label}*</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                  value={field.value}
+                  readOnly
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex justify-end mt-4"> 
+          <Link to=""> 
+            <button className="bg-orange-500 flex items-center hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">
+              <Pencil className="w-4 h-4 mr-2" />
+              Update Profile
+            </button>
+          </Link>
         </div>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 
             </div>
         </div>
@@ -450,6 +453,6 @@ const maintenanceItems = [
     { name: 'John Smith', duration: '1 Week Pending', amount: '1,200' }
 ];
 
-export default DashboardLayout;
+export default Update;
 
 
