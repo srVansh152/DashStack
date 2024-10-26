@@ -1,12 +1,18 @@
 const Resident = require('../models/Resident');
+const Society = require('../models/Society');
 
 // Create a new resident
+
 exports.createResident = async (req, res) => {
     try {
         const files = req.files || {};
-        
-        // Optional: Log the files to check the structure
-        console.log('Uploaded Files:', files);
+
+        // Get society ID from the logged-in user's data
+        const societyId = req.user.society; // Ensure your token middleware sets this
+
+        if (!societyId) {
+            return res.status(400).json({ message: "Society ID not found in admin's data." });
+        }
 
         const photo = files.photo ? files.photo[0].path : null;
         const aadhaarFront = files.aadhaarFront ? files.aadhaarFront[0].path : null;
@@ -21,33 +27,31 @@ exports.createResident = async (req, res) => {
             addressProof,
             rentAgreement,
             ...req.body,
-            password: '123', // Set password to '123' for all residents
+            society: societyId, // Set society ID from the admin's data
+            createdBy: req.user._id, // Use the admin's ID from the token
+            password: '123' // Default password for all residents
         };
 
         const resident = new Resident(residentData);
         await resident.save();
+
         res.status(201).json(resident);
     } catch (error) {
         console.error('Error creating resident:', error);
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: "Failed to create resident", error: error.message });
     }
 };
 
-// Update a resident
+// Update resident details
 exports.updateResident = async (req, res) => {
     try {
         const residentId = req.params.id;
         const resident = await Resident.findById(residentId);
 
-        if (!resident) {
-            return res.status(404).json({ message: "Resident not found" });
-        }
+        if (!resident) return res.status(404).json({ message: "Resident not found" });
 
-        if (resident.status === 'vacated') {
-            return res.status(400).json({ message: "Resident is vacated. Confirmation needed for deletion." });
-        }
+        if (resident.status === 'vacated') return res.status(400).json({ message: "Resident is vacated. Confirmation needed for deletion." });
 
-        // Only update unit number and wing if necessary
         const updates = req.body;
         if (updates.unitNumber) resident.unitNumber = updates.unitNumber;
         if (updates.wing) resident.wing = updates.wing;
@@ -60,17 +64,14 @@ exports.updateResident = async (req, res) => {
     }
 };
 
-// Delete a resident (after confirmation if vacated)
+// Delete a resident
 exports.deleteResident = async (req, res) => {
     try {
         const residentId = req.params.id;
         const resident = await Resident.findById(residentId);
 
-        if (!resident) {
-            return res.status(404).json({ message: "Resident not found" });
-        }
+        if (!resident) return res.status(404).json({ message: "Resident not found" });
 
-        // Check for confirmation to delete
         if (resident.status === 'vacated') {
             await resident.remove();
             return res.status(200).json({ message: "Resident deleted successfully" });
@@ -83,10 +84,16 @@ exports.deleteResident = async (req, res) => {
     }
 };
 
-// Get all residents
+// Get all residents for a specific society
 exports.getResidents = async (req, res) => {
     try {
-        const residents = await Resident.find();
+        const societyId = req.user.society; // Get society ID from admin's data
+
+        if (!societyId) {
+            return res.status(400).json({ message: "Society ID not found." });
+        }
+
+        const residents = await Resident.find({ society: societyId });
         res.status(200).json(residents);
     } catch (error) {
         console.error('Error fetching residents:', error);
@@ -94,15 +101,13 @@ exports.getResidents = async (req, res) => {
     }
 };
 
-// Get resident details by ID
+// Get a specific resident's details
 exports.getResidentDetails = async (req, res) => {
     try {
         const residentId = req.params.id;
         const resident = await Resident.findById(residentId);
 
-        if (!resident) {
-            return res.status(404).json({ message: "Resident not found" });
-        }
+        if (!resident) return res.status(404).json({ message: "Resident not found" });
 
         res.status(200).json(resident);
     } catch (error) {

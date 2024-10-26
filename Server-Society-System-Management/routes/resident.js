@@ -1,12 +1,13 @@
-// routes/residents.js
 const express = require('express');
 const router = express.Router();
 const residentController = require('../controllers/residentController');
 const upload = require('../config/multer');
+const { protect } = require('../middlewares/authMiddleware');
 
 // Routes for resident management
 router.post(
     '/',
+    protect,
     upload.fields([
         { name: 'photo', maxCount: 1 },
         { name: 'aadhaarFront', maxCount: 1 },
@@ -16,7 +17,6 @@ router.post(
     ]),
     async (req, res) => {
         try {
-            // Call the createResident method in your controller
             await residentController.createResident(req, res);
         } catch (error) {
             res.status(400).json({ message: error.message });
@@ -24,16 +24,16 @@ router.post(
     }
 );
 
-router.put('/:id', upload.none(), async (req, res) => {
+router.put('/:id', protect, upload.none(), async (req, res) => {
     try {
-        // Call the updateResident method in your controller
+
         await residentController.updateResident(req, res);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, async (req, res) => { // Protect the route
     try {
         await residentController.deleteResident(req, res);
     } catch (error) {
@@ -41,7 +41,7 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => { // Protect the route
     try {
         await residentController.getResidents(req, res);
     } catch (error) {
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', protect, async (req, res) => { // Protect the route
     try {
         await residentController.getResidentDetails(req, res);
     } catch (error) {

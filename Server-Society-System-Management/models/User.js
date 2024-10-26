@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   country: { type: String, required: true },
   state: { type: String, required: true },
   city: { type: String, required: true },
-  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society' },
+  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society',required: true,  },
   password: { type: String, required: [true, 'Password is required'] },
   photo: { type: String }, // Store the file path or URL for the profile photo  
   role: { 

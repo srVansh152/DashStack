@@ -96,6 +96,16 @@ const residentSchema = new mongoose.Schema({
             required: function () { return !this.owner; }
         },
     },
+    society: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Society',
+        required: true,
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     password: {
         type: String,
         default: '123', // Set default password for all residents

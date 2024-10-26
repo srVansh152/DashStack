@@ -5,10 +5,10 @@ exports.createSociety = async (req, res) => {
   const {
     societyname,
     societyaddress,
-    Country,
-    State,
-    City,
-    Zipcode
+    country,
+    state,
+    city,
+    zipcode
   } = req.body;
   console.log(req.body)
   try {
@@ -22,10 +22,10 @@ exports.createSociety = async (req, res) => {
     const society = new Society({
       societyname,
       societyaddress,
-      Country,
-      State,
-      City,
-      Zipcode
+      country,
+      state,
+      city,
+      zipcode
     });
     
     await society.save();
