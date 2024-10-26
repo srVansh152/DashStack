@@ -7,7 +7,8 @@ const protect = async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
+      // Ensure you populate the society if it exists in your User model
+      req.user = await User.findById(decoded.id).select('-password').populate('society'); // Populate if society is a reference
       next();
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });
