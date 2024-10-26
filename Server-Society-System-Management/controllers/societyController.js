@@ -2,34 +2,48 @@ const Society = require('../models/Society');
 
 // Create a new society
 exports.createSociety = async (req, res) => {
-  const { name, location } = req.body;
-  const society = new Society({ name, location });
-  await society.save();
-  res.status(201).json(society);
+  const {
+    societyname,
+    societyaddress,
+    Country,
+    State,
+    City,
+    Zipcode
+  } = req.body;
+  console.log(req.body)
+  try {
+    // Check if society with the same name already exists
+    const existingSociety = await Society.findOne({ societyname });
+    if (existingSociety) {
+      return res.status(400).json({ message: 'Society with this name already exists' });
+    }
+
+    // Create and save new society with provided data
+    const society = new Society({
+      societyname,
+      societyaddress,
+      Country,
+      State,
+      City,
+      Zipcode
+    });
+    
+    await society.save();
+
+    // Return the created society document
+    res.status(201).json(society);
+  } catch (error) {
+    console.error('Error creating society:', error);
+    res.status(500).json({ message: 'Failed to create society', error: error.message });
+  }
 };
 
 // Read societies
 exports.getSocieties = async (req, res) => {
-  const societies = await Society.find();
-  res.json(societies);
-};
-
-// Update society
-exports.updateSociety = async (req, res) => {
-  const { id } = req.params;
-  const { name, location } = req.body;
-
-  const society = await Society.findByIdAndUpdate(id, { name, location }, { new: true });
-  if (!society) return res.status(404).json({ message: 'Society not found' });
-
-  res.json(society);
-};
-
-// Delete society
-exports.deleteSociety = async (req, res) => {
-  const { id } = req.params;
-  const society = await Society.findByIdAndDelete(id);
-  if (!society) return res.status(404).json({ message: 'Society not found' });
-
-  res.json({ message: 'Society deleted' });
+  try {
+    const societies = await Society.find();
+    res.json(societies);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch societies', error: error.message });
+  }
 };

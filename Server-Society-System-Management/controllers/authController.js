@@ -37,15 +37,15 @@ const generateOTP = () => {
 // Register a new user
 exports.register = async (req, res) => {
   const { firstname, lastname, email, phone, country, state, city, society, password } = req.body;
-
+  
   try {
-    // Check if the user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create and save the new admin user
+    const photo = req.file ? req.file.path : null; // Store photo path if uploaded
+
     const newUser = new User({
       firstname,
       lastname,
@@ -56,7 +56,8 @@ exports.register = async (req, res) => {
       city,
       society,
       password,
-      role: 'admin'  // Assign role as admin by default
+      role: 'admin',
+      photo, // Store the profile photo path
     });
 
     await newUser.save();
@@ -71,7 +72,8 @@ exports.register = async (req, res) => {
       state: newUser.state,
       city: newUser.city,
       society: newUser.society,
-      role: newUser.role,  // Include role in the response
+      role: newUser.role,
+      photo: newUser.photo, // Include photo in the response
       token: generateToken(newUser),
     });
   } catch (error) {
@@ -164,3 +166,43 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Failed to reset password', error: error.message });
   }
 };
+
+exports.getProfile = async (req, res) => {
+  try {
+    console.log(req.user); // Debugging: Check if req.user is populated
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user data', error: error.message });
+  }
+};
+
+
+// Update (replace) the profile of the logged-in user
+exports.updateMe = async (req, res) => {
+  try {
+    const updates = req.body;
+
+    // Add photo if uploaded
+    if (req.file) {
+      updates.photo = req.file.path;
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, updates, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User profile updated successfully', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update user data', error: error.message });
+  }
+};
+
