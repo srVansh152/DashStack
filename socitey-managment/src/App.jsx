@@ -15,6 +15,7 @@ import Residence from './Components/Residence'
 import OwnerForm from './Components/OwnerForm'
 import Viewmodel from './Models/Viewmodel'
 import Deletemodel from './Models/Deletemodel'
+import { Form } from './Components/Form'
 
 
 
@@ -40,6 +41,7 @@ function App() {
           <Route path='/ownerform' element={<OwnerForm/>}/>
           <Route path='/viewmodel' element={<Viewmodel/>}/>
           <Route path='/deletemodel' element={<Deletemodel/>}/>
+          <Route path='/form' element={<Form/>}/>
 
 
 

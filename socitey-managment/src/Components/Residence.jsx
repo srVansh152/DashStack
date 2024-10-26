@@ -302,9 +302,11 @@ function Residence() {
                               <button onClick={()=>setOpenModel(false)} className="px-5 w-full py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
                                 Cancel
                               </button>
+                              <Link to="/form">
                               <button className="px-4 ml-2 w-full py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-colors">
                                 Save
                               </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
