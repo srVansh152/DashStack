@@ -1,14 +1,12 @@
 const Resident = require('../models/Resident');
-const Society = require('../models/Society');
-
-// Create a new resident
+const Society = require('../models/Society'); 
 
 exports.createResident = async (req, res) => {
     try {
         const files = req.files || {};
 
-        // Get society ID from the logged-in user's data
-        const societyId = req.user.society; // Ensure your token middleware sets this
+        
+        const societyId = req.user.society; 
 
         if (!societyId) {
             return res.status(400).json({ message: "Society ID not found in admin's data." });
@@ -35,12 +33,22 @@ exports.createResident = async (req, res) => {
         const resident = new Resident(residentData);
         await resident.save();
 
+        await Society.findByIdAndUpdate(
+            societyId,
+            { 
+                $inc: { units: 1 }, 
+                $push: { residents: resident._id } 
+            },
+            { new: true } 
+        );
+
         res.status(201).json(resident);
     } catch (error) {
         console.error('Error creating resident:', error);
         res.status(500).json({ message: "Failed to create resident", error: error.message });
     }
 };
+
 
 // Update resident details
 exports.updateResident = async (req, res) => {

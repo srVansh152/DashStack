@@ -7,8 +7,8 @@ const societySchema = new mongoose.Schema({
   state: { type: String, required: true },
   city: { type: String, required: true },
   zipcode: { type: Number, required: true },
-  residents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Resident' }], // Array to store resident IDs
-  occupiedUnits: { type: Number, default: 0 }, // Track occupied units count
+  residents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Resident' }], 
+  units: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });
 
