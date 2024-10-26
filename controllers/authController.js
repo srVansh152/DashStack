@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const { generateToken } = require('../utils/token');
-const twilio = require('twilio');
 
 // Email sending utility function
 const sendEmail = async (email, subject, text) => {
@@ -31,13 +30,10 @@ const sendEmail = async (email, subject, text) => {
 };
 
 // Generate a 6-digit OTP
-// const generateOTP = () => {
-//   return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
-// };
-
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString();  // 6 digit OTP
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
 };
+
 // Register a new user
 exports.register = async (req, res) => {
   const { firstname, lastname, email, phone, country, state, city, society, password } = req.body;
@@ -113,24 +109,14 @@ exports.login = async (req, res) => {
   }
 };
 
-// Configure Twilio
-const accountSid = process.env.TWILIO_ACCOUNT_SID;  // Twilio Account SID from .env
-const authToken = process.env.TWILIO_AUTH_TOKEN;    // Twilio Auth Token from .env
-const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER; // Your Twilio phone number
-
-const client = twilio(accountSid, authToken);
-
-// Function to generate OTP (for demo purposes)
-
-
-
+// Forgot Password - Send OTP
 exports.forgotPassword = async (req, res) => {
   const { emailOrPhone } = req.body;
 
   try {
     // Find user by email or phone
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }]
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
     });
 
     if (!user) {
@@ -140,51 +126,17 @@ exports.forgotPassword = async (req, res) => {
     // Generate OTP and set expiration
     const otp = generateOTP();
     user.resetOtp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000;  // OTP valid for 10 minutes
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
     await user.save();
 
-    // Prepare response messages
-    let emailSent = false;
-    let smsSent = false;
-
-    // Send OTP via email
-    if (user.email && user.email === emailOrPhone) {
-      try {
-        await sendEmail(user.email, 'Your OTP Code', `Your OTP is ${otp}`);
-        emailSent = true;
-      } catch (err) {
-        console.error('Email sending failed:', err.message);
-      }
-    }
-
-    // Send OTP via SMS using Twilio
-    if (user.phone && user.phone === emailOrPhone) {
-      try {
-        await client.messages.create({
-          body: `Your OTP is ${otp}`,
-          from: twilioPhoneNumber,
-          to: user.phone  // User's phone number
-        });
-        smsSent = true;
-      } catch (err) {
-        console.error('SMS sending failed:', err.message);
-      }
-    }
-
-    // Respond with success if either email or SMS was successful
-    if (emailSent || smsSent) {
-      return res.json({
-        message: `OTP sent to your ${emailSent ? 'email' : ''}${emailSent && smsSent ? ' and ' : ''}${smsSent ? 'phone' : ''}.`
-      });
-    } else {
-      return res.status(500).json({ message: 'Failed to send OTP' });
-    }
-
+    // Send OTP to user's email
+    await sendEmail(user.email, 'Your OTP Code', `Your OTP is ${otp}`);
+    res.json({ message: 'OTP sent to your email' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to process OTP request', error: error.message });
+    res.status(500).json({ message: 'Failed to send OTP email', error: error.message });
   }
-};
+}
+
 // Reset Password - Verify OTP and Reset Password
 exports.resetPassword = async (req, res) => {
   const { emailOrPhone, otp, newPassword } = req.body;
@@ -212,3 +164,74 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Failed to reset password', error: error.message });
   }
 };
+
+
+  // Get user profile
+  exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while fetching profile', error: error.message });
+  }
+}
+
+
+
+// Update user profile
+exports.updateProfile = async (req, res) => {
+  const { firstname, lastname, email, phone, country, state, city, society } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update profile fields
+    user.firstname = firstname || user.firstname;
+    user.lastname = lastname || user.lastname;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    user.country = country || user.country;
+    user.state = state || user.state;
+    user.city = city || user.city;
+    user.society = society || user.society;
+
+    // Save updated user profile
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error during profile update', error: error.message });
+  }
+
+
+  exports.updateProfilePhoto = async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Save the profile photo path to the user document
+      if (req.file) {
+        user.profilePhoto = req.file.path; // Path where the photo is stored
+      }
+  
+      await user.save();
+      res.json({ message: 'Profile photo updated successfully', profilePhoto: user.profilePhoto });
+    } catch (error) {
+      res.status(500).json({ message: 'Error updating profile photo', error: error.message });
+    }
+  };
+   
+  
+
+};
+
+
+ 

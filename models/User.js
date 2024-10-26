@@ -5,40 +5,28 @@ const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  phone: { type: String, unique: true, sparse: true }, // Optional for phone number login
-  country: { type: String, required: true },
-  state: { type: String, required: true },
-  city: { type: String, required: true },
-  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society' },
-  password: { type: String, required: [true, 'Password is required'] },
-  
-  role: { 
-    type: String, 
-    enum: ['user', 'admin', 'security'], 
-    default: 'user'  // Default role is 'user'
-  },
-
-  // OTP fields for password reset
+  phone: { type: String },
+  country: { type: String },
+  state: { type: String },
+  city: { type: String },
+  society: { type: String },
+  password: { type: String, required: true },
+  role: { type: String, default: 'user' },
   resetOtp: String,
   otpExpires: Date,
+  profilePhoto: { type: String }, 
 });
 
-// Hash the password before saving the user
-userSchema.pre('save', async function (next) {
+// Hash password before saving
+userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    return next(err);
-  }
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
-// Compare the provided password with the hashed password
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+// Method to compare passwords
+userSchema.methods.comparePassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);
