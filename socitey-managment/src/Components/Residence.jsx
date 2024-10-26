@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
-import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState } from 'react'
+import Aside from './Aside'
+import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, MoreHorizontal  } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Pencil } from 'lucide-react';
-import Aside from './Aside';
 
 
-const Update = () => {
-    const [activeMenu, setActiveMenu] = useState('Dashboard');
-    const [hoveredMenu, setHoveredMenu] = useState(null);
-    const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+function Residence() {
     const [isOpen, setIsOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [openModel, setOpenModel] = useState(false);
+    const [status, setStatus] = useState('occupied');
+    const [agreement, setAgreement] = useState(false);
 
-  
+    const handleAddDetails = () => {
+        setOpenModel(true);
+    };
+
+    const residents = [
+        { id: 1, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1001', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 1, vehicle: 2 },
+        { id: 2, name: '-', avatar: '', unitNumber: '1002', unitStatus: 'Vacant', residentStatus: '-', phoneNumber: '--', member: '-', vehicle: '-' },
+        { id: 3, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1003', unitStatus: 'Occupied', residentStatus: 'Owner', phoneNumber: '97587 85828', member: 1, vehicle: 4 },
+        { id: 4, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
+        { id: 5, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
+        { id: 6, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
+        { id: 7, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
+        { id: 8, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
+        { id: 9, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
+        { id: 10, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
+        { id: 11, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
+        { id: 12, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
+      ]
 
     const notifications = [
         {
@@ -47,12 +64,11 @@ const Update = () => {
             type: 'event'
         }
     ];
-
-    return (
-      <>
-      <Aside/>
-        <div className="main">
-        <header className="bg-white p-4 border-b flex justify-between items-center shadow-sm sticky top-0">
+  return (
+    <div>
+        <Aside/>
+      <div className="main">
+      <header className="bg-white p-4 border-b flex justify-between items-center shadow-sm sticky top-0">
                             <div className="flex items-center">
                                 <input
                                     type="search"
@@ -173,76 +189,151 @@ const Update = () => {
                             </div>
                         </header>
 
-                        <div className="">
-<div className='w-full'>
-  <img src="/image/blacnk.png" alt="" />
-</div>
-<div className="w-[1000px] mx-auto mt-[-100px] flex p-4">
-  <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg">
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
-      </div>
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/3 mb-6 md:mb-0 flex flex-col items-center">
-          <div className="relative w-40 h-40">
-            <img
-              src="/image/profile.png"
-              alt="Profile"
-              className="rounded-full object-cover"
-            />
-            <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md">
-              <button>
-                <Pencil className="w-5 h-5 text-gray-600" />
+
+                        <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 ">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Resident Tenant and Owner Details</h2>
+              <button onClick={handleAddDetails} className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                Add New Resident details
               </button>
             </div>
-          </div>
-          <h2 className="text-xl font-semibold text-center mt-4">Arlene McCoy</h2>
-        </div>
-        <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { label: 'First Name', value: '' },
-            { label: 'Last Name', value: '' },
-            { label: 'Phone Number', value: '' },
-            { label: 'Email Address', value: '' },
-            { label: 'Select Society', value: '' },
-            { label: 'Country', value: '' },
-            { label: 'State', value: '' },
-            { label: 'City', value: '' },
-          ].map((field) => (
-            <div key={field.label}>
-              <label className="block text-sm font-medium text-gray-700">{field.label}*</label>
-              <input
-                type="text"
-                className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                value={field.value}
-                readOnly
-              />
+            <div className=" bg-white shadow-md rounded-lg">
+            <div className="overflow-y-auto max-h-96"> {/* Container to handle overflow */}
+  <table className="min-w-full divide-y divide-gray-200">
+    <thead className="bg-gray-50">
+      <tr>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Number</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Status</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resident Status</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+      </tr>
+    </thead>
+    <tbody className="bg-white divide-y divide-gray-200">
+      {residents.map((resident) => (
+        <tr key={resident.id}>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 h-10 w-10">
+                {resident.avatar ? (
+                  <img className="h-10 w-10 rounded-full" src={resident.avatar} alt="" />
+                ) : (
+                  <div className="h-10 w-10 rounded-full bg-gray-300"></div>
+                )}
+              </div>
+              <div className="ml-4">
+                <div className="text-sm font-medium text-gray-900">{resident.name}</div>
+              </div>
             </div>
-          ))}
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{resident.unitNumber}</td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              resident.unitStatus === 'Occupied' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
+            }`}>
+              {resident.unitStatus}
+            </span>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              resident.residentStatus === 'Tenant' ? 'bg-pink-100 text-pink-800' : 
+              resident.residentStatus === 'Owner' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+            }`}>
+              {resident.residentStatus}
+            </span>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.phoneNumber}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.member}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.vehicle}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <button className="text-green-600 hover:text-green-900 mr-2">
+              <Edit className="h-5 w-5" />
+            </button>
+            <button className="text-gray-600 hover:text-gray-900">
+              <MoreHorizontal className="h-5 w-5" />
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="flex justify-end mt-4"> 
-        <Link to="/dashboard"> 
-          <button className="bg-orange-500 flex items-center hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg">
-            <Pencil className="w-4 h-4 mr-2" />
-            Update Profile
+
+        {openModel && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                            <div className="fixed inset-0 flex items-center justify-center z-50">
+                                <div className="w-[400px] bg-white rounded-lg shadow-lg p-6">
+                                <h2 className="text-lg font-semibold mb-4">Residence Status</h2>
+                                <form>
+        <div className="space-y-2 mb-4 px-2 rounded">
+          <label className="inline-flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="occupied"
+              className="form-radio text-orange-500 "
+              defaultChecked
+            />
+            <span className="ml-2 me-2 px-4 py-2 rounded  text-orange-600 border border-orange-300">
+              Occupied
+            </span>
+          </label>
+          <label className="inline-flex items-center px-2">
+            <input disabled
+              type="radio"
+              name="status"
+              value="vacate"
+              className="form-radio text-gray-500 focus:ring-gray-500"
+            />
+            <span className="ml-2 px-4 py-2 rounded bg-gray-100 text-gray-600">
+              Vacate
+            </span>
+          </label>
+        </div>
+
+        <div className="flex items-center space-x-2 mb-6">
+          <input
+            type="checkbox"
+            id="agreement"
+            className="form-checkbox text-orange-500 focus:ring-orange-500"
+          />
+          <label htmlFor="agreement" className="text-sm text-gray-600">
+            By submitting, you agree to select Occupied
+          </label>
+        </div>
+
+        <div className="flex justify-between">
+          <button onClick={ ()=>setOpenModel(false)}
+            type="button"
+            className="w-[48%] px-4 py-2 bg-gray-100 border text-gray-800 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >
+            Cancel
           </button>
-        </Link>
+        
+         <Link to='/ownerform'
+            type="submit"
+            className="w-[48%] btn px-4 py-2 bg-orange-500 text-white text-center border rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            Save
+          </Link>
+        
+        </div>
+      </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                        
       </div>
     </div>
-  </div>
-</div>
-</div>
-        </div>
-      </>
-    );
-};
+  )
+}
 
-
-
-export default Update;
-
-
-
-
+export default Residence

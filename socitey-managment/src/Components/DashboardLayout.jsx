@@ -385,7 +385,7 @@ const DashboardLayout = () => {
                                                 </thead>
                                                 <tbody>
                                                     {complaints.map(({ name, date, priority, status }) => (
-                                                        <tr className="border-t hover:bg-gray-50 transition-colors group">
+                                                        <tr   className="border-t hover:bg-gray-50 transition-colors group">
                                                             <td className="py-5 flex items-center gap-2 text-sm">
                                                                 <img
                                                                     src="/api/placeholder/32/32"

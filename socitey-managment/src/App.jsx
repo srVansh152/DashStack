@@ -1,16 +1,18 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import RegistrationPage from './Components/RegistrationPage'
-import Login from './components/Login'
-import ForgetPassword from './components/ForgetPassword'
-import OtpVerification from './components/OtpVerification'
+import RegistrationPage from './pages/RegistrationPage'
+import Login from './pages/Login'
+import ForgetPassword from './pages/ForgetPassword'
+import OtpVerification from './pages/OtpVerification'
 import DashboardLayout from './Components/DashboardLayout'
-import ResetPassword from './Components/ResetPassword'
+import ResetPassword from './pages/ResetPassword'
 import Editprofile from './Components/Editprofile'
 import "./App.css"
 
 import Update from './Components/Update'
 
-import Aside from './Components/Aside'
+
+import Residence from './Components/Residence'
+import OwnerForm from './Components/OwnerForm'
 
 
 
@@ -32,6 +34,8 @@ function App() {
           <Route path='/editprofile' element={<Editprofile/>}/>
 
           <Route path='/update' element={<Update/>}/>
+          <Route path='/residence' element={<Residence/>}/>
+          <Route path='/ownerform' element={<OwnerForm/>}/>
 
 
 

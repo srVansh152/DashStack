@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown } from 'lucide-react';
+import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Aside = () => {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
     const [hoveredMenu, setHoveredMenu] = useState(null);
-  return (
-    <div className='w-[17%] fixed top-0 h-screen'>
-           <div className="bg-white border-r shadow-sm h-screen">
+  
+    return (
+        <div className='w-[17%] fixed top-0 h-screen'>
+            <div className="bg-white border-r shadow-sm h-screen">
                 <div className="p-4">
                     <h1 className="text-2xl font-bold text-orange-500 cursor-pointer hover:text-orange-600 transition-colors">DashStack</h1>
                 </div>
@@ -23,12 +25,14 @@ const Aside = () => {
                         />
                     ))}
                 </nav>
-            </div>
-    </div>
-  )
-}
-const SidebarItem = ({ icon: Icon, label, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
-    <button
+            </div>
+        </div>
+    );
+};
+
+const SidebarItem = ({ icon: Icon, label, link, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
+    <Link
+        to={link || '#'}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -42,17 +46,19 @@ const SidebarItem = ({ icon: Icon, label, active, hovered, onClick, onMouseEnter
         {active && (
             <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
         )}
-    </button>
+    </Link>
 );
+
 const sidebarItems = [
-    { icon: Activity, label: 'Dashboard' },
-    { icon: Users, label: 'Resident Management' },
-    { icon: DollarSign, label: 'Financial Management' },
-    { icon: Package, label: 'Facility Management' },
-    { icon: Bell, label: 'Complaint Tracking' },
-    { icon: Settings, label: 'Security Management' },
-    { icon: Users, label: 'Security Guard' },
-    { icon: Bell, label: 'Announcement' },
-    { icon: LogOut, label: 'Logout' }
+    { icon: Activity, label: 'Dashboard', link: '/dashboard' },
+    { icon: Users, label: 'Resident Management', link: '/residence' },
+    { icon: DollarSign, label: 'Financial Management', link: '' },
+    { icon: Package, label: 'Facility Management', link: '' },
+    { icon: Bell, label: 'Complaint Tracking', link: '' },
+    { icon: Settings, label: 'Security Management', link: '' },
+    { icon: Users, label: 'Security Guard', link: '' },
+    { icon: Bell, label: 'Announcement', link: '' },
+    { icon: LogOut, label: 'Logout', link: '' }
 ];
-export default Aside
+
+export default Aside;
