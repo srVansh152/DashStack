@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, ChevronDown, ChevronUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Aside = () => {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
@@ -19,6 +18,11 @@ const Aside = () => {
         setIsFinancialOpen(!isFinancialOpen);
     };
 
+    const handleNavigation = (path) => {
+        console.log('Navigating to:', path);
+        // Handle navigation here
+    };
+
     return (
         <>
             {/* Mobile Menu Button */}
@@ -26,7 +30,7 @@ const Aside = () => {
                 className="md:hidden p-4 fixed top-0 left-0 z-20"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-                <span className="text-2xl font-bold text-orange-500 mb-4">☰</span>
+                <span className="text-2xl font-bold text-orange-500">☰</span>
             </button>
 
             {/* Sidebar */}
@@ -39,20 +43,67 @@ const Aside = () => {
                 </h1>
 
                 <nav className="mt-4">
-                    {sidebarItems.map((item, index) => (
-                        <SidebarItem
-                            key={index}
-                            {...item}
-                            active={activeMenu === item.label}
-                            hovered={hoveredMenu === item.label}
-                            onClick={() => {
-                                setActiveMenu(item.label);
-                                setIsSidebarOpen(false); // Close sidebar on mobile after selecting
-                            }}
-                            onMouseEnter={() => setHoveredMenu(item.label)}
-                            onMouseLeave={() => setHoveredMenu(null)}
-                        />
-                    ))}
+                    {sidebarItems.map((item, index) => {
+                        if (item.label === 'Financial Management') {
+                            return (
+                                <div key={index}>
+                                    <button
+                                        onClick={handleFinancialClick}
+                                        onMouseEnter={() => setHoveredMenu(item.label)}
+                                        onMouseLeave={() => setHoveredMenu(null)}
+                                        className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 relative
+                                            ${activeMenu === item.label ? 'bg-orange-50 text-orange-500 font-medium' : 'text-gray-600 hover:bg-orange-50/50 hover:text-orange-500'}
+                                            ${hoveredMenu === item.label ? 'shadow-sm' : ''}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <DollarSign className={`w-5 h-5 transition-transform duration-200 ${hoveredMenu === item.label ? 'scale-110' : ''}`} />
+                                            <span>{item.label}</span>
+                                        </div>
+                                        {isFinancialOpen ? (
+                                            <ChevronUp className="w-4 h-4" />
+                                        ) : (
+                                            <ChevronDown className="w-4 h-4" />
+                                        )}
+                                        {activeMenu === item.label && (
+                                            <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
+                                        )}
+                                    </button>
+                                    
+                                    {/* Financial Dropdown */}
+                                    {isFinancialOpen && (
+                                        <div className="bg-white pl-4">
+                                            {financialMenuItems.map((subItem, subIndex) => (
+                                                <button
+                                                    key={subItem.id}
+                                                    onClick={() => handleNavigation(subItem.path)}
+                                                    className="w-full flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-orange-50/50 hover:text-orange-500"
+                                                >
+                                                    <span className={`pl-2 ${subIndex === 0 ? 'border-l-2 border-orange-500' : ''}`}>
+                                                        {subItem.label}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+                        return (
+                            <SidebarItem
+                                key={index}
+                                {...item}
+                                active={activeMenu === item.label}
+                                hovered={hoveredMenu === item.label}
+                                onClick={() => {
+                                    setActiveMenu(item.label);
+                                    setIsSidebarOpen(false);
+                                    handleNavigation(item.path);
+                                }}
+                                onMouseEnter={() => setHoveredMenu(item.label)}
+                                onMouseLeave={() => setHoveredMenu(null)}
+                            />
+                        );
+                    })}
                 </nav>
             </div>
 
@@ -68,8 +119,7 @@ const Aside = () => {
 };
 
 const SidebarItem = ({ icon: Icon, label, path, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
-    <Link
-        to={path}
+    <button
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -82,19 +132,19 @@ const SidebarItem = ({ icon: Icon, label, path, active, hovered, onClick, onMous
         {active && (
             <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
         )}
-    </Link>
+    </button>
 );
 
 const sidebarItems = [
     { icon: Activity, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Resident Management', path: '/residence' },
     { icon: DollarSign, label: 'Financial Management', path: '/financial' },
-    { icon: Package, label: 'Facility Management', path: '/' },
-    { icon: Bell, label: 'Complaint Tracking', path: '/' },
-    { icon: Settings, label: 'Security Management', path: '/' },
-    { icon: Users, label: 'Security Guard', path: '/' },
-    { icon: Bell, label: 'Announcement', path: '/' },
-    { icon: LogOut, label: 'Logout', path: '/' }
+    { icon: Package, label: 'Facility Management', path: '/facility' },
+    { icon: Bell, label: 'Complaint Tracking', path: '/complaints' },
+    { icon: Settings, label: 'Security Management', path: '/security' },
+    { icon: Users, label: 'Security Guard', path: '/guard' },
+    { icon: Bell, label: 'Announcement', path: '/announcements' },
+    { icon: LogOut, label: 'Logout', path: '/logout' }
 ];
 
 export default Aside;
