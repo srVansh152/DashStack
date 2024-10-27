@@ -6,13 +6,13 @@ import { Pencil } from 'lucide-react';
 import Aside from './Aside';
 
 
-const DashboardLayout = () => {
+const Update = () => {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
     const [hoveredMenu, setHoveredMenu] = useState(null);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
-   
+  
 
     const notifications = [
         {
@@ -49,8 +49,8 @@ const DashboardLayout = () => {
     ];
 
     return (
-       <>
-        <Aside/>
+      <>
+      <Aside/>
         <div className="main">
         <header className="bg-white p-4 border-b flex justify-between items-center shadow-sm sticky top-0 z-10">
             {/* Search Bar - hidden on smaller screens */}
@@ -138,17 +138,11 @@ const DashboardLayout = () => {
         <div className="w-full">
   <img src="/image/blacnk.png" alt="Background" className="w-full" />
 </div>
-<div className="w-full max-w-[1000px] mx-auto mt-[-100px] flex justify-center p-4">
+<div className="max-w-[1000px] mx-auto mt-[-100px] flex justify-center p-4">
   <div className="w-full max-w-5xl bg-white rounded-lg shadow-lg">
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
-        <Link to='/update'>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200">
-            <Pencil className="w-4 h-4 mr-2" />
-            Edit Profile
-          </button>
-        </Link>
       </div>
       <div className="flex flex-col md:flex-row">
         <div className="md:w-1/3 mb-6 md:mb-0 flex flex-col items-center">
@@ -189,20 +183,26 @@ const DashboardLayout = () => {
           ))}
         </div>
       </div>
+      <div className="flex justify-end mt-4">
+        <Link to="/dashboard">
+          <button className="bg-orange-500 flex items-center hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">
+            <Pencil className="w-4 h-4 mr-2" />
+            Update Profile
+          </button>
+        </Link>
+      </div>
     </div>
   </div>
 </div>
 
         </div>
-        </>
+      </>
     );
 };
 
 
 
-export default DashboardLayout;
-
-
+export default Update;
 
 
 

@@ -1,23 +1,33 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import RegistrationForm from './components/RegistrationPage'
-import Login from './components/Login'
-import ForgetPassword from './components/ForgetPassword'
-import OtpVerification from './components/OtpVerification'
+import RegistrationPage from './pages/RegistrationPage'
+import Login from './pages/Login'
+import ForgetPassword from './pages/ForgetPassword'
+import OtpVerification from './pages/OtpVerification'
 import DashboardLayout from './Components/DashboardLayout'
-import ResetPassword from './Components/ResetPassword'
+import ResetPassword from './pages/ResetPassword'
 import Editprofile from './Components/Editprofile'
-import Aside from './Components/Aside'
+import "./App.css"
+
+import Update from './Components/Update'
+
+
+import Residence from './Components/Residence'
+import OwnerForm from './Components/OwnerForm'
+import Viewmodel from './Models/Viewmodel'
+import Deletemodel from './Models/Deletemodel'
+import { Form } from './Components/Form'
+
 
 
 
 function App() {
   return (
     <div className="App">
-        <Aside/>
-        <div className="main w-[83%] ml-[17%]">
+        {/* <Aside/> */}
+        <div className="">
         <BrowserRouter>
         <Routes>
-          <Route path='/' element={<RegistrationForm/>}/>
+          <Route path='/' element={<RegistrationPage/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/password' element={<ForgetPassword/>}/>
           <Route path='/otp' element={<OtpVerification/>}/>
@@ -25,6 +35,15 @@ function App() {
 
           <Route path='/reset' element={<ResetPassword/>}/>
           <Route path='/editprofile' element={<Editprofile/>}/>
+
+          <Route path='/update' element={<Update/>}/>
+          <Route path='/residence' element={<Residence/>}/>
+          <Route path='/ownerform' element={<OwnerForm/>}/>
+          <Route path='/viewmodel' element={<Viewmodel/>}/>
+          <Route path='/deletemodel' element={<Deletemodel/>}/>
+          <Route path='/form' element={<Form/>}/>
+
+
 
         </Routes>
         </BrowserRouter>
