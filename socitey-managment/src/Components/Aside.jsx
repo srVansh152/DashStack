@@ -14,7 +14,7 @@ const Aside = () => {
                 className="md:hidden p-4 fixed top-0 left-0 z-20"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-                <span className="text-2xl font-bold text-orange-500">☰</span>
+                <span className="text-2xl font-bold text-orange-500 mb-4">☰</span>
             </button>
 
             {/* Sidebar */}
@@ -26,7 +26,7 @@ const Aside = () => {
     DashStack
 </h1>
 
-                <nav className="mt-4">
+                <nav className="mt-[30px]">
                     {sidebarItems.map((item, index) => (
                         <SidebarItem
                             key={index}
