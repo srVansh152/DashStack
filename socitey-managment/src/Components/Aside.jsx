@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
-import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut } from 'lucide-react';
+import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Aside = () => {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
     const [hoveredMenu, setHoveredMenu] = useState(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar toggle for mobile view
-  
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isFinancialOpen, setIsFinancialOpen] = useState(false);
+
+    const financialMenuItems = [
+        { id: 1, label: 'Income', path: '/financial/income' },
+        { id: 2, label: 'Expanse', path: '/financial/expanse' },
+        { id: 3, label: 'Note', path: '/financial/note' },
+    ];
+
+    const handleFinancialClick = (e) => {
+        e.preventDefault();
+        setIsFinancialOpen(!isFinancialOpen);
+    };
+
     return (
         <>
             {/* Mobile Menu Button */}
@@ -22,11 +34,11 @@ const Aside = () => {
                 className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-10
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
             >
-               <h1 className="text-2xl font-bold text-orange-500 cursor-pointer hover:text-orange-600 transition-colors hidden lg:flex">
-    DashStack
-</h1>
+                <h1 className="text-2xl font-bold text-orange-500 cursor-pointer hover:text-orange-600 transition-colors hidden lg:flex">
+                    DashStack
+                </h1>
 
-                <nav className="mt-[30px]">
+                <nav className="mt-4">
                     {sidebarItems.map((item, index) => (
                         <SidebarItem
                             key={index}
@@ -55,9 +67,9 @@ const Aside = () => {
     );
 };
 
-const SidebarItem = ({ icon: Icon, label, link, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
+const SidebarItem = ({ icon: Icon, label, path, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
     <Link
-        to={link || '#'}
+        to={path}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -74,15 +86,15 @@ const SidebarItem = ({ icon: Icon, label, link, active, hovered, onClick, onMous
 );
 
 const sidebarItems = [
-    { icon: Activity, label: 'Dashboard', link: '/dashboard' },
-    { icon: Users, label: 'Resident Management', link: '/residence' },
-    { icon: DollarSign, label: 'Financial Management', link: '' },
-    { icon: Package, label: 'Facility Management', link: '' },
-    { icon: Bell, label: 'Complaint Tracking', link: '' },
-    { icon: Settings, label: 'Security Management', link: '' },
-    { icon: Users, label: 'Security Guard', link: '' },
-    { icon: Bell, label: 'Announcement', link: '' },
-    { icon: LogOut, label: 'Logout', link: '' }
+    { icon: Activity, label: 'Dashboard', path: '/dashboard' },
+    { icon: Users, label: 'Resident Management', path: '/residence' },
+    { icon: DollarSign, label: 'Financial Management', path: '/financial' },
+    { icon: Package, label: 'Facility Management', path: '/' },
+    { icon: Bell, label: 'Complaint Tracking', path: '/' },
+    { icon: Settings, label: 'Security Management', path: '/' },
+    { icon: Users, label: 'Security Guard', path: '/' },
+    { icon: Bell, label: 'Announcement', path: '/' },
+    { icon: LogOut, label: 'Logout', path: '/' }
 ];
 
 export default Aside;
