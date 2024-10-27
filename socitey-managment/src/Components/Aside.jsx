@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, ChevronDown, ChevronUp } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Aside = () => {
     const [activeMenu, setActiveMenu] = useState('Dashboard');
@@ -7,20 +8,24 @@ const Aside = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isFinancialOpen, setIsFinancialOpen] = useState(false);
 
+    const location = useLocation();
+    const navigate = useNavigate(); // Initialize useNavigate
+
     const financialMenuItems = [
-        { id: 1, label: 'Income', path: '/financial/income' },
-        { id: 2, label: 'Expanse', path: '/financial/expanse' },
-        { id: 3, label: 'Note', path: '/financial/note' },
+        { id: 2, label: 'Income', path: '/financial/income' },
+        { id: 3, label: 'Expanse', path: '/financial/expanse' },
+        { id: 4, label: 'Note', path: '/financial/note' },
     ];
 
-    const handleFinancialClick = (e) => {
-        e.preventDefault();
-        setIsFinancialOpen(!isFinancialOpen);
-    };
-
-    const handleNavigation = (path) => {
-        console.log('Navigating to:', path);
-        // Handle navigation here
+    const handleFinancialClick = () => {
+        if (activeMenu === 'Financial Management') {
+            setIsFinancialOpen(!isFinancialOpen);
+        } else {
+            setActiveMenu('Financial Management');
+            setIsFinancialOpen(true);
+            navigate('/financial'); // Navigate to financial management page
+            setIsSidebarOpen(false); // Optionally close the sidebar
+        }
     };
 
     return (
@@ -68,20 +73,24 @@ const Aside = () => {
                                             <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
                                         )}
                                     </button>
-                                    
+
                                     {/* Financial Dropdown */}
                                     {isFinancialOpen && (
                                         <div className="bg-white pl-4">
                                             {financialMenuItems.map((subItem, subIndex) => (
-                                                <button
+                                                <Link 
                                                     key={subItem.id}
-                                                    onClick={() => handleNavigation(subItem.path)}
+                                                    to={subItem.path}
+                                                    onClick={() => {
+                                                        setActiveMenu(subItem.label);
+                                                        setIsSidebarOpen(false);
+                                                    }}
                                                     className="w-full flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-orange-50/50 hover:text-orange-500"
                                                 >
                                                     <span className={`pl-2 ${subIndex === 0 ? 'border-l-2 border-orange-500' : ''}`}>
                                                         {subItem.label}
                                                     </span>
-                                                </button>
+                                                </Link>
                                             ))}
                                         </div>
                                     )}
@@ -97,7 +106,6 @@ const Aside = () => {
                                 onClick={() => {
                                     setActiveMenu(item.label);
                                     setIsSidebarOpen(false);
-                                    handleNavigation(item.path);
                                 }}
                                 onMouseEnter={() => setHoveredMenu(item.label)}
                                 onMouseLeave={() => setHoveredMenu(null)}
@@ -119,7 +127,8 @@ const Aside = () => {
 };
 
 const SidebarItem = ({ icon: Icon, label, path, active, hovered, onClick, onMouseEnter, onMouseLeave }) => (
-    <button
+    <Link
+        to={path}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -132,19 +141,19 @@ const SidebarItem = ({ icon: Icon, label, path, active, hovered, onClick, onMous
         {active && (
             <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
         )}
-    </button>
+    </Link>
 );
 
 const sidebarItems = [
     { icon: Activity, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Resident Management', path: '/residence' },
     { icon: DollarSign, label: 'Financial Management', path: '/financial' },
-    { icon: Package, label: 'Facility Management', path: '/facility' },
-    { icon: Bell, label: 'Complaint Tracking', path: '/complaints' },
-    { icon: Settings, label: 'Security Management', path: '/security' },
-    { icon: Users, label: 'Security Guard', path: '/guard' },
-    { icon: Bell, label: 'Announcement', path: '/announcements' },
-    { icon: LogOut, label: 'Logout', path: '/logout' }
+    { icon: Package, label: 'Facility Management', path: '/' },
+    { icon: Bell, label: 'Complaint Tracking', path: '/' },
+    { icon: Settings, label: 'Security Management', path: '/' },
+    { icon: Users, label: 'Security Guard', path: '/' },
+    { icon: Bell, label: 'Announcement', path: '/' },
+    { icon: LogOut, label: 'Logout', path: '/' }
 ];
 
 export default Aside;
