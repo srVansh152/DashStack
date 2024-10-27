@@ -17,6 +17,7 @@ import Viewmodel from './Models/Viewmodel'
 import Deletemodel from './Models/Deletemodel'
 import { Form } from './Components/Form'
 import FinanceManagment from './Components/FinanceManagment'
+import OtherIncome from './Components/OtherIncome'
 
 
 
@@ -44,6 +45,7 @@ function App() {
           <Route path='/deletemodel' element={<Deletemodel/>}/>
           <Route path='/form' element={<Form/>}/>
           <Route path='/financial' element={<FinanceManagment/>}/>
+          <Route path='/otherincome' element={<OtherIncome/>}/>
 
 
 

@@ -12,7 +12,7 @@ const Aside = () => {
     const navigate = useNavigate(); // Initialize useNavigate
 
     const financialMenuItems = [
-        { id: 2, label: 'Income', path: '/financial/income' },
+        { id: 2, label: 'Income', path: '/otherincome' },
         { id: 3, label: 'Expanse', path: '/financial/expanse' },
         { id: 4, label: 'Note', path: '/financial/note' },
     ];

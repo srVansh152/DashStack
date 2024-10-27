@@ -183,9 +183,9 @@ function FinanceManagment() {
                             <button className="px-4 py-2 text-white bg-orange-500 rounded-t-lg">
                                 Maintenance
                             </button>
-                            <button className="px-4 py-2 text-gray-600">
+                            <Link to="/otherincome" className="px-4 py-2 text-gray-600">
                                 Other Income
-                            </button>
+                            </Link>
                         </div>
                     </div>
 
