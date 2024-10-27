@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const errorHandler = require('./middlewares/errorMiddleware'); // Import the error middleware
+const { protect } = require('./middlewares/authMiddleware');
 
 dotenv.config();
 
@@ -16,6 +17,15 @@ app.use(morgan('dev'));
 
 connectDB();
 
+// Sample Route to test the protect middleware
+app.get('/protected', protect, (req, res) => {
+    res.json({
+      message: 'Access granted!',
+      user: req.user,
+      residents: req.residents,
+    });
+  });
+
 // Auth and society routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/society', require('./routes/society'));
@@ -25,6 +35,9 @@ app.use('/api/important-numbers', require('./routes/importantNumber'));
 
 // Resident management routes
 app.use('/api/residents', require('./routes/resident'));
+
+// Middleware to protect routes
+app.use('/api/financial', require('./routes/financialRoutes'));
 
 // Health check route
 app.get('/health', (req, res) => {
