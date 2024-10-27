@@ -8,9 +8,14 @@ const DashboardLayout = () => {
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
+    const [openEditModel, setOpenEditModel] = useState(false);
 
     const handleAddDetails = () => {
         setOpenModel(true);
+    };
+    
+    const handleEditDetails = () => {
+        setOpenEditModel(true);
     };
 
     const activities = [
@@ -303,7 +308,7 @@ const DashboardLayout = () => {
                                                     <button className="p-1 text-red-500 hover:bg-red-50 rounded">
                                                         <Trash2 size={16} />
                                                     </button>
-                                                    <button className="p-1 text-green-500 hover:bg-green-50 rounded">
+                                                    <button className="p-1 text-green-500 hover:bg-green-50 rounded" >
                                                         <CheckCircle size={16} />
                                                     </button>
                                                 </div>
@@ -416,7 +421,7 @@ const DashboardLayout = () => {
                                     <input
                                         type="text"
                                         placeholder="Enter Full Name"
-                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                                     />
                                 </div>
 
@@ -427,7 +432,8 @@ const DashboardLayout = () => {
                                     <input
                                         type="text"
                                         placeholder="+91"
-                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        
                                     />
                                 </div>
 
@@ -438,20 +444,20 @@ const DashboardLayout = () => {
                                     <input
                                         type="text"
                                         placeholder="Enter Work"
-                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                        className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                                     />
                                 </div>
 
                                 <div className="flex justify-between mt-6">
                                     <button
                                         type="button"
-                                        className="px-6 py-2 border border-neutral-300 rounded-full text-neutral-500 hover:bg-neutral-100 w-[47%]" onClick={() => setOpenModel(false)}
+                                        className="px-6 py-2 border border-neutral-300 rounded-md text-neutral-500 hover:bg-neutral-100 w-[47%]" onClick={() => setOpenModel(false)}
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-6 py-2 bg-[#F6F8FB] text-black rounded-full  w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
+                                        className="px-6 py-2 bg-[#F6F8FB] text-black rounded-md  w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
                                     >
                                         Save
                                     </button>
