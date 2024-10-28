@@ -180,7 +180,6 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-
 // Update (replace) the profile of the logged-in user
 exports.updateMe = async (req, res) => {
   try {
