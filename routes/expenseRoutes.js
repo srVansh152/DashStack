@@ -1,69 +1,21 @@
-const Expense = require('../models/Expense');
-const path = require('path');
-const fs = require('fs');
+const express = require('express');
+const router = express.Router();
+const expenseController = require('../controllers/expenseController');
+const upload = require('../middleware/upload'); // Assuming you have a middleware for file uploads
 
-// Add new expense
-exports.addExpense = async (req, res) => {
-  try {
-    const { title, description, date, amount } = req.body;
-    const billImage = req.file ? req.file.path : null;
+// Route to add a new expense
+router.post('/add', upload.single('billImage'), expenseController.addExpense);
 
-    const newExpense = new Expense({ title, description, date, amount, billImage });
-    await newExpense.save();
+// Route to update an expense by ID
+router.put('/update/:id', upload.single('billImage'), expenseController.updateExpense);
 
-    res.status(201).json({ message: 'Expense added successfully', expense: newExpense });
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding expense', error: error.message });
-  }
-};
+// Route to view an expense by ID
+router.get('/view/:id', expenseController.viewExpense);
 
-// Update expense
-exports.updateExpense = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, description, date, amount } = req.body;
-    const billImage = req.file ? req.file.path : null;
+// Route to delete an expense by ID
+router.delete('/delete/:id', expenseController.deleteExpense);
 
-    const updatedExpense = await Expense.findByIdAndUpdate(
-      id,
-      { title, description, date, amount, billImage },
-      { new: true }
-    );
+// Route to get all expenses by societyId and adminId
+router.get('/list', expenseController.listExpensesBySocietyAndAdmin);
 
-    res.json({ message: 'Expense updated successfully', expense: updatedExpense });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating expense', error: error.message });
-  }
-};
-
-// View expense
-exports.viewExpense = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const expense = await Expense.findById(id);
-
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found' });
-    }
-
-    res.json(expense);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching expense', error: error.message });
-  }
-};
-
-// Delete expense
-exports.deleteExpense = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const expense = await Expense.findByIdAndDelete(id);
-
-    if (expense && expense.billImage) {
-      fs.unlinkSync(path.join(__dirname, '..', expense.billImage)); // Delete image file
-    }
-
-    res.json({ message: 'Expense deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting expense', error: error.message });
-  }
-};
+module.exports = router;

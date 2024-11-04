@@ -1,24 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
-exports.protect = async (req, res, next) => {
-  let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-
-  if (!token) {
-    return res.status(401).json({ message: 'Not authorized, no token' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select('-password');
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Not authorized, token failed' });
-  }
-};
+const Society = require('../models/Society'); // Make sure to import your Society model
 
 const protect = async (req, res, next) => {
   let token;
@@ -26,7 +8,23 @@ const protect = async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
+      // Ensure you populate the society if it exists in your User model
+      const user = await User.findById(decoded.id).select('-password').populate('society');
+
+      if (!user) {
+        return res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+
+      req.user = user;
+
+      // If the user has a society, get its residents
+      if (user.society) {
+        const society = await Society.findById(user.society).populate('residents'); // Populate residents
+        req.residents = society.residents; // Attach residents to request object
+      } else {
+        req.residents = []; // If no society, set residents to an empty array
+      }
+
       next();
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });
@@ -45,6 +43,5 @@ const restrictTo = (...roles) => {
     next();
   };
 };
-
 
 module.exports = { protect, restrictTo };

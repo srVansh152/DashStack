@@ -18,7 +18,6 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
-
 // Serve static files (uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -31,6 +30,7 @@ app.use('/api/society', require('./routes/society'));
 app.use('/api/important-numbers', require('./routes/importantNumber'));
 app.use('/api/residents', require('./routes/resident'));
 app.use('/api/expenses', expenseRoutes);  // Expense routes
+app.use('/api/notes', noteRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {
