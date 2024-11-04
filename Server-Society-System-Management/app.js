@@ -44,6 +44,11 @@ app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
+//  commen get api
+app.get('/',(req,res)=>{
+  res.status(200),send({message:"done bhai bas hogaya "})
+})
+
 // Use the error handling middleware after all routes
 app.use(errorHandler);
 
