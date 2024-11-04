@@ -18,6 +18,7 @@ import Deletemodel from './Models/Deletemodel'
 import { Form } from './Components/Form'
 import FinanceManagment from './Components/FinanceManagment'
 import OtherIncome from './Components/OtherIncome'
+import AddMaintain from './Models/AddMaintain'
 
 
 
@@ -46,6 +47,7 @@ function App() {
           <Route path='/form' element={<Form/>}/>
           <Route path='/financial' element={<FinanceManagment/>}/>
           <Route path='/otherincome' element={<OtherIncome/>}/>
+          <Route path='/addmain' element={<AddMaintain/>}/>
 
 
 

@@ -196,7 +196,7 @@ function Residence() {
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
                       {resident.avatar ? (
-                        <img className="h-10 w-10 rounded-full" src={resident.avatar} alt="" />
+                        <img className="h-10 w-10 rounded-full" src={"public/image/profile.png"} alt="" />
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-gray-300"></div>
                       )}
@@ -325,7 +325,7 @@ function Residence() {
         
         <div className="px-4 py-6">
           <div className="flex flex-col items-center mb-6">
-            <img src="/placeholder.svg?height=80&width=80" alt="Roger Lubin" className="w-20 h-20 rounded-full mb-2" />
+            <img src="/public/image/profile.png" alt="Roger Lubin" className="w-20 h-20 rounded-full mb-2" />
             <h2 className="text-xl font-semibold text-gray-800">Roger Lubin</h2>
             <p className="text-sm text-gray-600">RogerLubin@gmail.com</p>
           </div>
