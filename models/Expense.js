@@ -5,20 +5,11 @@ const expenseSchema = new mongoose.Schema({
   description: { type: String, required: true },
   date: { type: Date, required: true },
   amount: { type: Number, required: true },
-  billImage: { type: String }, // Store image file path
-  society: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Society', // Reference to the Society model
-    required: true
-  },
-  admin: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model for the admin
-    required: true
-  }
+  billImage: { type: String },
+  societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Expense', expenseSchema);
-
 
 

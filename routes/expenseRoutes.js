@@ -1,21 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const expenseController = require('../controllers/expenseController');
-const upload = require('../middleware/upload'); // Assuming you have a middleware for file uploads
+const authMiddleware = require('../middlewares/authMiddleware'); // Middleware to add req.user
 
-// Route to add a new expense
-router.post('/add', upload.single('billImage'), expenseController.addExpense);
+// Middleware to handle file uploads
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // or configure storage as per your requirements
 
-// Route to update an expense by ID
-router.put('/update/:id', upload.single('billImage'), expenseController.updateExpense);
+// Add new expense
+router.post('/add', authMiddleware, upload.single('billImage'), expenseController.addExpense);
 
-// Route to view an expense by ID
-router.get('/view/:id', expenseController.viewExpense);
+// Update expense
+router.put('/update/:id', authMiddleware, upload.single('billImage'), expenseController.updateExpense);
 
-// Route to delete an expense by ID
-router.delete('/delete/:id', expenseController.deleteExpense);
+// View a single expense
+router.get('/view/:id', authMiddleware, expenseController.viewExpense);
 
-// Route to get all expenses by societyId and adminId
-router.get('/list', expenseController.listExpensesBySocietyAndAdmin);
+// Delete an expense
+router.delete('/delete/:id', authMiddleware, expenseController.deleteExpense);
+
+// List expenses for the authenticated user's society and admin
+router.get('/list', authMiddleware, expenseController.listExpensesBySocietyAndAdmin);
 
 module.exports = router;

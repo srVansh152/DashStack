@@ -25,6 +25,7 @@ exports.addExpense = async (req, res) => {
     res.status(500).json({ message: 'Error adding expense', error: error.message });
   }
 };
+
 // Update expense
 exports.updateExpense = async (req, res) => {
   try {
@@ -152,3 +153,4 @@ exports.deleteSociety = async (req, res) => {
     res.status(500).json({ message: 'Error deleting society', error: error.message });
   }
 };
+

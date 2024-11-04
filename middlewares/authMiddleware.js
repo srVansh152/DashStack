@@ -1,31 +1,42 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Society = require('../models/Society'); // Make sure to import your Society model
+const Society = require('../models/Society'); // Ensure you have the Society model
 
+// Protect middleware to authenticate and authorize users
 const protect = async (req, res, next) => {
   let token;
+
+  // Check for token in headers
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+
     try {
+      // Decode the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // Ensure you populate the society if it exists in your User model
+
+      // Find the user and populate the society field
       const user = await User.findById(decoded.id).select('-password').populate('society');
 
       if (!user) {
         return res.status(401).json({ message: 'Not authorized, user not found' });
       }
 
-      req.user = user;
+      // Set req.user with adminId and societyId
+      req.user = {
+        _id: user._id,
+        society: user.society ? user.society._id : null, // If society exists, use its ID; otherwise null
+        role: user.role
+      };
 
-      // If the user has a society, get its residents
+      // If the user has a society, populate residents
       if (user.society) {
-        const society = await Society.findById(user.society).populate('residents'); // Populate residents
-        req.residents = society.residents; // Attach residents to request object
+        const society = await Society.findById(user.society._id).populate('residents');
+        req.residents = society.residents; // Attach residents to the request
       } else {
-        req.residents = []; // If no society, set residents to an empty array
+        req.residents = []; // No society means no residents
       }
 
-      next();
+      next(); // Proceed to the next middleware or route handler
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });
     }

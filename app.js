@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const expenseRoutes = require('./routes/expenseRoutes');
+const expenseRoutes = require('./routes/expenseRoutes'); 
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorMiddleware'); 
 
@@ -31,6 +31,9 @@ app.use('/api/important-numbers', require('./routes/importantNumber'));
 app.use('/api/residents', require('./routes/resident'));
 app.use('/api/expenses', expenseRoutes);  // Expense routes
 app.use('/api/notes', noteRoutes);
+app.use('/api/facility', require('./routes/facilityRoutes'));
+
+
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -44,6 +47,21 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
+    delete require.cache[require.resolve('./middleware/upload')];
+
+});
+
+//middleware upload
+const uploadTest = require('./middleware/upload');
+console.log('Upload middleware loaded:', uploadTest);
+
+//facility
+const cron = require('node-cron');
+const facilityController = require('./controllers/facilityController');
+
+// Schedule the notification job to run every day at midnight
+cron.schedule('0 0 * * *', () => {
+  facilityController.sendFacilityNotifications();
 });
 
 // Graceful shutdown
