@@ -1,13 +1,98 @@
 import { Link } from "react-router-dom";
 import CreateSocietyForm from "../Models/CreateSocietyForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { registerUser, createSociety, getSocieties } from "../utils/api";
+import axios from "axios";
+
 
 export default function RegistrationPage() {
   const [openModel, setOpenModel] = useState(false);
+  const [societies, setSocieties] = useState([]);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    country: "",
+    state: "",
+    city: "",
+    society: "",
+    password: "",
+    confirmPassword: "",
+    agreeToTerms: false,
+  });
+
+  useEffect(() => {
+    const fetchSocieties = async () => {
+      try {
+        const data = await getSocieties();
+        console.log(data);
+
+        setSocieties(data);
+      } catch (error) {
+        console.error("Error fetching societies:", error);
+      }
+    };
+    fetchSocieties();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    // Map formData to match backend fields
+    const payload = {
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      country: formData.country,
+      state: formData.state,
+      city: formData.city,
+      society: formData.society,
+      password: formData.password,
+    };
+
+    try {
+      console.log("Sending data:", payload);
+
+      const response = await axios.post(
+        "https://socitey-management-system-server.onrender.com/api/auth/register",
+        payload
+      );
+
+      if (response) {
+        console.log("Sending data:", response);
+      } else {
+        alert(response.data.message || "Registration failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error.response ? error.response.data : error.message);
+      alert(`Registration failed: ${error.response?.data?.message || "Server error"}`);
+    }
+  };
+
+
+  const handleCreateSociety = async (societyData) => {
+    try {
+      const newSociety = await createSociety(societyData);
+      setSocieties((prevSocieties) => [...prevSocieties, newSociety]); // Add new society to dropdown
+      setOpenModal(false); // Close modal after creation
+    } catch (error) {
+      alert("Error creating society. Please try again.");
+    }
+  };
+
 
   const openModal = () => {
     setOpenModel(true);
   };
+
+
   return (
     <div className="min-h-screen bg-white flex flex-col lg:flex-row">
       {/* Left side */}
@@ -27,7 +112,7 @@ export default function RegistrationPage() {
       <div className="lg:w-1/2 p-8">
         <div className="w-3/5 mx-auto shadow-lg p-10 rounded-lg">
           <h1 className="text-2xl font-bold mb-6">Registration</h1>
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label
@@ -41,6 +126,8 @@ export default function RegistrationPage() {
                   type="text"
                   placeholder="Enter First Name"
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  value={formData.firstName}
                 />
               </div>
               <div className="space-y-2">
@@ -55,6 +142,8 @@ export default function RegistrationPage() {
                   type="text"
                   placeholder="Enter Last Name"
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  value={formData.lastName}
                 />
               </div>
             </div>
@@ -70,6 +159,8 @@ export default function RegistrationPage() {
                 type="email"
                 placeholder="Enter Email Address"
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={formData.email}
               />
             </div>
             <div className="space-y-2">
@@ -84,6 +175,8 @@ export default function RegistrationPage() {
                 type="tel"
                 placeholder="Enter Phone Number"
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                value={formData.phone}
               />
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -99,6 +192,8 @@ export default function RegistrationPage() {
                   type="text"
                   placeholder="Enter Country"
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  value={formData.country}
                 />
               </div>
               <div className="space-y-2">
@@ -113,6 +208,8 @@ export default function RegistrationPage() {
                   type="text"
                   placeholder="Enter State"
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  value={formData.state}
                 />
               </div>
               <div className="space-y-2">
@@ -127,6 +224,8 @@ export default function RegistrationPage() {
                   type="text"
                   placeholder="Enter City"
                   className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  value={formData.city}
                 />
               </div>
             </div>
@@ -138,22 +237,22 @@ export default function RegistrationPage() {
                 Select Society*
               </label>
               <div className="mt-1 relative">
-                <select className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                  <option value=" Shantigram residency ">
-                    Shantigram residency
-                  </option>
-                  <option value="Russett House Park">Russett House Park</option>
-                  <option value="Saurya residency ">Saurya residency </option>
-                  <option value="Shamruddh Avenyu">Shamruddh Avenyu</option>
-                  <option value="Utsav society">Utsav society</option>
-                  <option value="Murlidhar ">Murlidhar </option>
-                  <option value="Shree Sharanam">Shree Sharanam</option>
-                  <option value="vasantnagar township">
-                    vasantnagar township
-                  </option>
+                <select className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md" onChange={(e) => setFormData({ ...formData, society: e.target.value })}
+                  value={formData.society}>
+                  {
+                    societies.map((val) => {
+                      return (
+                        <>
+                          <option key={val._id} value={val._id}>
+                            {val.societyname}
+                          </option>
+                        </>
+                      )
+                    })
+                  }
                 </select>
               </div>
-                <option onClick={() => openModal()} style={{cursor:"pointer"}}>Create New Society</option>
+              <option onClick={() => openModal()} style={{ cursor: "pointer" }}>Create New Society</option>
             </div>
             <div className="space-y-2">
               <label
@@ -167,6 +266,9 @@ export default function RegistrationPage() {
                 type="password"
                 placeholder="Enter Password"
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                value={formData.password}
+
               />
             </div>
             <div className="space-y-2">
@@ -181,6 +283,8 @@ export default function RegistrationPage() {
                 type="password"
                 placeholder="Confirm Password"
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                value={formData.confirmPassword}
               />
             </div>
             <div className="flex items-center space-x-2">
@@ -188,6 +292,8 @@ export default function RegistrationPage() {
                 type="checkbox"
                 id="terms"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
+                checked={formData.agreeToTerms}
               />
               <label htmlFor="terms" className="text-sm text-gray-600">
                 I agree to all the Terms and Privacy Policies
@@ -275,7 +381,7 @@ export default function RegistrationPage() {
                       id="state"
                       name="state"
                       required
-                     placeholder="Enter Name"
+                      placeholder="Enter Name"
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border p-3"
                     />
                   </div>
@@ -336,6 +442,6 @@ export default function RegistrationPage() {
           </div>
         </div>
       )}
-    </div>
-  );
+    </div>
+  );
 }
