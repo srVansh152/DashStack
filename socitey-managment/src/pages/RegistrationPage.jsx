@@ -242,11 +242,11 @@ export default function RegistrationPage() {
                   {
                     societies.map((val) => {
                       return (
-                        <>
+                        
                           <option key={val._id} value={val._id}>
                             {val.societyname}
                           </option>
-                        </>
+                     
                       )
                     })
                   }
