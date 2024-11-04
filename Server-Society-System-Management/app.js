@@ -37,7 +37,7 @@ app.use('/api/important-numbers', require('./routes/importantNumber'));
 app.use('/api/residents', require('./routes/resident'));
 
 // Middleware to protect routes
-app.use('/api/financial', require('./routes/financialRoutes'));
+// app.use('/api/financial', require('./routes/financialRoutes'));
 
 // Health check route
 app.get('/health', (req, res) => {
