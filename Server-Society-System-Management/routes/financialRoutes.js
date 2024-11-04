@@ -1,19 +1,24 @@
 const express = require('express');
-const financialController = require('../controllers/financialController');
-const { protect } = require('../middlewares/authMiddleware'); // Adjust the path as needed
+const financialIncomeController = require('../controllers/financialController');
+const { protect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// Create a new financial record
-router.post('/maintenance', protect, financialController.createFinancialRecord);
+// Create a new Financial Income record
+router.post('/financial-income', protect, financialIncomeController.createFinancialIncome);
 
-// View all financial records for the authenticated resident
-router.get('/maintenance', protect, financialController.getFinancialRecords);
+// Get all Financial Income records with resident payment status
+router.get('/financial-income', protect, financialIncomeController.getFinancialIncomes);
 
-// View detailed financial record for a specific resident by ID
-router.get('/maintenance/:id', protect, financialController.getFinancialRecordById);
+// Get payment status for each resident in a specific Financial Income record
+router.get('/financial-income/:id', protect, financialIncomeController.getFinancialIncomeById);
+
+// Mark a resident as paid for a specific Financial Income
+router.patch('/financial-income/:id/mark-paid', protect, financialIncomeController.markResidentPaid);
+
+module.exports = router;
 
 // Update financial record status to complete
 // router.patch('/maintenance/:id/pay', protect, financialController.payFinancialRecord);
 
-module.exports = router;
+// module.exports = router;

@@ -1,93 +1,107 @@
-const Financial = require('../models/Financial');
+const FinancialIncome = require('../models/FinancialIncome');
+const Society = require('../models/Society');
 
-// Create a new financial record
-exports.createFinancialRecord = async (req, res) => {
-    const {
-        amount,
-        penaltyAmount = 0,
-        dueDate,
-        paymentMethod,
-        lastPenaltyDate,
-        status = 'pending'
-    } = req.body;
+// Create a new Financial Income record
+exports.createFinancialIncome = async (req, res) => {
+  const { title, dueDate, description, amount } = req.body;
 
-    try {
-        // Check if the required fields are present
-        if (!amount || !dueDate || !paymentMethod) {
-            return res.status(400).json({ message: 'Amount, due date, and payment method are required.' });
-        }
+  try {
+    // Get all residents of the society
+    const society = await Society.findById(req.user.society._id).populate('residents');
 
-        // Validate that user has a society and residents are available
-        if (!req.user.society || !req.residents.length) {
-            return res.status(400).json({ message: 'Society and resident data are required.' });
-        }
+    const residentStatus = society.residents.map((resident) => ({
+      residentId: resident._id,
+      hasPaid: false,
+      penaltyAmount: 0,
+    }));
 
-        // Collect all resident IDs in an array
-        const residentIds = req.residents.map(resident => resident._id);
+    const financialIncome = new FinancialIncome({
+      title,
+      amount,
+      dueDate,
+      description,
+      adminId: req.user._id,  // Admin ID from middleware
+      societyId: req.user.society._id,  // Society ID from middleware
+      residentStatus,
+    });
 
-        // Create a new financial record
-        const financialRecord = new Financial({
-            society: req.user.society._id, // Retrieved from user’s populated society
-            residents: residentIds,        // Array of resident IDs
-            amount,
-            penaltyAmount,
-            dueDate,
-            lastPenaltyDate,
-            status,
-            paymentMethod,
-        });
-
-        await financialRecord.save();
-
-        res.status(201).json(financialRecord);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+    await financialIncome.save();
+    res.status(201).json(financialIncome);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-// View all financial records for the authenticated resident
-exports.getFinancialRecords = async (req, res) => {
-    try {
-        const financialRecords = await Financial.find({ user: req.user._id }) // Automatically use resident ID from the authenticated user
-            .populate('society')
-            .populate('resident');
-        res.json(financialRecords);
-    } catch (error) {
-        res.status(400).json({ message: 'Error fetching financial records', error });
-    }
+// Get all Financial Income records with payment status for each resident
+exports.getFinancialIncomes = async (req, res) => {
+  try {
+    const financialIncomes = await FinancialIncome.find({ societyId: req.user.society._id })
+      .populate('residentStatus.residentId');
+
+    res.json(financialIncomes);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
-// Get detailed financial record by ID
-exports.getFinancialRecordById = async (req, res) => {
-    try {
-        const financial = await Financial.findById(req.params.id)
-            .populate('society')
-            .populate('resident');
+// View payment status for each resident in a specific Financial Income record
+exports.getFinancialIncomeById = async (req, res) => {
+  try {
+    const financialIncome = await FinancialIncome.findById(req.params.id)
+      .populate('residentStatus.residentId');
 
-        if (!financial) {
-            return res.status(404).json({ message: 'Financial record not found' });
-        }
-
-        res.json(financial);
-    } catch (error) {
-        res.status(400).json({ message: 'Error fetching financial record', error });
+    if (!financialIncome) {
+      return res.status(404).json({ message: 'Financial Income record not found' });
     }
+
+    res.json(financialIncome);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Mark a resident as paid for a specific Financial Income
+exports.markResidentPaid = async (req, res) => {
+  try {
+    const { residentId } = req.body;
+    const financialIncome = await FinancialIncome.findById(req.params.id);
+
+    if (!financialIncome) {
+      return res.status(404).json({ message: 'Financial Income record not found' });
+    }
+
+    const residentStatus = financialIncome.residentStatus.find(
+      (status) => status.residentId.toString() === residentId
+    );
+
+    if (residentStatus) {
+      residentStatus.hasPaid = true;
+      residentStatus.penaltyAmount = 0;  // Clear penalty if paid
+      await financialIncome.save();
+    } else {
+      return res.status(404).json({ message: 'Resident not found in this income record' });
+    }
+
+    res.json(financialIncome);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 // Update financial record status to complete
-exports.payFinancialRecord = async (req, res) => {
-    try {
-        const financial = await Financial.findById(req.params.id);
-        if (!financial) {
-            return res.status(404).json({ message: 'Financial record not found' });
-        }
+// exports.payFinancialRecord = async (req, res) => {
+//     try {
+//         const financial = await Financial.findById(req.params.id);
+//         if (!financial) {
+//             return res.status(404).json({ message: 'Financial record not found' });
+//         }
 
-        financial.status = 'complete'; // Mark as complete
-        financial.lastPenaltyDate = new Date(); // Update last penalty date to now
-        await financial.save();
+//         financial.status = 'complete'; // Mark as complete
+//         financial.lastPenaltyDate = new Date(); // Update last penalty date to now
+//         await financial.save();
 
-        res.json(financial);
-    } catch (error) {
-        res.status(400).json({ message: 'Error updating financial record', error });
-    }
-};
+//         res.json(financial);
+//     } catch (error) {
+//         res.status(400).json({ message: 'Error updating financial record', error });
+//     }
+// };
