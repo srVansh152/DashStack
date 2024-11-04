@@ -40,7 +40,7 @@ const Aside = () => {
 
             {/* Sidebar */}
             <div
-                className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-10
+                className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-20
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
             >
                 <h1 className="text-2xl font-bold text-orange-500 cursor-pointer hover:text-orange-600 transition-colors hidden lg:flex">
