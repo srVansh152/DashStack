@@ -11,7 +11,7 @@ const sendEmail = async (email, subject, text) => {
       secure: process.env.EMAIL_PORT === '465', // Use SSL for port 465
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Ensure this is your app password
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -39,13 +39,11 @@ exports.register = async (req, res) => {
   const { firstname, lastname, email, phone, country, state, city, society, password } = req.body;
 
   try {
-    // Check if the user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create and save the new admin user
     const newUser = new User({
       firstname,
       lastname,
@@ -56,7 +54,7 @@ exports.register = async (req, res) => {
       city,
       society,
       password,
-      role: 'admin'  // Assign role as admin by default
+      role: 'admin',
     });
 
     await newUser.save();
@@ -71,7 +69,7 @@ exports.register = async (req, res) => {
       state: newUser.state,
       city: newUser.city,
       society: newUser.society,
-      role: newUser.role,  // Include role in the response
+      role: newUser.role,
       token: generateToken(newUser),
     });
   } catch (error) {
@@ -84,10 +82,8 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
 
-    // Check if the user exists and if the password is valid
     if (user && (await user.comparePassword(password))) {
       res.json({
         _id: user._id,
@@ -114,7 +110,6 @@ exports.forgotPassword = async (req, res) => {
   const { emailOrPhone } = req.body;
 
   try {
-    // Find user by email or phone
     const user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
     });
@@ -123,38 +118,34 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Generate OTP and set expiration
     const otp = generateOTP();
     user.resetOtp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+    user.otpExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // Send OTP to user's email
     await sendEmail(user.email, 'Your OTP Code', `Your OTP is ${otp}`);
     res.json({ message: 'OTP sent to your email' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to send OTP email', error: error.message });
   }
-}
+};
 
 // Reset Password - Verify OTP and Reset Password
 exports.resetPassword = async (req, res) => {
   const { emailOrPhone, otp, newPassword } = req.body;
 
   try {
-    // Find the user by email/phone and OTP, ensure OTP is valid and not expired
     const user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
       resetOtp: otp,
-      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+      otpExpires: { $gt: Date.now() },
     });
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
     }
 
-    // Update the user's password and clear OTP data
-    user.password = newPassword; // Ensure the password is hashed in the User model
+    user.password = newPassword;
     user.resetOtp = undefined;
     user.otpExpires = undefined;
     await user.save();
@@ -165,9 +156,8 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-
-  // Get user profile
-  exports.getProfile = async (req, res) => {
+// Get user profile
+exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
     if (!user) {
@@ -177,9 +167,7 @@ exports.resetPassword = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error while fetching profile', error: error.message });
   }
-}
-
-
+};
 
 // Update user profile
 exports.updateProfile = async (req, res) => {
@@ -191,7 +179,6 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update profile fields
     user.firstname = firstname || user.firstname;
     user.lastname = lastname || user.lastname;
     user.email = email || user.email;
@@ -201,37 +188,33 @@ exports.updateProfile = async (req, res) => {
     user.city = city || user.city;
     user.society = society || user.society;
 
-    // Save updated user profile
     await user.save();
 
     res.json({ message: 'Profile updated successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error during profile update', error: error.message });
   }
-
-
-  exports.updateProfilePhoto = async (req, res) => {
-    try {
-      const user = await User.findById(req.user._id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Save the profile photo path to the user document
-      if (req.file) {
-        user.profilePhoto = req.file.path; // Path where the photo is stored
-      }
-  
-      await user.save();
-      res.json({ message: 'Profile photo updated successfully', profilePhoto: user.profilePhoto });
-    } catch (error) {
-      res.status(500).json({ message: 'Error updating profile photo', error: error.message });
-    }
-  };
-   
-  
-
 };
+
+// Update profile photo
+exports.updateProfilePhoto = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (req.file) {
+      user.profilePhoto = req.file.path;
+    }
+
+    await user.save();
+    res.json({ message: 'Profile photo updated successfully', profilePhoto: user.profilePhoto });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating profile photo', error: error.message });
+  }
+};
+
 
 
      

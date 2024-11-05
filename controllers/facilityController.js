@@ -11,8 +11,8 @@ exports.addFacility = async (req, res) => {
       description,
       scheduleServiceDate,
       remindBeforeDays,
-      society: req.user.society._id,
-      admin: req.user._id
+      societyId: req.user.society._id, 
+      adminId: req.user._id 
     });
 
     await newFacility.save();

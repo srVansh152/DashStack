@@ -9,6 +9,7 @@ exports.addNote = async (req, res) => {
       title,
       description,
       date,
+      user: req.user._id, // Link note to the authenticated user
     });
     await newNote.save();
 
@@ -40,10 +41,10 @@ exports.updateNote = async (req, res) => {
   }
 };
 
-// View all notes
+// View all notes for the authenticated user
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.find();
+    const notes = await Note.find({ user: req.user._id });
     res.json(notes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching notes', error: error.message });
@@ -65,3 +66,4 @@ exports.deleteNote = async (req, res) => {
     res.status(500).json({ message: 'Error deleting note', error: error.message });
   }
 };
+
