@@ -13,7 +13,7 @@ function AddMaintain() {
     const [openAddModel, setOpenAddModel] = useState(true);
 
     const currentYear = new Date().getFullYear();
-const maintenanceDueDate = `${currentYear + 1}-03-13`;
+    const maintenanceDueDate = `${currentYear + 1}-03-13`;
   
     const [maintenanceData, setMaintenanceData] = useState([
       {
