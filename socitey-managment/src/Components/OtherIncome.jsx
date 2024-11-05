@@ -6,6 +6,37 @@ import Aside from './Aside';
 
 function OtherIncome() {
   const [isOpen, setIsOpen] = useState(false);
+  const [openModel, setOpenModel] = useState(false);
+  const [openDeleteModel, setOpenDeleteModel] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    date: '',
+    dueDate: '',
+    description: '',
+    amount: ''
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(formData)
+   
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleAddIncome = () => {
+    setOpenModel(true);
+};
+
+const handleDeleteIncome = () => {
+  setOpenDeleteModel(true);
+};
 
   const incomeItems = [
     {
@@ -75,6 +106,8 @@ function OtherIncome() {
       type: 'event'
     }
   ];
+
+
 
   return (
     <div>
@@ -172,11 +205,13 @@ function OtherIncome() {
               <button className="px-4 py-2 bg-orange-500 text-white font-medium rounded-t-lg">Other Income</button>
             </div>
             <div className='flex gap-4'>
+              <Link to="/memberlist">
               <button className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
                 <EyeIcon className="w-5 h-5 mr-2" />
                 Views
               </button>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
+              </Link>
+              <button onClick={handleAddIncome} className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
                 <PlusIcon className="w-5 h-5 mr-2" />
                 Create Other Income
               </button>
@@ -192,10 +227,12 @@ function OtherIncome() {
                     <button className="text-gray-500 hover:text-gray-700">
                       <PencilIcon className="w-5 h-5" />
                     </button>
-                    <button className="text-gray-500 hover:text-gray-700">
+                    <Link to="/memberlist">
+                    <button  className="text-gray-500 mt-1 pointer hover:text-gray-700">
                       <EyeIcon className="w-5 h-5" />
                     </button>
-                    <button className="text-gray-500 hover:text-gray-700">
+                    </Link>
+                    <button onClick={handleDeleteIncome}  className="text-gray-500 hover:text-gray-700">
                       <TrashIcon className="w-5 h-5" />
                     </button>
                   </div>
@@ -212,7 +249,157 @@ function OtherIncome() {
           </div>
         </div>
       </div>
+
+      {openModel && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+  <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+    <div className="p-6">
+    <h1 className="text-xl font-bold text-gray-900 mb-6">Create Other Income</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+              Title<span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Enter Title"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+                Date<span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
+                Due Date<span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  id="dueDate"
+                  name="dueDate"
+                  value={formData.dueDate}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              Description<span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter Description"
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+              Amount<span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                placeholder="0000"
+                className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <button onClick={()=> setOpenModel(false)}
+              type="button"
+              className="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            >
+              Cancel
+            </button>
+           <Link to="/otherincome">
+           <button  
+              type="submit"
+              className="w-full px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Save
+            </button>
+           </Link>
+          </div>
+        </form>
     </div>
+  </div>
+</div>
+)}
+
+{openDeleteModel && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                          <div className="p-6">
+                          <h2 className="text-xl font-semibold text-gray-900 p-3">
+              Delete Ganesh Chaturthi?
+            </h2>
+            <p className="text-gray-500 p-3">
+              Are you sure you want to delete this?
+            </p>
+            
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                onClick={() => setOpenDeleteModel(false)}
+                className="px-6 py-2.5 text-gray-700 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-6 py-2.5 text-white font-medium bg-[#f1523d] rounded-lg hover:bg-[#d13d2a] focus:outline-none focus:ring-2 focus:ring-[#f1523d]"
+              >
+                Delete
+              </button>
+            </div>
+
+                             
+                            </div>
+                          </div>
+                        </div>
+                    )}
+    </div>
+
+
 
   )
 }

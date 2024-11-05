@@ -19,6 +19,7 @@ import { Form } from './Components/Form'
 import FinanceManagment from './Components/FinanceManagment'
 import OtherIncome from './Components/OtherIncome'
 import AddMaintain from './Models/AddMaintain'
+import MemberList from './Components/MemberList'
 
 
 
@@ -48,6 +49,7 @@ function App() {
           <Route path='/financial' element={<FinanceManagment/>}/>
           <Route path='/otherincome' element={<OtherIncome/>}/>
           <Route path='/addmain' element={<AddMaintain/>}/>
+          <Route path='/memberlist' element={<MemberList/>}/>
 
 
 
