@@ -1,17 +1,44 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function ForgetPassword() {
   const [emailOrPhone, setEmailOrPhone] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState({ type: '', text: '' })
+  const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle OTP sending logic here
-    console.log('Sending OTP to:', emailOrPhone)
+    setLoading(true)
+    setMessage({ type: '', text: '' })
+
+    try {
+      // Replace with your actual API endpoint
+      const response = await fetch('https://socitey-management-system-server.onrender.com/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ emailOrPhone: emailOrPhone }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'OTP sent successfully! Check your email.' })
+        navigate('/otp')
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Failed to send OTP' })
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <div className="flex min-h-screen ">
+    <div className="flex min-h-screen">
       {/* Left side with illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#F6F8FB]  p-12 flex-col justify-between items-center">
         <div className="w-full">
@@ -34,6 +61,15 @@ function ForgetPassword() {
           <p className="text-gray-600 mb-8">
             Enter your email and we'll send you a otp to reset your password.
           </p>
+
+          {message.text && (
+            <div className={`p-4 rounded-md mb-4 ${
+              message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+            }`}>
+              {message.text}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700">
@@ -51,13 +87,17 @@ function ForgetPassword() {
               />
             </div>
             <div>
-              <Link
-              to={'/otp'}
+              <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                disabled={loading}
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                  loading 
+                    ? 'bg-orange-400 cursor-not-allowed' 
+                    : 'bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                }`}
               >
-                Get OTP
-              </Link>
+                {loading ? 'Sending...' : 'Get OTP'}
+              </button>
             </div>
           </form>
           <p className="mt-4 text-center text-sm">

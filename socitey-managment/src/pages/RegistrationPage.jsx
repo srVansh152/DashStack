@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CreateSocietyForm from "../Models/CreateSocietyForm";
 import { useEffect, useState } from "react";
 import { registerUser, createSociety, getSocieties } from "../utils/api";
@@ -22,11 +22,21 @@ export default function RegistrationPage() {
     agreeToTerms: false,
   });
 
+  const [societyData, setSocietyData] = useState({
+    societyname: "",
+    societyaddress: "",
+    country: "",
+    state: "",
+    city: "",
+    zipcode: "",
+  });
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchSocieties = async () => {
       try {
         const data = await getSocieties();
-        console.log(data);
 
         setSocieties(data);
       } catch (error) {
@@ -65,8 +75,10 @@ export default function RegistrationPage() {
         payload
       );
 
-      if (response) {
-        console.log("Sending data:", response);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        console.log("Token received:", response.data.token);
+        navigate('/dashboard');
       } else {
         alert(response.data.message || "Registration failed. Please try again.");
       }
@@ -79,17 +91,59 @@ export default function RegistrationPage() {
 
   const handleCreateSociety = async (societyData) => {
     try {
-      const newSociety = await createSociety(societyData);
-      setSocieties((prevSocieties) => [...prevSocieties, newSociety]); // Add new society to dropdown
-      setOpenModal(false); // Close modal after creation
+      const response = await axios.post(
+        "https://socitey-management-system-server.onrender.com/api/society/create",
+        societyData
+      );
+
+      if (response.data) {
+        // Add new society to the societies list
+        setSocieties(prevSocieties => [...prevSocieties, response.data]);
+        
+        // Reset the society form data
+        setSocietyData({
+          societyname: "",
+          societyaddress: "",
+          country: "",
+          state: "",
+          city: "",
+          zipcode: "",
+        });
+
+        // Close the modal
+        setOpenModel(false);
+        
+        // Show success message
+        alert("Society created successfully!");
+      }
     } catch (error) {
-      alert("Error creating society. Please try again.");
+      // More detailed error handling
+      console.error("Error creating society:", error);
+      
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        alert(error.response.data.message || "Error creating society. Please try again.");
+      } else if (error.request) {
+        // The request was made but no response was received
+        alert("No response from server. Please check your internet connection.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        alert("Error creating society: " + error.message);
+      }
     }
   };
 
 
   const openModal = () => {
     setOpenModel(true);
+  };
+
+  const handleSocietyInputChange = (e) => {
+    setSocietyData({
+      ...societyData,
+      [e.target.name]: e.target.value
+    });
   };
 
 
@@ -319,18 +373,23 @@ export default function RegistrationPage() {
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
               <h2 className="text-xl font-semibold mb-4">Create New Society</h2>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateSociety(societyData);
+              }}>
                 <div>
                   <label
-                    htmlFor="societyName"
+                    htmlFor="societyname"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Society Name<span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="societyName"
-                    name="societyName"
+                    id="societyname"
+                    name="societyname"
+                    value={societyData.societyname}
+                    onChange={handleSocietyInputChange}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border p-3"
                   />
@@ -338,15 +397,17 @@ export default function RegistrationPage() {
 
                 <div>
                   <label
-                    htmlFor="societyAddress"
+                    htmlFor="societyaddress"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Society Address
                   </label>
                   <input
                     type="text"
-                    id="societyAddress"
-                    name="societyAddress"
+                    id="societyaddress"
+                    name="societyaddress"
+                    value={societyData.societyaddress}
+                    onChange={handleSocietyInputChange}
                     placeholder="Enter Address"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border p-3"
                   />
@@ -364,8 +425,10 @@ export default function RegistrationPage() {
                       type="text"
                       id="country"
                       name="country"
+                      value={societyData.country}
+                      onChange={handleSocietyInputChange}
                       required
-                      placeholder="Enter Name"
+                      placeholder="Enter Country"
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border p-3"
                     />
                   </div>
@@ -380,8 +443,10 @@ export default function RegistrationPage() {
                       type="text"
                       id="state"
                       name="state"
+                      value={societyData.state}
+                      onChange={handleSocietyInputChange}
                       required
-                      placeholder="Enter Name"
+                      placeholder="Enter State"
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border p-3"
                     />
                   </div>
@@ -399,22 +464,26 @@ export default function RegistrationPage() {
                       type="text"
                       id="city"
                       name="city"
+                      value={societyData.city}
+                      onChange={handleSocietyInputChange}
                       required
-                      placeholder="Enter Name"
+                      placeholder="Enter City"
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border p-3"
                     />
                   </div>
                   <div>
                     <label
-                      htmlFor="zipCode"
+                      htmlFor="zipcode"
                       className="block text-sm font-medium text-gray-700"
                     >
                       Zip Code<span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      id="zipCode"
-                      name="zipCode"
+                      id="zipcode"
+                      name="zipcode"
+                      value={societyData.zipcode}
+                      onChange={handleSocietyInputChange}
                       required
                       placeholder="Enter Zip Code"
                       className="mt-1 block w-full border p-3 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"

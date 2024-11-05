@@ -3,6 +3,28 @@ import { useState } from 'react';
 function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('https://socitey-management-system-server.onrender.com/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: newPassword }),
+      });
+
+      if (response.ok) {
+        alert('Password reset successful!');
+      } else {
+        alert('Failed to reset password. Please try again.');
+      }
+    } catch (error) {
+      alert('An error occurred. Please try again.');
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -34,6 +56,8 @@ function ResetPassword() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500"
                   placeholder="••••••••"
                   required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                 />
                 <button
                   type="button"
@@ -110,6 +134,7 @@ function ResetPassword() {
             <button
               type="submit"
               className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              onClick={handleSubmit}
             >
               Reset Password
             </button>

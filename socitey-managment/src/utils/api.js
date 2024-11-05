@@ -34,3 +34,13 @@ export const getSocieties = async () => {
     throw error;
   }
 };
+
+export const getImportantNumbers = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/important-numbers`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching societies:", error);
+    throw error;
+  }
+};
