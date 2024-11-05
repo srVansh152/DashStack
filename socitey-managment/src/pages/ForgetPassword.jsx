@@ -20,7 +20,7 @@ function ForgetPassword() {
           </h1>
         </div>
         <img
-          src="/image/forget.jpg"
+          src="/image/reset.png"
           alt="Password Reset Illustration"
           className="max-w-full"
         />
@@ -28,45 +28,48 @@ function ForgetPassword() {
       </div>
 
       {/* Right side with forget password form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full shadow-lg p-6 max-w-md">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Forget Password</h2>
-          <p className="text-gray-600 mb-8">
-            Enter your email and we'll send you a otp to reset your password.
-          </p>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700">
-                Email*
-              </label>
-              <input
-                type="text"
-                id="emailOrPhone"
-                name="emailOrPhone"
-                value={emailOrPhone}
-                onChange={(e) => setEmailOrPhone(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
-                placeholder="Enter email"
-                required
-              />
-            </div>
-            <div>
-              <Link
-              to={'/otp'}
-                type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-              >
-                Get OTP
-              </Link>
-            </div>
-          </form>
-          <p className="mt-4 text-center text-sm">
-            <Link to='/login' href="#" className="font-medium text-orange-600 hover:text-orange-500">
-              Back to Login
-            </Link>
-          </p>
-        </div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
+  <div className="absolute inset-0 z-0">
+    <img src="public/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
+  </div>
+  <div className="w-full shadow-lg p-6 max-w-md bg-white rounded-md z-10">
+    <h2 className="text-3xl font-bold text-gray-900 mb-2">Forget Password</h2>
+    <p className="text-gray-600 mb-8">
+      Enter your email and we'll send you an OTP to reset your password.
+    </p>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700">
+          Email*
+        </label>
+        <input
+          type="text"
+          id="emailOrPhone"
+          name="emailOrPhone"
+          value={emailOrPhone}
+          onChange={(e) => setEmailOrPhone(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+          placeholder="Enter email"
+          required
+        />
       </div>
+      <div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+        >
+          Get OTP
+        </button>
+      </div>
+    </form>
+    <p className="mt-4 text-center text-sm">
+      <Link to='/login' className="font-medium text-orange-600 hover:text-orange-500">
+        Back to Login
+      </Link>
+    </p>
+  </div>
+</div>
+
     </div>
   )
 }
