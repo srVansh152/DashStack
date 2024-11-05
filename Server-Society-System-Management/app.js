@@ -39,6 +39,9 @@ app.use('/api/residents', require('./routes/resident'));
 // Middleware to protect routes
 // app.use('/api/financial', require('./routes/financialRoutes'));
 
+// Expense routes
+app.use('/api/expenses', require('./routes/expenseRoutes'));  
+
 // Health check route
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
