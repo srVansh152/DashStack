@@ -7,7 +7,7 @@ const expenseSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   billImage: { type: String },
   societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
-  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true }
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Expense', expenseSchema);

@@ -29,7 +29,7 @@ exports.updateFacility = async (req, res) => {
     const { facilityName, description, scheduleServiceDate, remindBeforeDays } = req.body;
 
     const updatedFacility = await Facility.findOneAndUpdate(
-      { _id: id, society: req.user.society._id, admin: req.user._id },
+      { _id: id },
       { facilityName, description, scheduleServiceDate, remindBeforeDays },
       { new: true }
     );
@@ -48,7 +48,7 @@ exports.updateFacility = async (req, res) => {
 exports.viewFacility = async (req, res) => {
   try {
     const { id } = req.params;
-    const facility = await Facility.findOne({ _id: id, society: req.user.society._id, admin: req.user._id });
+    const facility = await Facility.findOne({ _id: id });
 
     if (!facility) {
       return res.status(404).json({ message: 'Facility not found' });
@@ -65,7 +65,7 @@ exports.deleteFacility = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const facility = await Facility.findOneAndDelete({ _id: id, society: req.user.society._id, admin: req.user._id });
+    const facility = await Facility.findOneAndDelete({ _id: id });
 
     if (!facility) {
       return res.status(404).json({ message: 'Facility not found or not associated with the specified society/admin' });

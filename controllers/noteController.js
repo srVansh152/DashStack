@@ -9,7 +9,8 @@ exports.addNote = async (req, res) => {
       title,
       description,
       date,
-      user: req.user._id, // Link note to the authenticated user
+      society: societyId,
+      admin: adminId
     });
     await newNote.save();
 

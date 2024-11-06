@@ -9,6 +9,9 @@ const cron = require('node-cron');
 
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorMiddleware');
+const complaintRoutes = require('./routes/complaintRoutes');
+const visitorLogRoutes = require('./routes/visitorLogRoutes');
+const facilityRoutes = require('./routes/facilityRoutes'); // Import facilityRoutes
 
 dotenv.config();
 
@@ -28,9 +31,11 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/society', require('./routes/society'));
 app.use('/api/important-numbers', require('./routes/importantNumber'));
 app.use('/api/residents', require('./routes/resident'));
-app.use('/api/expenses', require('./routes/expenseRoutes')); // Expense routes
+app.use('/api/expenses', require('./routes/expenseRoutes'));
 app.use('/api/notes', require('./routes/noteRoutes'));
-app.use('/api/facilities', require('./routes/facilityRoutes'));
+app.use('/api/facilities', facilityRoutes); // Use facilityRoutes
+app.use('/api/complaints', complaintRoutes); // Complaints route
+app.use('/api/visitor-logs', visitorLogRoutes);
 
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
@@ -53,9 +58,10 @@ process.on('SIGINT', () => {
     console.log('Shutting down server...');
     server.close(() => {
         console.log('Server closed');
-        process.exit(0);
+        process
     });
 });
+
 
 
 

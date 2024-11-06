@@ -14,4 +14,4 @@ const financialIncomeSchema = new mongoose.Schema({
   }]
 });
 
-module.exports = mongoose.model('FinancialIncome', financialIncomeSchema);
+module.exports = mongoose.model('FinancialIncome', financialIncomeSchema);         

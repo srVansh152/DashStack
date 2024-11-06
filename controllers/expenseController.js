@@ -16,7 +16,7 @@ exports.addExpense = async (req, res) => {
       amount,
       billImage,
       society: societyId,
-      admin: adminId
+      admin: adminId         
     });
 
     await newExpense.save();
