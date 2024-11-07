@@ -42,6 +42,7 @@ app.use('/api/residents', require('./routes/resident'));
 // Expense routes
 app.use('/api/expenses', require('./routes/expenseRoutes'));  
 
+
 // Health check route
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
