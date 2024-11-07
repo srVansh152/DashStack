@@ -8,21 +8,29 @@ const protect = async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // Ensure you populate the society if it exists in your User model
-      const user = await User.findById(decoded.id).select('-password').populate('society');
 
-      if (!user) {
+      // Identify if the user is an admin or resident based on the token role
+      let user = await User.findById(decoded.id).select('-password').populate('society');
+      let role = user ? user.role : 'resident';
+
+      if (role === 'resident') {
+        user = await Resident.findById(decoded.id).populate('society createdBy'); // createdBy is admin
+        if (!user) {
+          return res.status(401).json({ message: 'Not authorized, resident not found' });
+        }
+        req.adminId = user.createdBy._id;  // Attach admin ID
+      } else if (!user) {
         return res.status(401).json({ message: 'Not authorized, user not found' });
       }
 
       req.user = user;
+      req.userRole = role;
 
-      // If the user has a society, get its residents
       if (user.society) {
-        const society = await Society.findById(user.society).populate('residents'); // Populate residents
-        req.residents = society.residents; // Attach residents to request object
+        const society = await Society.findById(user.society).populate('residents');
+        req.residents = society.residents;
       } else {
-        req.residents = []; // If no society, set residents to an empty array
+        req.residents = [];
       }
 
       next();

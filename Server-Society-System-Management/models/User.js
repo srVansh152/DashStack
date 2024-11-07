@@ -14,8 +14,8 @@ const userSchema = new mongoose.Schema({
   photo: { type: String }, // Store the file path or URL for the profile photo  
   role: { 
     type: String, 
-    enum: ['user', 'admin', 'security'], 
-    default: 'user'  // Default role is 'user'
+    enum: ['residents', 'admin', 'security'], 
+    default: 'admin'  // Default role is 'user'
   },
 
   // OTP fields for password reset

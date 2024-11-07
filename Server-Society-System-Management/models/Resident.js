@@ -1,5 +1,6 @@
 // models/Resident.js
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const memberSchema = new mongoose.Schema({
     name: String,
@@ -96,6 +97,11 @@ const residentSchema = new mongoose.Schema({
             required: function () { return !this.owner; }
         },
     },
+    role: {
+        type: String,
+        enum: ['resident', 'admin', 'security'],
+        default: 'resident', 
+    },
     society: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Society',
@@ -111,5 +117,19 @@ const residentSchema = new mongoose.Schema({
         default: '123', // Set default password for all residents
     },
 }, { timestamps: true });
+
+// Hash password before saving or updating if modified
+residentSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+// Method to compare entered password with hashed password
+residentSchema.methods.comparePassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 module.exports = mongoose.model('Resident', residentSchema);
