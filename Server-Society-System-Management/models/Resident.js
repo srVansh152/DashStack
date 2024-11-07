@@ -1,4 +1,3 @@
-// models/Resident.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -13,7 +12,7 @@ const memberSchema = new mongoose.Schema({
 
 const vehicleSchema = new mongoose.Schema({
     type: {
-        type: String, // "two-wheeler" or "four-wheeler"
+        type: String,
         required: true,
     },
     name: String,
@@ -21,86 +20,32 @@ const vehicleSchema = new mongoose.Schema({
 });
 
 const residentSchema = new mongoose.Schema({
-    photo: {
-        type: String,
-        required: true,
-    },
-    fullName: {
-        type: String,
-        required: true,
-    },
-    phoneNumber: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-    },
-    age: {
-        type: Number,
-        required: true,
-    },
-    gender: {
-        type: String,
-        required: true,
-    },
-    wing: {
-        type: String,
-        required: true,
-    },
-    unitNumber: {
-        type: String,
-        required: true,
-    },
-    relation: {
-        type: String,
-        required: true,
-    },
-    aadhaarFront: {
-        type: String,
-        required: true,
-    },
-    aadhaarBack: {
-        type: String,
-        required: true,
-    },
-    addressProof: {
-        type: String,
-        required: true,
-    },
-    rentAgreement: {
-        type: String,
-        required: true,
-    },
+    photo: { type: String, required: true },
+    fullName: { type: String, required: true },
+    phoneNumber: { type: String, unique: true, sparse: true },
+    email: { type: String, required: true, unique: true },
+    age: { type: Number, required: true },
+    gender: { type: String, required: true },
+    wing: { type: String, required: true },
+    unitNumber: { type: String, required: true },
+    relation: { type: String, required: true },
+    aadhaarFront: { type: String, required: true },
+    aadhaarBack: { type: String, required: true },
+    addressProof: { type: String, required: true },
+    rentAgreement: { type: String, required: true },
     members: [memberSchema],
     vehicles: [vehicleSchema],
-    status: {
-        type: String, // "occupied" or "vacated"
-        required: true,
-    },
-    owner: {
-        type: Boolean,
-        required: true,
-    },
+    status: { type: String, required: true },
+    owner: { type: Boolean, required: true },
     ownerDetails: {
-        fullName: {
-            type: String,
-            required: function () { return !this.owner; }
-        },
-        phoneNumber: {
-            type: String,
-            required: function () { return !this.owner; }
-        },
-        address: {
-            type: String,
-            required: function () { return !this.owner; }
-        },
+        fullName: { type: String, required: function () { return !this.owner; }},
+        phoneNumber: { type: String, required: function () { return !this.owner; }},
+        address: { type: String, required: function () { return !this.owner; }},
     },
     role: {
         type: String,
         enum: ['resident', 'admin', 'security'],
-        default: 'resident', 
+        default: 'resident',
     },
     society: {
         type: mongoose.Schema.Types.ObjectId,
@@ -112,10 +57,11 @@ const residentSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    password: {
-        type: String,
-        default: '123', // Set default password for all residents
-    },
+    password: { type: String },
+    
+    // OTP fields for password reset
+    resetOtp: String,
+    otpExpires: Date,
 }, { timestamps: true });
 
 // Hash password before saving or updating if modified
