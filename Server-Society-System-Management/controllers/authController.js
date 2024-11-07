@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
+const Resident = require('../models/Resident');
 const { generateToken } = require('../utils/token');
 
 // Email sending utility function
@@ -37,7 +38,7 @@ const generateOTP = () => {
 // Register a new user
 exports.register = async (req, res) => {
   const { firstname, lastname, email, phone, country, state, city, society, password } = req.body;
-  
+
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -86,43 +87,60 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find the user by email
-    const user = await User.findOne({ email });
-
-    // Check if the user exists and if the password is valid
+    // Check for admin or security guard in User model
+    let user = await User.findOne({ email });
     if (user && (await user.comparePassword(password))) {
-      res.json({
+      return res.json({
         _id: user._id,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        phone: user.phone,
-        country: user.country,
-        state: user.state,
-        city: user.city,
-        society: user.society,
+        role: user.role,
         token: generateToken(user),
       });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    // If no admin/security guard found, check in Resident model for resident
+    const resident = await Resident.findOne({ email });
+    if (resident && (await resident.comparePassword(password))) {
+      return res.json({
+        _id: resident._id,
+        firstname: resident.firstname,
+        lastname: resident.lastname,
+        email: resident.email,
+        role: 'resident', // Setting role for residents
+        token: generateToken(resident),
+      });
+    }
+
+    // If no matching user or resident found
+    res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
     res.status(500).json({ message: 'Server error during login', error: error.message });
   }
 };
 
-// Forgot Password - Send OTP
+
+// Forgot Password - Send OTP required to correct 
+// Forgot Password - Send OTP required to reset password
 exports.forgotPassword = async (req, res) => {
   const { emailOrPhone } = req.body;
 
   try {
-    // Find user by email or phone
-    const user = await User.findOne({
+    // Find user by email or phone in both User and Resident models
+    let user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
     });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      // If user not found in User model, check in Resident model
+      user = await Resident.findOne({
+        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User or Resident not found' });
     }
 
     // Generate OTP and set expiration
@@ -139,7 +157,34 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// Reset Password - Verify OTP and Reset Password
+
+exports.verifyOtp = async (req, res) => {
+  const { emailOrPhone, otp } = req.body;
+
+  try {
+    // Find the user by email/phone and OTP, ensure OTP is valid and not expired
+    const user = await User.findOne({
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      resetOtp: otp,
+      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+    }) || await Resident.findOne({
+      email: emailOrPhone,
+      resetOtp: otp,
+      otpExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
+    }
+
+    // OTP is valid, allow user to proceed with password reset
+    res.json({ message: 'OTP verified successfully. Proceed to reset password.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to verify OTP', error: error.message });
+  }
+};
+
+// Reset Password - Verify OTP before this step
 exports.resetPassword = async (req, res) => {
   const { emailOrPhone, otp, newPassword } = req.body;
 
@@ -148,7 +193,11 @@ exports.resetPassword = async (req, res) => {
     const user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
       resetOtp: otp,
-      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+      otpExpires: { $gt: Date.now() },
+    }) || await Resident.findOne({
+      email: emailOrPhone,
+      resetOtp: otp,
+      otpExpires: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -156,7 +205,7 @@ exports.resetPassword = async (req, res) => {
     }
 
     // Update the user's password and clear OTP data
-    user.password = newPassword; // Ensure the password is hashed in the User model
+    user.password = newPassword; // Password hashing handled in User model `pre` hook
     user.resetOtp = undefined;
     user.otpExpires = undefined;
     await user.save();
