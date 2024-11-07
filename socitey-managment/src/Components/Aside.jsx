@@ -14,10 +14,11 @@ const Aside = () => {
     const financialMenuItems = [
         { id: 2, label: 'Income', path: '/otherincome' },
         { id: 3, label: 'Expanse', path: '/financial/expanse' },
-        { id: 4, label: 'Note', path: '/financial/note' },
+        { id: 4, label: 'Note', path: '/note' },
     ];
 
     const handleFinancialClick = () => {
+        setHoveredMenu(null); // Reset hovered menu on click
         if (activeMenu === 'Financial Management') {
             setIsFinancialOpen(!isFinancialOpen);
         } else {
@@ -106,6 +107,7 @@ const Aside = () => {
                                 onClick={() => {
                                     setActiveMenu(item.label);
                                     setIsSidebarOpen(false);
+                                    setHoveredMenu(null); // Reset hovered menu on click
                                 }}
                                 onMouseEnter={() => setHoveredMenu(item.label)}
                                 onMouseLeave={() => setHoveredMenu(null)}
@@ -148,11 +150,11 @@ const sidebarItems = [
     { icon: Activity, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Resident Management', path: '/residence' },
     { icon: DollarSign, label: 'Financial Management', path: '/financial' },
-    { icon: Package, label: 'Facility Management', path: '/' },
+    { icon: Package, label: 'Facility Management', path: '/Facilitymanagment' },
     { icon: Bell, label: 'Complaint Tracking', path: '/' },
     { icon: Settings, label: 'Security Management', path: '/' },
     { icon: Users, label: 'Security Guard', path: '/' },
-    { icon: Bell, label: 'Announcement', path: '/' },
+    { icon: Bell, label: 'Announcement', path: '/announcment' },
     { icon: LogOut, label: 'Logout', path: '/' }
 ];
 

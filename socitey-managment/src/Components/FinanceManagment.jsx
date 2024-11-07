@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, DollarSign, EyeOff,Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, UserCircle as UserCircleIcon } from 'lucide-react';
+import { Activity, DollarSign, EyeOff, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, UserCircle as UserCircleIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import Aside from './Aside';
 
 
@@ -73,7 +73,12 @@ function FinanceManagment() {
                         <div className="flex items-center space-x-2">
                             <span className="text-gray-500">Home</span>
                             <span className="text-gray-500">/</span>
-                            <span className="text-gray-700">Financial Maintenance</span>
+                            <NavLink
+                                className={({ isActive }) => isActive ? 'text-blue-500 font-bold' : 'text-gray-700 '}
+                                to={'/financial'}
+                            >
+                                Maintenance
+                            </NavLink>
                         </div>
                     </div>
 
@@ -151,7 +156,7 @@ function FinanceManagment() {
                 </header>
                 {/* Summary Cards */}
                 <div className="p-8 ">
-                    <div className="flex gap-4 p-4 bg-white">
+                    <div className="flex flex-col gap-4 p-4 bg-white md:flex-row">
                         {/* Maintenance Amount Card */}
                         <div className="flex-1 bg-white rounded-lg p-4 shadow-sm relative">
                             <div className="absolute left-0 top-4 bottom-4 w-1 bg-green-500 rounded-r-full" />
@@ -197,12 +202,12 @@ function FinanceManagment() {
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white rounded-lg shadow-sm overflow-hidden shadow">
+                    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                         <div className="px-6 py-4 border-b">
                             <h2 className="text-lg font-semibold">Maintenance Details</h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full">
+                            <table className="min-w-full">
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
@@ -271,44 +276,44 @@ function FinanceManagment() {
                 </div>
 
                 {openModel && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
                         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                          <div className="p-6">
-                          <h2 className="text-xl font-semibold text-gray-900 mb-6">Set Maintenance</h2>
-        
-        <div className="space-y-2 mb-8">
-          <label className="block">
-            <span className="text-sm font-medium text-gray-900">Password<span className="text-red-500">*</span></span>
-          </label>
-          <div className="relative">
-            <input 
-              type={showPassword ? "text" : "password"} 
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              defaultValue="password123"
-            />
-            <button 
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-        </div>
+                            <div className="p-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Set Maintenance</h2>
 
-        <div className="flex gap-3">
-          <button onClick={()=> setOpenModel(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-            Cancel
-          </button>
-         <Link to='/addmain'>
-         <button className="flex-1 px-4 py-3 rounded-xl bg-orange-500 text-white font-medium  hover:bg-orange-600 transition-colors duration-200">
-            Continue
-          </button>
-         </Link>
-        </div>
-                          </div>
+                                <div className="space-y-2 mb-8">
+                                    <label className="block">
+                                        <span className="text-sm font-medium text-gray-900">Password<span className="text-red-500">*</span></span>
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                            defaultValue="password123"
+                                        />
+                                        <button
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-3">
+                                    <button onClick={() => setOpenModel(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                                        Cancel
+                                    </button>
+                                    <Link to='/addmain'>
+                                        <button className="flex-1 px-4 py-3 rounded-xl bg-orange-500 text-white font-medium  hover:bg-orange-600 transition-colors duration-200">
+                                            Continue
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    )}
+                    </div>
+                )}
             </div>
         </div>
 

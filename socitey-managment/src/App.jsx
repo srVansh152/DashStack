@@ -20,6 +20,9 @@ import FinanceManagment from './Components/FinanceManagment'
 import OtherIncome from './Components/OtherIncome'
 import AddMaintain from './Models/AddMaintain'
 import MemberList from './Components/MemberList'
+import Note from './Components/note'
+import Facilitymanagment from './Components/facilitymanagment'
+import Announcment from './Components/Announcment'
 
 
 
@@ -36,10 +39,8 @@ function App() {
           <Route path='/password' element={<ForgetPassword/>}/>
           <Route path='/otp' element={<OtpVerification/>}/>
           <Route path='/dashboard' element={<DashboardLayout/>}/>
-
           <Route path='/reset' element={<ResetPassword/>}/>
           <Route path='/editprofile' element={<Editprofile/>}/>
-
           <Route path='/update' element={<Update/>}/>
           <Route path='/residence' element={<Residence/>}/>
           <Route path='/ownerform' element={<OwnerForm/>}/>
@@ -50,9 +51,9 @@ function App() {
           <Route path='/otherincome' element={<OtherIncome/>}/>
           <Route path='/addmain' element={<AddMaintain/>}/>
           <Route path='/memberlist' element={<MemberList/>}/>
-
-
-
+          <Route path='/note' element={<Note/>}/>
+          <Route path='/Facilitymanagment' element={<Facilitymanagment/>}/>
+          <Route path='/announcment' element={<Announcment/>}/>
         </Routes>
         </BrowserRouter>
     

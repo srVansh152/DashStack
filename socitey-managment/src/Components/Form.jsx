@@ -368,118 +368,139 @@ const handleInputVecChange = (index, field, value) => {
   );
   
 
-  const renderCommonFormSections = () => (
-    <>
-      {/* Document Uploads */}
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-3 rounded-b-lg">
-        {[
-          "Upload Aadhar Card (Front side)",
-          "Upload Aadhar Card (Back side)",
-          "Rent Agreement",
-          "NOC",
-        ].map((title, index) => (
-          <div key={index} className="space-y-2 ">
-            <label className="block text-sm font-medium text-gray-700 ">
-              {title}
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-              <Upload className="mx-auto h-8 w-8 text-gray-400" />
-              <p className="mt-1 text-sm font-bold text-gray-500">
-                <span className="text-[#5678E9]">Upload a file </span> or drag
-                and drop
-              </p>
-              <p className="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
-            </div>
-          </div>
-        ))}
-      </div>
+  const renderCommonFormSections = () => {
+    const handleDragOver = (event) => {
+      event.preventDefault(); // Prevent default behavior (Prevent file from being opened)
+    };
 
-      {/* Member Counting */}
-      <div className="bg-white p-3 rounded-lg my-5">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-semibold">Member Counting (Other Members)</h3>
-        <select
-          className="border rounded px-2 py-1"
-          value={memberCount}
-          onChange={handleMemberCountChange}
-        >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="space-y-4">
-        {Array.from({ length: memberCount }).map((_, index) => (
-          <div key={index} className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[#202224]">Full Name*</label>
-              <input
-                type="text"
-                className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-                placeholder="Enter Name"
-                value={members[index]?.fullName || ''}
-                onChange={(e) => handleInputChange(index, 'fullName', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#202224]">Phone No*</label>
-              <input
-                type="tel"
-                className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-                placeholder="+91"
-                value={members[index]?.phone || ''}
-                onChange={(e) => handleInputChange(index, 'phone', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#202224]">Email</label>
-              <input
-                type="email"
-                className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-                placeholder="Enter Email"
-                value={members[index]?.email || ''}
-                onChange={(e) => handleInputChange(index, 'email', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#202224]">Age*</label>
-              <input
-                type="number"
-                className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-                placeholder="Enter Age"
-                value={members[index]?.age || ''}
-                onChange={(e) => handleInputChange(index, 'age', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[#202224]">Gender*</label>
-              <select
-                className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1 text-[#A7A7A7]"
-                value={members[index]?.gender || ''}
-                onChange={(e) => handleInputChange(index, 'gender', e.target.value)}
+    const handleDrop = (event) => {
+      event.preventDefault(); // Prevent default behavior
+      const files = event.dataTransfer.files; // Get the dropped files
+      if (files.length > 0) {
+        const file = files[0]; // Get the first file
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          // Handle the file upload (you can call your upload function here)
+          console.log(e.target.result); // For demonstration, log the file data
+          // You can also set the image or file data to state if needed
+          setSelectedImage(e.target.result); // Example: set the uploaded image
+        };
+        reader.readAsDataURL(file); // Read the file as a data URL
+      }
+    };
+
+    return (
+      <>
+        {/* Document Uploads */}
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white p-3 rounded-b-lg">
+          {[ "Upload Aadhar Card (Front side)", "Upload Aadhar Card (Back side)", "Rent Agreement", "NOC", ].map((title, index) => (
+            <div key={index} className="space-y-2 ">
+              <label className="block text-sm font-medium text-gray-700 ">{title}</label>
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center"
+                onDragOver={handleDragOver} // Add drag over event
+                onDrop={handleDrop} // Add drop event
               >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
+                <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                <p className="mt-1 text-sm font-bold text-gray-500">
+                  <span className="text-[#5678E9]">Upload a file </span> or drag and drop
+                </p>
+                <p className="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+              </div>
+              {/* Display uploaded image if available */}
+              {selectedImage && (
+                <img src={selectedImage} alt="Uploaded" className="mt-2 w-full h-auto rounded-md" />
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-[#202224]">Relation*</label>
-              <input
-                type="text"
-                className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-                placeholder="Enter Relation"
-                value={members[index]?.relation || ''}
-                onChange={(e) => handleInputChange(index, 'relation', e.target.value)}
-              />
+          ))}
+        </div>
+
+        {/* Member Counting */}
+        <div className="bg-white p-3 rounded-lg my-5">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold">Member Counting (Other Members)</h3>
+          <select
+            className="border rounded px-2 py-1"
+            value={memberCount}
+            onChange={handleMemberCountChange}
+          >
+            {[1, 2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: memberCount }).map((_, index) => (
+            <div key={index} className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[#202224]">Full Name*</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
+                  placeholder="Enter Name"
+                  value={members[index]?.fullName || ''}
+                  onChange={(e) => handleInputChange(index, 'fullName', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#202224]">Phone No*</label>
+                <input
+                  type="tel"
+                  className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
+                  placeholder="+91"
+                  value={members[index]?.phone || ''}
+                  onChange={(e) => handleInputChange(index, 'phone', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#202224]">Email</label>
+                <input
+                  type="email"
+                  className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
+                  placeholder="Enter Email"
+                  value={members[index]?.email || ''}
+                  onChange={(e) => handleInputChange(index, 'email', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#202224]">Age*</label>
+                <input
+                  type="number"
+                  className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
+                  placeholder="Enter Age"
+                  value={members[index]?.age || ''}
+                  onChange={(e) => handleInputChange(index, 'age', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#202224]">Gender*</label>
+                <select
+                  className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1 text-[#A7A7A7]"
+                  value={members[index]?.gender || ''}
+                  onChange={(e) => handleInputChange(index, 'gender', e.target.value)}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#202224]">Relation*</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
+                  placeholder="Enter Relation"
+                  value={members[index]?.relation || ''}
+                  onChange={(e) => handleInputChange(index, 'relation', e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
 
       {/* Vehicle Counting */}
       <div className="bg-white p-3 rounded-lg">
@@ -550,6 +571,7 @@ const handleInputVecChange = (index, field, value) => {
       </div>
     </>
   );
+};
 
   return (
     <>

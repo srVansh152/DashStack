@@ -107,8 +107,6 @@ const handleDeleteIncome = () => {
     }
   ];
 
-
-
   return (
     <div>
       <Aside />
@@ -119,9 +117,9 @@ const handleDeleteIncome = () => {
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">Home</span>
               <span className="text-gray-500">/</span>
-              <span className="text-gray-700">Maintenance</span>
+              <Link className={`text-gray-500 ${window.location.pathname === '/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/financial'}> Maintenance</Link>
               <span className="text-gray-500">/</span>
-              <span className="text-gray-700">Other Income</span>
+              <Link className={`text-blue-500 ${window.location.pathname === '/otherincome' ? 'font-bold' : 'text-gray-600'}`} to={'/otherincome'}> otherincome</Link>
             </div>
           </div>
 
