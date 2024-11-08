@@ -2,22 +2,19 @@ const Complaint = require('../models/Complaint');
 const User = require('../models/User');
 
 // Create a new complaint
-exports.createComplaint = async (req, res) => {
+exports.createComplaint = async (req, res) => { 
   try {
     const { complaintName, description, wing, unitNumber, priority, status } = req.body;
 
     const complaint = new Complaint({
-      complainer: req.user._id,
-      society: req.user.society,
+      complainer: req.user._id, // User ID from token
+      society: req.user.society, // Society ID from user
       complaintName,
       description,
       wing,
       unitNumber,
       priority,
-      status: status || 'Pending',
-      society: societyId,
-      admin: adminId
-       
+      status: status || 'Pending'         // Default status to 'Pending' if not provided
     });
 
     await complaint.save();
@@ -76,8 +73,8 @@ exports.deleteComplaint = async (req, res) => {
 exports.listComplaintsBySocietyAndAdmin = async (req, res) => {
   try {
     const complaints = await Complaint.find({
-      society: req.user.society,
-      complainer: req.user._id
+      society: req.user.society,         // Match complaints by the user's society ID
+      complainer: req.user._id           // Match complaints by the user's ID
     });
 
     res.status(200).json({ complaints });

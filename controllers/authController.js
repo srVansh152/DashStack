@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
+const Resident = require('../models/Resident');
 const { generateToken } = require('../utils/token');
 
 // Email sending utility function
@@ -11,7 +12,7 @@ const sendEmail = async (email, subject, text) => {
       secure: process.env.EMAIL_PORT === '465', // Use SSL for port 465
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, // Ensure this is your app password
       },
     });
 
@@ -44,6 +45,8 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    const photo = req.file ? req.file.path : null; // Store photo path if uploaded
+
     const newUser = new User({
       firstname,
       lastname,
@@ -55,6 +58,7 @@ exports.register = async (req, res) => {
       society,
       password,
       role: 'admin',
+      photo, // Store the profile photo path
     });
 
     await newUser.save();
@@ -70,6 +74,7 @@ exports.register = async (req, res) => {
       city: newUser.city,
       society: newUser.society,
       role: newUser.role,
+      photo: newUser.photo, // Include photo in the response
       token: generateToken(newUser),
     });
   } catch (error) {
@@ -82,47 +87,68 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-
+    // Check for admin or security guard in User model
+    let user = await User.findOne({ email });
     if (user && (await user.comparePassword(password))) {
-      res.json({
+      return res.json({
         _id: user._id,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        phone: user.phone,
-        country: user.country,
-        state: user.state,
-        city: user.city,
-        society: user.society,
+        role: user.role,
         token: generateToken(user),
       });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    // If no admin/security guard found, check in Resident model for resident
+    const resident = await Resident.findOne({ email });
+    if (resident && (await resident.comparePassword(password))) {
+      return res.json({
+        _id: resident._id,
+        firstname: resident.firstname,
+        lastname: resident.lastname,
+        email: resident.email,
+        role: 'resident', // Setting role for residents
+        token: generateToken(resident),
+      });
+    }
+
+    // If no matching user or resident found
+    res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
     res.status(500).json({ message: 'Server error during login', error: error.message });
   }
 };
 
-// Forgot Password - Send OTP
+
+// Forgot Password - Send OTP required to reset password
 exports.forgotPassword = async (req, res) => {
   const { emailOrPhone } = req.body;
 
   try {
-    const user = await User.findOne({
+    // Find user by email or phone in both User and Resident models
+    let user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
     });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      // If user not found in User model, check in Resident model
+      user = await Resident.findOne({
+        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      });
     }
 
+    if (!user) {
+      return res.status(404).json({ message: 'User or Resident not found' });
+    }
+
+    // Generate OTP and set expiration
     const otp = generateOTP();
     user.resetOtp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000;
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
     await user.save();
 
+    // Send OTP to user's email
     await sendEmail(user.email, 'Your OTP Code', `Your OTP is ${otp}`);
     res.json({ message: 'OTP sent to your email' });
   } catch (error) {
@@ -130,13 +156,18 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// Reset Password - Verify OTP and Reset Password
-exports.resetPassword = async (req, res) => {
-  const { emailOrPhone, otp, newPassword } = req.body;
+
+exports.verifyOtp = async (req, res) => {
+  const { emailOrPhone, otp } = req.body;
 
   try {
+    // Find the user by email/phone and OTP, ensure OTP is valid and not expired
     const user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      resetOtp: otp,
+      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+    }) || await Resident.findOne({
+      email: emailOrPhone,
       resetOtp: otp,
       otpExpires: { $gt: Date.now() },
     });
@@ -145,7 +176,35 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
     }
 
-    user.password = newPassword;
+    // OTP is valid, allow user to proceed with password reset
+    res.json({ message: 'OTP verified successfully. Proceed to reset password.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to verify OTP', error: error.message });
+  }
+};
+
+// Reset Password - Verify OTP before this step
+exports.resetPassword = async (req, res) => {
+  const { emailOrPhone, otp, newPassword } = req.body;
+
+  try {
+    // Find the user by email/phone and OTP, ensure OTP is valid and not expired
+    const user = await User.findOne({
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      resetOtp: otp,
+      otpExpires: { $gt: Date.now() },
+    }) || await Resident.findOne({
+      email: emailOrPhone,
+      resetOtp: otp,
+      otpExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
+    }
+
+    // Update the user's password and clear OTP data
+    user.password = newPassword; // Password hashing handled in User model `pre` hook
     user.resetOtp = undefined;
     user.otpExpires = undefined;
     await user.save();
@@ -156,68 +215,40 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// Get user profile
 exports.getProfile = async (req, res) => {
   try {
+    console.log(req.user); // Debugging: Check if req.user is populated
     const user = await User.findById(req.user._id).select('-password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(user);
+    res.json({ user });
   } catch (error) {
-    res.status(500).json({ message: 'Server error while fetching profile', error: error.message });
+    res.status(500).json({ message: 'Failed to fetch user data', error: error.message });
   }
 };
 
-// Update user profile
-exports.updateProfile = async (req, res) => {
-  const { firstname, lastname, email, phone, country, state, city, society } = req.body;
-
+// Update (replace) the profile of the logged-in user
+exports.updateMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const updates = req.body;
 
-    user.firstname = firstname || user.firstname;
-    user.lastname = lastname || user.lastname;
-    user.email = email || user.email;
-    user.phone = phone || user.phone;
-    user.country = country || user.country;
-    user.state = state || user.state;
-    user.city = city || user.city;
-    user.society = society || user.society;
-
-    await user.save();
-
-    res.json({ message: 'Profile updated successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error during profile update', error: error.message });
-  }
-};
-
-// Update profile photo
-exports.updateProfilePhoto = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
+    // Add photo if uploaded
     if (req.file) {
-      user.profilePhoto = req.file.path;
+      updates.photo = req.file.path;
     }
 
-    await user.save();
-    res.json({ message: 'Profile photo updated successfully', profilePhoto: user.profilePhoto });
+    const user = await User.findByIdAndUpdate(req.user._id, updates, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User profile updated successfully', user });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating profile photo', error: error.message });
+    res.status(500).json({ message: 'Failed to update user data', error: error.message });
   }
 };
-
-
-
-     
-
-
- 

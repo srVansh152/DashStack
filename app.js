@@ -12,6 +12,7 @@ const errorHandler = require('./middlewares/errorMiddleware');
 const complaintRoutes = require('./routes/complaintRoutes');
 const visitorLogRoutes = require('./routes/visitorLogRoutes');
 const facilityRoutes = require('./routes/facilityRoutes'); // Import facilityRoutes
+const securityProtocolRoutes = require('./routes/securityProtocolRoutes');
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use('/api/notes', require('./routes/noteRoutes'));
 app.use('/api/facilities', facilityRoutes); // Use facilityRoutes
 app.use('/api/complaints', complaintRoutes); // Complaints route
 app.use('/api/visitor-logs', visitorLogRoutes);
+app.use('/api/security-protocols', securityProtocolRoutes);
 
 app.get('/health', (req, res) => {
     res.status(200).send('OK');

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const expenseController = require('../controllers/expenseController');
-const { protect } = require('../middlewares/authMiddleware'); // Destructure protect from the imported object
-
+const { protect } = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 

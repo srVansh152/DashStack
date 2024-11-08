@@ -12,8 +12,8 @@ exports.createVisitorLog = async (req, res) => {
       unit,
       wing,
       time,
-      society: societyId,
-      admin: adminId
+      societyId: societyId,
+      adminId: adminId
     });
 
     await visitorLog.save();
@@ -34,7 +34,7 @@ exports.getVisitorLogs = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching visitor logs', error });
   }
-};
+};          
 
 // View a single visitor log
 exports.viewVisitorLog = async (req, res) => {
@@ -62,3 +62,5 @@ exports.deleteVisitorLog = async (req, res) => {
     res.status(500).json({ message: 'Error deleting visitor log', error });
   }
 };
+
+

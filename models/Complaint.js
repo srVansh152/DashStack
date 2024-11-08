@@ -1,18 +1,17 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
-  complainer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
+  complainer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // User who filed the complaint
+  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Related society
   complaintName: { type: String, required: true },
   description: { type: String },
   wing: { type: String },
   unitNumber: { type: String, required: true },
   priority: { type: String, enum: ['High', 'Medium', 'Low'], required: true },
   status: { type: String, enum: ['Pending', 'Open', 'Solved'], default: 'Pending' },
-  createdAt: { type: Date, default: Date.now },
-  societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
-  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Complaint', complaintSchema);           
+module.exports = mongoose.model('Complaint', complaintSchema);
+           
 

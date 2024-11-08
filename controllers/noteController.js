@@ -9,8 +9,8 @@ exports.addNote = async (req, res) => {
       title,
       description,
       date,
-      society: societyId,
-      admin: adminId
+      societyId: societyId,
+      adminId: adminId
     });
     await newNote.save();
 

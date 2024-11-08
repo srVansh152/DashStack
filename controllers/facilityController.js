@@ -4,7 +4,7 @@ const moment = require('moment');
 // Add new facility
 exports.addFacility = async (req, res) => {
   try {
-    const { facilityName, description, scheduleServiceDate, remindBeforeDays } = req.body;
+    const { facilityName, description, scheduleServiceDate, remindBeforeDays, } = req.body;
 
     const newFacility = new Facility({
       facilityName,

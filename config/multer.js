@@ -12,7 +12,10 @@ const storage = new CloudinaryStorage({
     },
 });
 
+
+
 // Initialize multer with Cloudinary storage
 const upload = multer({ storage: storage });
+
 
 module.exports = upload;

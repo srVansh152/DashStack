@@ -4,10 +4,46 @@ const path = require('path');
 const fs = require('fs');
 
 // Add new expense
+// Add new expense
+// exports.addExpense = async (req, res) => {
+//     try {
+//       const { title, description, date, amount } = req.body;
+//       const billImage = req.file ? req.file.path : null;
+  
+//       // Log the user and society IDs for verification
+//       console.log("User ID: " + req.user._id);
+//       console.log("Society ID: " + req.user.society._id);
+  
+//       const newExpense = new Expense({
+//         title,
+//         description,
+//         date,
+//         amount,
+//         billImage,
+//         societyId: req.user.society._id, // Using the society ID from the middleware
+//         adminId: req.user._id // Using the admin (user) ID from the middleware
+//       });
+  
+//       await newExpense.save();
+//       res.status(201).json({ message: 'Expense added successfully', expense: newExpense });
+//     } catch (error) {
+//       res.status(500).json({ message: 'Error adding expense', error: error.message });
+//     }
+//   };
+
 exports.addExpense = async (req, res) => {
   try {
-    const { title, description, date, amount, societyId, adminId } = req.body;
+    // Check if req.user and req.user.society are populated
+    if (!req.user || !req.user.society || !req.user._id || !req.user.society._id) {
+      return res.status(400).json({ message: 'User or society data is missing' });
+    }
+
+    const { title, description, date, amount, } = req.body;
     const billImage = req.file ? req.file.path : null;
+
+    // Log the user and society IDs for verification
+    console.log("User ID: " + req.user._id);
+    console.log("Society ID: " + req.user.society._id);
 
     const newExpense = new Expense({
       title,
@@ -15,8 +51,8 @@ exports.addExpense = async (req, res) => {
       date,
       amount,
       billImage,
-      society: societyId,
-      admin: adminId         
+      societyId: req.user.society._id, // Using the society ID from the middleware
+      adminId: req.user._id // Using the admin (user) ID from the middleware
     });
 
     await newExpense.save();
@@ -26,15 +62,16 @@ exports.addExpense = async (req, res) => {
   }
 };
 
+
 // Update expense
 exports.updateExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, date, amount, societyId, adminId } = req.body;
+    const { title, description, date, amount} = req.body;
     const billImage = req.file ? req.file.path : null;
 
     const updatedExpense = await Expense.findOneAndUpdate(
-      { _id: id, society: societyId, admin: adminId },
+      { _id: id, societyId: req.user.society._id, adminId: req.user._id },
       { title, description, date, amount, billImage },
       { new: true }
     );
@@ -53,7 +90,7 @@ exports.updateExpense = async (req, res) => {
 exports.viewExpense = async (req, res) => {
   try {
     const { id } = req.params;
-    const expense = await Expense.findById(id).populate('society').populate('admin');
+    const expense = await Expense.findById(id).populate('societyId').populate('adminId');
 
     if (!expense) {
       return res.status(404).json({ message: 'Expense not found' });
@@ -67,90 +104,51 @@ exports.viewExpense = async (req, res) => {
 
 // Delete expense
 exports.deleteExpense = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { societyId, adminId } = req.body;
-
-    const expense = await Expense.findOneAndDelete({ _id: id, society: societyId, admin: adminId });
-
-    if (!expense) {
-      return res.status(404).json({ message: 'Expense not found or not associated with the specified society/admin' });
+    try {
+      const { id } = req.params;
+  
+      // Ensure only the admin from the same society can delete the expense
+      const expense = await Expense.findOneAndDelete({ 
+        _id: id, 
+        societyId: req.user.society._id, 
+        adminId: req.user._id 
+      });
+  
+      if (!expense) {
+        return res.status(404).json({ message: 'Expense not found or not associated with the specified society/admin' });
+      }
+  
+      // If an image is associated, delete it from the file system
+      if (expense.billImage) {
+        const imagePath = path.join(__dirname, '..', expense.billImage);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+  
+      res.json({ message: 'Expense deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting expense', error: error.message });
     }
-
-    if (expense.billImage) {
-      fs.unlinkSync(path.join(__dirname, '..', expense.billImage)); // Delete image file
-    }
-
-    res.json({ message: 'Expense deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting expense', error: error.message });
-  }
-};
+  };
+  
 
 // List expenses by societyId and adminId
 exports.listExpensesBySocietyAndAdmin = async (req, res) => {
   try {
-    const { societyId, adminId } = req.query;
+    const societyId = req.user.society._id;
+    const adminId = req.user._id;
 
     if (!societyId || !adminId) {
       return res.status(400).json({ message: 'societyId and adminId are required' });
     }
 
-    const expenses = await Expense.find({ society: societyId, admin: adminId }).populate('society').populate('admin');
+    const expenses = await Expense.find({ societyId: societyId, adminId: adminId })
+      .populate('societyId')
+      .populate('adminId');
 
     res.json(expenses);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching expenses', error: error.message });
   }
 };
-
-// Create a new society
-exports.createSociety = async (req, res) => {
-  try {
-    const { name, location } = req.body;
-    const society = new Society({ name, location });
-    await society.save();
-    res.status(201).json(society);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating society', error: error.message });
-  }
-};
-
-// Read societies
-exports.getSocieties = async (req, res) => {
-  try {
-    const societies = await Society.find();
-    res.json(societies);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching societies', error: error.message });
-  }
-};
-
-// Update society
-exports.updateSociety = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, location } = req.body;
-
-    const society = await Society.findByIdAndUpdate(id, { name, location }, { new: true });
-    if (!society) return res.status(404).json({ message: 'Society not found' });
-
-    res.json(society);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating society', error: error.message });
-  }
-};
-
-// Delete society
-exports.deleteSociety = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const society = await Society.findByIdAndDelete(id);
-    if (!society) return res.status(404).json({ message: 'Society not found' });
-
-    res.json({ message: 'Society deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting society', error: error.message });
-  }
-};
-

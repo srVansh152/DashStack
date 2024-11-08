@@ -1,5 +1,3 @@
-// errorMiddleware.js
-
 const errorHandler = (err, req, res, next) => {
     console.error(err.stack); // Log the error stack for debugging
 

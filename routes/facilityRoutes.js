@@ -1,16 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const facilityController = require('../controllers/facilityController'); // Ensure this path is correct
-const authMiddleware = require('../middlewares/authMiddleware'); // Ensure this path is correct
-
-console.log(facilityController);
+const { protect } = require('../middlewares/authMiddleware'); // Ensure this path is correct
+const { addFacility, updateFacility, viewFacility, deleteFacility, getFacilities } = require('../controllers/facilityController'); // Adjust as needed
 
 // Routes for facility management
-router.post('/facility', authMiddleware, facilityController.addFacility);
-router.put('/facility/:id', authMiddleware, facilityController.updateFacility);
-router.get('/facility/:id', authMiddleware, facilityController.viewFacility);
-router.delete('/facility/:id', authMiddleware, facilityController.deleteFacility);
-router.get('/facilities', authMiddleware, facilityController.getFacilities);
+router.post('/facility', protect, addFacility);
+router.put('/facility/:id', protect, updateFacility);
+router.get('/facility/:id', protect, viewFacility);
+router.delete('/facility/:id', protect, deleteFacility);
+router.get('/facilities', protect, getFacilities);
 
 module.exports = router;
 
