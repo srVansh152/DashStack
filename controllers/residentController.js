@@ -21,7 +21,7 @@ exports.createResident = async (req, res) => {
             addressProof,
             rentAgreement,
             ...req.body,
-            password: '123', // Set password to '123' for all residents
+            password: '123', 
         };
 
         const resident = new Resident(residentData);

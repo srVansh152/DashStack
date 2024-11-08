@@ -2,7 +2,7 @@ const Society = require('../models/Society');
 
 // Create a new society
 exports.createSociety = async (req, res, next) => {
-    const { societyname, societyaddress, country, state, city, zipcode, residents, units } = req.body; // Include residents and units if provided
+    const { societyname, societyaddress, country, state, city, zipcode, residents, units } = req.body; 
 
     try {
         // Validate required fields
@@ -33,7 +33,7 @@ exports.createSociety = async (req, res, next) => {
 
     } catch (error) {
         // Handle any other errors
-        console.error(error); // Log the error for debugging
+        console.error(error); 
         res.status(500).json({
             success: false,
             message: 'Server Error'
@@ -50,7 +50,7 @@ exports.getSocieties = async (req, res, next) => {
             data: societies
         });
     } catch (error) {
-        console.error(error); // Log the error for debugging
+        console.error(error);
         res.status(500).json({
             success: false,
             message: 'Server Error'

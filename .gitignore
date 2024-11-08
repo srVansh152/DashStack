@@ -1,20 +1,57 @@
-# Node modules folder
+# Node modules
 node_modules/
 
-# Environment variables file
+# Environment variables
 .env
 
 # Logs
-*.log
 logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Optional: Ignore OS-specific files
-.DS_Store   # macOS
-Thumbs.db   # Windows
+# Debugging and error reporting files
+error.log
+*.stackdump
+*.pid
 
-# Optional: Ignore build files if you're using a frontend build tool (like Webpack, etc.)
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore uploaded files
+uploads/
+public/uploads/
+
+# Cache and build files
+.cache/
 dist/
-build/
+out/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Configurations
+*.local
+config.json
+
+# Misc
+*.swp
+*.bak
+*.pid
+*.seed
+*.log
+

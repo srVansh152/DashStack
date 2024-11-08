@@ -12,7 +12,7 @@ const memberSchema = new mongoose.Schema({
 
 const vehicleSchema = new mongoose.Schema({
     type: {
-        type: String, // "two-wheeler" or "four-wheeler"
+        type: String, 
         required: true,
     },
     name: String,
@@ -75,7 +75,7 @@ const residentSchema = new mongoose.Schema({
     members: [memberSchema],
     vehicles: [vehicleSchema],
     status: {
-        type: String, // "occupied" or "vacated"
+        type: String, 
         required: true,
     },
     owner: {
@@ -108,7 +108,7 @@ const residentSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        default: '123', // Set default password for all residents
+        default: '123', 
     },
 }, { timestamps: true });
 

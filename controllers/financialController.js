@@ -20,8 +20,8 @@ exports.createFinancialIncome = async (req, res) => {
       amount,
       dueDate,
       description,
-      adminId: req.user._id,  // Admin ID from middleware
-      societyId: req.user.society._id,  // Society ID from middleware
+      adminId: req.user._id,  
+      societyId: req.user.society._id, 
       residentStatus,
     });
 
@@ -76,7 +76,7 @@ exports.markResidentPaid = async (req, res) => {
 
     if (residentStatus) {
       residentStatus.hasPaid = true;
-      residentStatus.penaltyAmount = 0;  // Clear penalty if paid
+      residentStatus.penaltyAmount = 0;  
       await financialIncome.save();
     } else {
       return res.status(404).json({ message: 'Resident not found in this income record' });

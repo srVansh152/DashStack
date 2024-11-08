@@ -14,12 +14,12 @@ router.use(protect);
 
 router
   .route('/')
-  .post(createImportantNumber)  // Add a new contact
-  .get(getImportantNumbers);    // Get all contacts
+  .post(createImportantNumber)  
+  .get(getImportantNumbers);    
 
 router
   .route('/:id')
-  .put(updateImportantNumber)   // Update contact by ID
-  .delete(deleteImportantNumber); // Delete contact by ID
+  .put(updateImportantNumber)   
+  .delete(deleteImportantNumber); 
 
 module.exports = router;

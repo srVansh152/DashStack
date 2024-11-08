@@ -6,7 +6,7 @@ const societySchema = new mongoose.Schema({
   country: { type: String, required: true },
   state: { type: String, required: true },
   city: { type: String, required: true },
-  zipcode: { type: Number, required: true }, // Consider changing to String if you need leading zeros
+  zipcode: { type: Number, required: true }, 
   residents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Resident' }], 
   units: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },

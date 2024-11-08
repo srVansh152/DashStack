@@ -7,14 +7,14 @@ exports.createComplaint = async (req, res) => {
     const { complaintName, description, wing, unitNumber, priority, status } = req.body;
 
     const complaint = new Complaint({
-      complainer: req.user._id, // User ID from token
-      society: req.user.society, // Society ID from user
+      complainer: req.user._id, 
+      society: req.user.society, 
       complaintName,
       description,
       wing,
       unitNumber,
       priority,
-      status: status || 'Pending'         // Default status to 'Pending' if not provided
+      status: status || 'Pending'         
     });
 
     await complaint.save();
@@ -45,7 +45,7 @@ exports.updateComplaint = async (req, res) => {
 exports.viewComplaint = async (req, res) => {
   try {
     const complaint = await Complaint.findById(req.params.id)
-      .populate('complainer', 'name profilePhoto')  // Populate complainer name and photo
+      .populate('complainer', 'name profilePhoto')  
       .populate('society', 'name');
 
     if (!complaint) return res.status(404).json({ message: 'Complaint not found' });
@@ -73,8 +73,8 @@ exports.deleteComplaint = async (req, res) => {
 exports.listComplaintsBySocietyAndAdmin = async (req, res) => {
   try {
     const complaints = await Complaint.find({
-      society: req.user.society,         // Match complaints by the user's society ID
-      complainer: req.user._id           // Match complaints by the user's ID
+      society: req.user.society,         
+      complainer: req.user._id           
     });
 
     res.status(200).json({ complaints });

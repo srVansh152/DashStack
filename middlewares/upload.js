@@ -11,11 +11,11 @@ if (!fs.existsSync(uploadDir)) {
 // Define storage for uploaded images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir); // Define your upload directory
+    cb(null, uploadDir); 
   },
   filename: (req, file, cb) => {
     const uniqueName = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
-    cb(null, uniqueName); // Rename the file with a timestamp and original name without spaces
+    cb(null, uniqueName); 
   }
 });
 
@@ -35,7 +35,7 @@ const fileFilter = (req, file, cb) => {
 // Configure multer
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  limits: { fileSize: 5 * 1024 * 1024 }, 
   fileFilter: fileFilter,
 });
 

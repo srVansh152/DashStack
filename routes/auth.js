@@ -4,7 +4,7 @@ const {
   login,
   forgotPassword,
   resetPassword,
-  verifyOtp, // New OTP verification function
+  verifyOtp, 
   getProfile,
   updateMe
 } = require('../controllers/authController');
@@ -16,7 +16,7 @@ const router = express.Router();
 router.post('/register', upload.single('photo'), register);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
-router.get('/verify-otp', verifyOtp); // Verify OTP before reset
+router.get('/verify-otp', verifyOtp); 
 router.post('/reset-password', resetPassword);
 
 // Routes for individual user profile management

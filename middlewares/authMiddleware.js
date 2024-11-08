@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Society = require('../models/Society'); // Make sure to import your Society model
+const Society = require('../models/Society'); 
 
 const protect = async (req, res, next) => {
   let token;
@@ -14,11 +14,11 @@ const protect = async (req, res, next) => {
       let role = user ? user.role : 'resident';
 
       if (role === 'resident') {
-        user = await Resident.findById(decoded.id).populate('society createdBy'); // createdBy is admin
+        user = await Resident.findById(decoded.id).populate('society createdBy'); 
         if (!user) {
           return res.status(401).json({ message: 'Not authorized, resident not found' });
         }
-        req.adminId = user.createdBy._id;  // Attach admin ID
+        req.adminId = user.createdBy._id;  
       } else if (!user) {
         return res.status(401).json({ message: 'Not authorized, user not found' });
       }

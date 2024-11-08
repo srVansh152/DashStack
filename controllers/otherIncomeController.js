@@ -16,8 +16,8 @@ exports.createOtherIncome = async (req, res) => {
       dueDate,
       description,
       amount,
-      adminId: req.user._id,  // Get admin ID from middleware
-      societyId: req.user.society._id,  // Get society ID from middleware
+      adminId: req.user._id,  
+      societyId: req.user.society._id,  
     });
 
     await otherIncome.save();

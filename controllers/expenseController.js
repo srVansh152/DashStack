@@ -3,7 +3,7 @@ const Society = require('../models/Society');
 const path = require('path');
 const fs = require('fs');
 
-// Add new expense
+
 // Add new expense
 // exports.addExpense = async (req, res) => {
 //     try {
@@ -51,8 +51,8 @@ exports.addExpense = async (req, res) => {
       date,
       amount,
       billImage,
-      societyId: req.user.society._id, // Using the society ID from the middleware
-      adminId: req.user._id // Using the admin (user) ID from the middleware
+      societyId: req.user.society._id,
+      adminId: req.user._id 
     });
 
     await newExpense.save();

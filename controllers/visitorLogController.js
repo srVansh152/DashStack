@@ -28,7 +28,7 @@ exports.getVisitorLogs = async (req, res) => {
   try {
     const visitorLogs = await VisitorLog.find({ society: req.user.society })
       .populate('createdBy', 'name')
-      .sort({ date: -1 }); // Sort by date, most recent first
+      .sort({ date: -1 }); 
 
     res.status(200).json({ visitorLogs });
   } catch (error) {

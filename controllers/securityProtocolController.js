@@ -39,7 +39,7 @@ exports.updateProtocol = async (req, res) => {
     const protocol = await SecurityProtocol.findByIdAndUpdate(
       req.params.id,
       { title, description, date, time },
-      { new: true, runValidators: true } // Ensure validation and return updated doc
+      { new: true, runValidators: true } 
     );
 
     if (!protocol) return res.status(404).json({ message: 'Protocol not found' });

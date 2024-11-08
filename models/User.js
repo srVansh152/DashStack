@@ -5,17 +5,17 @@ const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  phone: { type: String, unique: true, sparse: true }, // Optional for phone number login
+  phone: { type: String, unique: true, sparse: true }, 
   country: { type: String, required: true },
   state: { type: String, required: true },
   city: { type: String, required: true },
   society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society',required: true,  },
   password: { type: String, required: [true, 'Password is required'] },
-  photo: { type: String }, // Store the file path or URL for the profile photo  
+  photo: { type: String },  
   role: { 
     type: String, 
     enum: ['user', 'admin', 'security'], 
-    default: 'user'  // Default role is 'user'
+    default: 'user'  
   },
 
   // OTP fields for password reset

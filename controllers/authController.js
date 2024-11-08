@@ -9,10 +9,10 @@ const sendEmail = async (email, subject, text) => {
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
-      secure: process.env.EMAIL_PORT === '465', // Use SSL for port 465
+      secure: process.env.EMAIL_PORT === '465', 
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Ensure this is your app password
+        pass: process.env.EMAIL_PASS, 
       },
     });
 
@@ -32,7 +32,7 @@ const sendEmail = async (email, subject, text) => {
 
 // Generate a 6-digit OTP
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit OTP
+  return Math.floor(100000 + Math.random() * 900000).toString(); 
 };
 
 // Register a new user
@@ -45,7 +45,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const photo = req.file ? req.file.path : null; // Store photo path if uploaded
+    const photo = req.file ? req.file.path : null; 
 
     const newUser = new User({
       firstname,
@@ -58,7 +58,7 @@ exports.register = async (req, res) => {
       society,
       password,
       role: 'admin',
-      photo, // Store the profile photo path
+      photo, 
     });
 
     await newUser.save();
@@ -74,7 +74,7 @@ exports.register = async (req, res) => {
       city: newUser.city,
       society: newUser.society,
       role: newUser.role,
-      photo: newUser.photo, // Include photo in the response
+      photo: newUser.photo, 
       token: generateToken(newUser),
     });
   } catch (error) {
@@ -108,7 +108,7 @@ exports.login = async (req, res) => {
         firstname: resident.firstname,
         lastname: resident.lastname,
         email: resident.email,
-        role: 'resident', // Setting role for residents
+        role: 'resident', 
         token: generateToken(resident),
       });
     }
@@ -145,7 +145,7 @@ exports.forgotPassword = async (req, res) => {
     // Generate OTP and set expiration
     const otp = generateOTP();
     user.resetOtp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+    user.otpExpires = Date.now() + 10 * 60 * 1000; 
     await user.save();
 
     // Send OTP to user's email
@@ -165,7 +165,7 @@ exports.verifyOtp = async (req, res) => {
     const user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
       resetOtp: otp,
-      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+      otpExpires: { $gt: Date.now() }, 
     }) || await Resident.findOne({
       email: emailOrPhone,
       resetOtp: otp,
@@ -204,7 +204,7 @@ exports.resetPassword = async (req, res) => {
     }
 
     // Update the user's password and clear OTP data
-    user.password = newPassword; // Password hashing handled in User model `pre` hook
+    user.password = newPassword; 
     user.resetOtp = undefined;
     user.otpExpires = undefined;
     await user.save();

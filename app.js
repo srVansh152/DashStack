@@ -13,6 +13,7 @@ const complaintRoutes = require('./routes/complaintRoutes');
 const visitorLogRoutes = require('./routes/visitorLogRoutes');
 const facilityRoutes = require('./routes/facilityRoutes'); // Import facilityRoutes
 const securityProtocolRoutes = require('./routes/securityProtocolRoutes');
+const announcementRoutes = require('./routes/announcementRoutes');
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use('/api/facilities', facilityRoutes); // Use facilityRoutes
 app.use('/api/complaints', complaintRoutes); // Complaints route
 app.use('/api/visitor-logs', visitorLogRoutes);
 app.use('/api/security-protocols', securityProtocolRoutes);
+app.use('/api/announcements', announcementRoutes);
 
 app.get('/health', (req, res) => {
     res.status(200).send('OK');

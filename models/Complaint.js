@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
-  complainer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // User who filed the complaint
-  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, // Related society
+  complainer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
+  society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true }, 
   complaintName: { type: String, required: true },
   description: { type: String },
   wing: { type: String },

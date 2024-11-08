@@ -1,6 +1,6 @@
 const express = require('express');
 const otherIncomeController = require('../controllers/otherIncomeController');
-const { protect } = require('../middlewares/authMiddleware');  // Assuming `protect` middleware attaches user info to req
+const { protect } = require('../middlewares/authMiddleware');  
 
 const router = express.Router();
 

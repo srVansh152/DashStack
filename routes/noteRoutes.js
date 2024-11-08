@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const noteController = require('../controllers/noteController');
-const { protect } = require('../middlewares/authMiddleware'); // Import protect middleware
+const { protect } = require('../middlewares/authMiddleware'); 
 
 // Add a new note
 router.post('/notes', protect, noteController.addNote);

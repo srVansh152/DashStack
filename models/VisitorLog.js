@@ -11,7 +11,7 @@ const visitorLogSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now, // Default to current date
+    default: Date.now, 
     required: true,
   },
   unit: {
@@ -24,7 +24,7 @@ const visitorLogSchema = new mongoose.Schema({
   },
   time: {
     type: String,
-    required: true, // Format: 'HH:MM' or 'HH:MM AM/PM'
+    required: true, 
   },
   
   societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
