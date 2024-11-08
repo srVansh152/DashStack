@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express')
 const router = express.Router();
 const visitorLogController = require('../controllers/visitorLogController');
 const { protect } = require('../middlewares/authMiddleware'); // Assuming you have an auth middleware
