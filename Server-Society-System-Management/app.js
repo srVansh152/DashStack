@@ -42,6 +42,18 @@ app.use('/api/residents', require('./routes/resident'));
 // Expense routes
 app.use('/api/expenses', require('./routes/expenseRoutes'));  
 
+// note
+app.use('/api/notes', require('./routes/noteRoutes'));
+
+// facilities
+app.use('/api/facilities', require("./routes/facilityRoutes")); 
+
+// Complaints route
+app.use('/api/complaints', require("./routes/complaintRoutes")); 
+
+// visitor logs
+app.use('/api/visitor-logs', require("./routes/visitorLogRoutes"));
+
 // Health check route
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
