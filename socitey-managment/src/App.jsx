@@ -23,6 +23,10 @@ import MemberList from './Components/MemberList'
 import Note from './Components/note'
 import Facilitymanagment from './Components/facilitymanagment'
 import Announcment from './Components/Announcment'
+import CreateComplain from './Components/CreateComplain'
+import RequestTracking from './Components/RequestTracking'
+import VisitorsLogs from './Components/VisitorsLogs'
+import SecurityProtocols from './Components/SecurityProtocols'
 
 
 
@@ -54,6 +58,10 @@ function App() {
           <Route path='/note' element={<Note/>}/>
           <Route path='/Facilitymanagment' element={<Facilitymanagment/>}/>
           <Route path='/announcment' element={<Announcment/>}/>
+          <Route path='/Createcomplain' element={<CreateComplain/>}/>
+          <Route path='/requesttracking' element={<RequestTracking/>}/>
+          <Route path='/visitorslogs' element={<VisitorsLogs/>}/>
+          <Route path='/securityprotocols' element={<SecurityProtocols/>}/>
         </Routes>
         </BrowserRouter>
     
