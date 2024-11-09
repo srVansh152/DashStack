@@ -14,6 +14,7 @@ const visitorLogRoutes = require('./routes/visitorLogRoutes');
 const facilityRoutes = require('./routes/facilityRoutes'); // Import facilityRoutes
 const securityProtocolRoutes = require('./routes/securityProtocolRoutes');
 const announcementRoutes = require('./routes/announcementRoutes');
+const emergencyRoutes = require('./routes/emergencyRoutes');
 
 dotenv.config();
 
@@ -35,11 +36,12 @@ app.use('/api/important-numbers', require('./routes/importantNumber'));
 app.use('/api/residents', require('./routes/resident'));
 app.use('/api/expenses', require('./routes/expenseRoutes'));
 app.use('/api/notes', require('./routes/noteRoutes'));
-app.use('/api/facilities', facilityRoutes); // Use facilityRoutes
-app.use('/api/complaints', complaintRoutes); // Complaints route
+app.use('/api/facilities', facilityRoutes); 
+app.use('/api/complaints', complaintRoutes); 
 app.use('/api/visitor-logs', visitorLogRoutes);
 app.use('/api/security-protocols', securityProtocolRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/emergency-alerts', emergencyRoutes);
 
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
