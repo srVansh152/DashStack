@@ -15,9 +15,6 @@ exports.createComplaint = async (req, res) => {
       unitNumber,
       priority,
       status: status || 'Pending',
-      society: societyId,
-      admin: adminId
-       
     });
 
     await complaint.save();

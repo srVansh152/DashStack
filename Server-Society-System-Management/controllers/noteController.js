@@ -9,8 +9,8 @@ exports.addNote = async (req, res) => {
       title,
       description,
       date,
-      society: societyId,
-      admin: adminId
+      societyId: req.user.society._id,
+      adminId: req.user._id
     });
     await newNote.save();
 
@@ -45,7 +45,7 @@ exports.updateNote = async (req, res) => {
 // View all notes for the authenticated user
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user._id });
+    const notes = await Note.find({ adminId: req.user._id });
     res.json(notes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching notes', error: error.message });

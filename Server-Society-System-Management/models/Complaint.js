@@ -9,9 +9,7 @@ const complaintSchema = new mongoose.Schema({
   unitNumber: { type: String, required: true },
   priority: { type: String, enum: ['High', 'Medium', 'Low'], required: true },
   status: { type: String, enum: ['Pending', 'Open', 'Solved'], default: 'Pending' },
-  createdAt: { type: Date, default: Date.now },
-  societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
-  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);           

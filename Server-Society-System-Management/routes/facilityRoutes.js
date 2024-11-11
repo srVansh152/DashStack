@@ -10,6 +10,6 @@ router.post('/facility', protect, facilityController.addFacility);
 router.put('/facility/:id', protect, facilityController.updateFacility);
 router.get('/facility/:id', protect, facilityController.viewFacility);
 router.delete('/facility/:id', protect, facilityController.deleteFacility);
-router.get('/facilities', protect, facilityController.getFacilities);
+router.get('/facility', protect, facilityController.getFacilities);
 
 module.exports = router;

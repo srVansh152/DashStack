@@ -79,7 +79,7 @@ exports.deleteFacility = async (req, res) => {
 // Get all facilities for the authenticated user's society and admin
 exports.getFacilities = async (req, res) => {
   try {
-    const facilities = await Facility.find({ society: req.user.society._id, admin: req.user._id });
+    const facilities = await Facility.find({ societyId: req.user.society._id, adminId: req.user._id });
     res.json(facilities);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching facilities', error: error.message });

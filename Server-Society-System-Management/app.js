@@ -54,6 +54,15 @@ app.use('/api/complaints', require("./routes/complaintRoutes"));
 // visitor logs
 app.use('/api/visitor-logs', require("./routes/visitorLogRoutes"));
 
+// security protocol
+app.use('/api/security-protocols', require("./routes/securityProtocolRoutes"));
+
+// announcement
+app.use('/api/announcements', require("./routes/announcementRoutes"));
+
+//emergency
+app.use('/api/emergency-alerts', require("./routes/emergencyRoutes"));
+
 // Health check route
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
