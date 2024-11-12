@@ -9,6 +9,7 @@ import Aside from './Aside';
 function FinanceManagment() {
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
+    const [openViewModel, setOpenViewModel] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
     const [maintenanceData, setMaintenanceData] = useState([
         {
@@ -27,6 +28,9 @@ function FinanceManagment() {
 
     const handleAddDetails = () => {
         setOpenModel(true);
+    };
+    const handleViewDetails = () => {
+        setOpenViewModel(true);
     };
 
     const notifications = [
@@ -261,7 +265,7 @@ function FinanceManagment() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button className="text-blue-600 hover:text-blue-800">
+                                                <button onClick={handleViewDetails} className="text-blue-600 hover:text-blue-800">
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                                                     </svg>
@@ -311,6 +315,92 @@ function FinanceManagment() {
                                     </Link>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                )}
+                {openViewModel && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-gray-900">View Maintenance Details</h2>
+            <button onClick={()=> setOpenViewModel(false)} className="text-gray-500 hover:text-gray-700">
+              <span className="sr-only">Close</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Profile */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-full overflow-hidden">
+              <img
+                src="/placeholder.svg?height=48&width=48"
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="font-medium text-gray-900">Cody Fisher</div>
+              <div className="text-sm text-gray-500">Feb 10, 2024</div>
+            </div>
+          </div>
+
+          {/* Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Wing</div>
+              <div className="text-sm font-medium text-blue-600">A</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Unit</div>
+              <div className="text-sm font-medium">1001</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Status</div>
+              <div className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                Owner
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Amount</div>
+              <div className="text-sm font-medium text-green-600">₹1000</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Penalty</div>
+              <div className="text-sm font-medium">--</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Status</div>
+              <div className="inline-flex items-center gap-1 text-sm font-medium text-yellow-600">
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                Pending
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 mb-1">Payment</div>
+              <div className="inline-flex items-center gap-1 text-sm font-medium">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                Cash
+              </div>
+            </div>
+          </div>
+        </div>
                         </div>
                     </div>
                 )}

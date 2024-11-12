@@ -7,32 +7,35 @@ import { Info, MoreVertical } from "lucide-react"
 
 
 function Announcment() {
+  const [announcementTitle, setAnnouncementTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [announcementDate, setAnnouncementDate] = useState("");
+  const [announcementTime, setAnnouncementTime] = useState("");
+  const [title, setTitle] = useState("Community Initiatives");
+  const [descriptionn, setDescriptionn] = useState("The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.");
+  const [date, setDate] = useState("01/02/2024");
+  const [time, setTime] = useState("10:15 AM");
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
     const [openEditModel, setOpenEditModel] = useState(false);
     const [openViewModel, setOpenViewModel] = useState(false);
     const [openDeleteModel, setOpenDeleteModel] = useState(false);
-    const [formData, setFormData] = useState({
-        title: '',
-        date: '',
-        dueDate: '',
-        description: '',
-        amount: ''
-    })
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(formData)
 
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here (e.g., saving the data)
+    
+  };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-    }
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic, e.g., saving or sending the data
+  
+  };
+
+
+
 
     const handleAddModel = () => {
         setOpenModel(true);
@@ -274,66 +277,78 @@ function Announcment() {
                         <h1 className="text-xl font-semibold mb-6">Add Announcement</h1>
         
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1">
-              Announcement Title<span className="text-red-500">*</span>
-            </label>
-            <input 
-              type="text"
-             
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1">
-              Description<span className="text-red-500">*</span>
-            </label>
-            <textarea
-             
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[80px]"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-    {/* Announcement Date Input */}
-    <div>
+        <form onSubmit={handleSubmit}>
+      <div>
         <label className="block text-sm mb-1">
+          Announcement Title<span className="text-red-500">*</span>
+        </label>
+        <input 
+          type="text"
+          value={announcementTitle}
+          onChange={(e) => setAnnouncementTitle(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm mb-1">
+          Description<span className="text-red-500">*</span>
+        </label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[80px]"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        {/* Announcement Date Input */}
+        <div>
+          <label className="block text-sm mb-1">
             Announcement Date<span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-            <input
-                type="date"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
-            
+          </label>
+          <input
+            type="date"
+            value={announcementDate}
+            onChange={(e) => setAnnouncementDate(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            required
+          />
         </div>
-    </div>
 
-    {/* Announcement Time Input */}
-    <div>
-        <label className="block text-sm mb-1">
+        {/* Announcement Time Input */}
+        <div>
+          <label className="block text-sm mb-1">
             Announcement Time<span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-            <input
-                type="time"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
-           
+          </label>
+          <input
+            type="time"
+            value={announcementTime}
+            onChange={(e) => setAnnouncementTime(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            required
+          />
         </div>
-    </div>
-</div>
+      </div>
 
-
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <button onClick={()=> setOpenModel(false)} className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-              Cancel
-            </button>
-            <button className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors">
-              Save
-            </button>
-          </div>
+      <div className="grid grid-cols-2 gap-4 mt-8">
+        <button 
+          type="button" 
+          onClick={() => setOpenModel(false)} 
+          className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          Save
+        </button>
+      </div>
+    </form>
         </div>
                         </div>
                     </div>
@@ -379,66 +394,84 @@ function Announcment() {
                         <h1 className="text-xl font-semibold mb-6">Edit Announcement</h1>
         
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1">
-              Announcement Title<span className="text-red-500">*</span>
-            </label>
-            <input 
+        <form onSubmit={handleEditSubmit}>
+      <div>
+        <label className="block text-sm mb-1">
+          Announcement Title<span className="text-red-500">*</span>
+        </label>
+        <input 
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm mb-1">
+          Description<span className="text-red-500">*</span>
+        </label>
+        <textarea
+          value={descriptionn}
+          onChange={(e) => setDescriptionn(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[80px]"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm mb-1">
+            Announcement Date<span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <input
               type="text"
-              defaultValue="Community Initiatives"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              required
             />
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1">
-              Description<span className="text-red-500">*</span>
-            </label>
-            <textarea
-              defaultValue="The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[80px]"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm mb-1">
-                Announcement Date<span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  defaultValue="01/02/2024"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-                <Calendar className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">
-                Announcement Time<span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  defaultValue="10:15 AM"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-                <Clock className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <button onClick={()=> setOpenEditModel(false)} className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-              Cancel
-            </button>
-            <button className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors">
-              Save
-            </button>
+            <Calendar className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
         </div>
+
+        <div>
+          <label className="block text-sm mb-1">
+            Announcement Time<span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              required
+            />
+            <Clock className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mt-8">
+        <button 
+          type="button" 
+          onClick={() => setOpenEditModel(false)} 
+          className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+        </div>
+    
                         </div>
                     </div>
                 </div>

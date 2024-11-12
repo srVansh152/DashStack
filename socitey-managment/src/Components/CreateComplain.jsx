@@ -59,31 +59,38 @@ const complaints = [
 ]
 
 function CreateComplain() {
+  const [reporterName, setReporterName] = useState("Evelyn Harper");
+  const [reportTitle, setReportTitle] = useState("Unethical Behavior");
+  const [details, setDetails] = useState("The celebration of Ganesh Chaturthi involves the installation of clay idols in Resident.");
+  const [section, setSection] = useState("A");
+  const [unitNumber, setUnitNumber] = useState("1001");
+  const [urgency, setUrgency] = useState("medium");
+  const [currentStatus, setCurrentStatus] = useState("open");
+  const [requesterName, setRequesterName] = useState('');
+  const [requestName, setRequestName] = useState('');
+  const [requestDate, setRequestDate] = useState('');
+  const [wing, setWing] = useState('');
+  const [unit, setUnit] = useState('');
+  const [priority, setPriority] = useState('');
+  const [status, setStatus] = useState('');
   const [isOpen, setIsOpen] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [openEditModel, setOpenEditModal] = useState(false)
   const [openViewModel, setOpenViewModal] = useState(false)
   const [openDeleteModel, setOpenDeleteModel] = useState(false)
-  const [formData, setFormData] = useState({
-    title: '',
-    date: '',
-    dueDate: '',
-    description: '',
-    amount: '',
-  })
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(formData)
-  }
+    e.preventDefault();
+    // Form submission logic here
+   
+  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+  };
+  
+
+
 
   const handleAddModel = () => {
     setOpenModal(true)
@@ -353,174 +360,173 @@ function CreateComplain() {
           <div className="p-6 space-y-6">
           <h2 className="text-xl font-semibold text-gray-900">Create Complaint  </h2>
           
-          <form className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Requester Name<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-              
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Request Name<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-              
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Request Date<span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
+          
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Requester Name<span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={requesterName}
+          onChange={(e) => setRequesterName(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          required
+        />
+      </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium">
-                  Wing<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium">
-                  Unit<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-               
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-              </div>
-            </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Request Name<span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={requestName}
+          onChange={(e) => setRequestName(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          required
+        />
+      </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Priority<span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-4 ">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="high"
-                    className="w-4 h-4  text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">High</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="medium"
-              
-                    className="w-4 h-4 text-
-                    orange border-gray-300 focus:ring-orange"
-                  />
-                  <span className="ml-2 text-sm">Medium</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="low"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Low</span>
-                </label>
-              </div>
-            </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Request Date<span className="text-red-500">*</span>
+        </label>
+        <input
+          type="date"
+          value={requestDate}
+          onChange={(e) => setRequestDate(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          required
+        />
+      </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Status<span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="open"
-                  
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Open</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="pending"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Pending</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="solve"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Solve</span>
-                </label>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 pt-4">
-              <button onClick={()=> setOpenModal(false)}
-                type="button"
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-              >
-                Create
-              </button>
-            </div>
-          </form>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium">
+            Wing<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={wing}
+            onChange={(e) => setWing(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            required
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium">
+            Unit<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Priority<span className="text-red-500">*</span>
+        </label>
+        <div className="flex gap-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="priority"
+              value="high"
+              checked={priority === 'high'}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">High</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="priority"
+              value="medium"
+              checked={priority === 'medium'}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Medium</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="priority"
+              value="low"
+              checked={priority === 'low'}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Low</span>
+          </label>
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Status<span className="text-red-500">*</span>
+        </label>
+        <div className="flex gap-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="open"
+              checked={status === 'open'}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Open</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="pending"
+              checked={status === 'pending'}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Pending</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="solve"
+              checked={status === 'solve'}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Solve</span>
+          </label>
+        </div>
+      </div>
+
+      <div className="flex gap-4 pt-4">
+        <button
+          type="button"
+          onClick={() => setOpenModal(false)}
+          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+        >
+          Create
+        </button>
+      </div>
+    </form>
         </div>
           </div>
         </div>
@@ -602,156 +608,172 @@ function CreateComplain() {
           <div className="p-6 space-y-6">
           <h2 className="text-xl font-semibold text-gray-900">Edit Complaint</h2>
           
-          <form className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Complainer Name<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                defaultValue="Evelyn Harper"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Complaint Name<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                defaultValue="Unethical Behavior"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Description<span className="text-red-500">*</span>
-              </label>
-              <textarea
-                defaultValue="The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident."
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
+          <form className="space-y-4" onSubmit={handleEditSubmit}>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Reporter Name<span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={reporterName}
+          onChange={(e) => setReporterName(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          required
+        />
+      </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium">
-                  Wing<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  defaultValue="A"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium">
-                  Unit<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  defaultValue="1001"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-              </div>
-            </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Report Title<span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          value={reportTitle}
+          onChange={(e) => setReportTitle(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          required
+        />
+      </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Priority<span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="high"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">High</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="medium"
-                    defaultChecked
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Medium</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="low"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Low</span>
-                </label>
-              </div>
-            </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Details<span className="text-red-500">*</span>
+        </label>
+        <textarea
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          required
+        />
+      </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Status<span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="open"
-                    defaultChecked
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Open</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="pending"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Pending</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="solve"
-                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-2 text-sm">Solve</span>
-                </label>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 pt-4">
-              <button onClick={()=> setOpenEditModal(false)}
-                type="button"
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-              >
-                Save
-              </button>
-            </div>
-          </form>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium">
+            Section<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={section}
+            onChange={(e) => setSection(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            required
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium">
+            Unit Number<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={unitNumber}
+            onChange={(e) => setUnitNumber(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Urgency<span className="text-red-500">*</span>
+        </label>
+        <div className="flex gap-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="urgency"
+              value="high"
+              checked={urgency === "high"}
+              onChange={(e) => setUrgency(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">High</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="urgency"
+              value="medium"
+              checked={urgency === "medium"}
+              onChange={(e) => setUrgency(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Medium</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="urgency"
+              value="low"
+              checked={urgency === "low"}
+              onChange={(e) => setUrgency(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Low</span>
+          </label>
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium">
+          Status<span className="text-red-500">*</span>
+        </label>
+        <div className="flex gap-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="open"
+              checked={currentStatus === "open"}
+              onChange={(e) => setCurrentStatus(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Open</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="pending"
+              checked={currentStatus === "pending"}
+              onChange={(e) => setCurrentStatus(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Pending</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="status"
+              value="resolved"
+              checked={currentStatus === "resolved"}
+              onChange={(e) => setCurrentStatus(e.target.value)}
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+            />
+            <span className="ml-2 text-sm">Resolved</span>
+          </label>
+        </div>
+      </div>
+
+      <div className="flex gap-4 pt-4">
+        <button
+          onClick={()=>setOpenEditModal(false)}
+          type="button"
+          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+        >
+          Save
+        </button>
+      </div>
+    </form>
         </div>
           </div>
         </div>

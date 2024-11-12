@@ -38,6 +38,9 @@ function App() {
         <div className="">
         <BrowserRouter>
         <Routes>
+        
+
+         
           <Route path='/' element={<RegistrationPage/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/password' element={<ForgetPassword/>}/>
@@ -61,7 +64,8 @@ function App() {
           <Route path='/Createcomplain' element={<CreateComplain/>}/>
           <Route path='/requesttracking' element={<RequestTracking/>}/>
           <Route path='/visitorslogs' element={<VisitorsLogs/>}/>
-          <Route path='/securityprotocols' element={<SecurityProtocols/>}/>
+          <Route path='/securityprotocols' element={<SecurityProtocols/>}/>\
+       
         </Routes>
         </BrowserRouter>
     
