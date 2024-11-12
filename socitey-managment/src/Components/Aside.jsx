@@ -14,12 +14,12 @@ import {
 import { useState } from 'react'
 
 export default function Component() {
-  const [activeMenu, setActiveMenu] = useState('Dashboard')
+  const [activeMenu, setActiveMenu] = useState('')
   const [hoveredMenu, setHoveredMenu] = useState(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isFinancialOpen, setIsFinancialOpen] = useState(false)
-  const [isComplaintOpen, setIsComplaintOpen] = useState(false)
-  const [isSecurityOpen, setIsSecurityOpen] = useState(false)
+  const [isFinancialOpen, setIsFinancialOpen] = useState(true)
+  const [isComplaintOpen, setIsComplaintOpen] = useState(true)
+  const [isSecurityOpen, setIsSecurityOpen] = useState(true)
 
   // Financial menu items
   const financialMenuItems = [
@@ -214,6 +214,7 @@ export default function Component() {
 
           <SidebarItem
             icon={LogOut}
+            className="mt-40"
             label="Logout"
             path="/"
             active={activeMenu === 'Logout'}
