@@ -45,7 +45,7 @@ function App() {
           <Route path='/admin/dashboard' element={<DashboardLayout/>}/>
           <Route path='/reset' element={<ResetPassword/>}/>
           <Route path='/editprofile' element={<Editprofile/>}/>
-          <Route path='/update' element={<Update/>}/>
+          <Route path='/admin/update' element={<Update/>}/>
           <Route path='/admin/residence' element={<Residence/>}/>
           <Route path='/ownerform' element={<OwnerForm/>}/>
           <Route path='/viewmodel' element={<Viewmodel/>}/>
