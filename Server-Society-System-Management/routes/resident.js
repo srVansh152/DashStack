@@ -9,20 +9,20 @@ router.post(
     '/',
     protect,
     upload.fields([
-        { name: 'photo', maxCount: 1 },
-        { name: 'aadhaarFront', maxCount: 1 },
-        { name: 'aadhaarBack', maxCount: 1 },
-        { name: 'addressProof', maxCount: 1 },
-        { name: 'rentAgreement', maxCount: 1 },
+      { name: 'photo', maxCount: 1 },
+      { name: 'aadhaarFront', maxCount: 1 },
+      { name: 'aadhaarBack', maxCount: 1 },
+      { name: 'addressProof', maxCount: 1 },
+      { name: 'rentAgreement', maxCount: 1 },
     ]),
     async (req, res) => {
-        try {
-            await residentController.createResident(req, res);
-        } catch (error) {
-            res.status(400).json({ message: error.message });
-        }
+      try {
+        await residentController.createResident(req, res);
+      } catch (error) {
+        res.status(400).json({ message: error.message });
+      }
     }
-);
+  );
 
 router.put('/:id', protect, upload.none(), async (req, res) => {
     try {

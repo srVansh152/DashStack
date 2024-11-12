@@ -2,6 +2,8 @@ const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const Resident = require('../models/Resident');
 const { generateToken } = require('../utils/token');
+const cloudinary = require('../config/cloudinaryConfig'); 
+
 
 // Email sending utility function
 const sendEmail = async (email, subject, text) => {
@@ -45,7 +47,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const photo = req.file ? req.file.path : null; // Store photo path if uploaded
+    const userPhoto = req.file ? req.file.path : null;
 
     const newUser = new User({
       firstname,
@@ -58,7 +60,7 @@ exports.register = async (req, res) => {
       society,
       password,
       role: 'admin',
-      photo, // Store the profile photo path
+      userPhoto,
     });
 
     await newUser.save();
@@ -74,7 +76,7 @@ exports.register = async (req, res) => {
       city: newUser.city,
       society: newUser.society,
       role: newUser.role,
-      photo: newUser.photo, // Include photo in the response
+      userPhoto: newUser.userPhoto,
       token: generateToken(newUser),
     });
   } catch (error) {
@@ -233,9 +235,17 @@ exports.updateMe = async (req, res) => {
   try {
     const updates = req.body;
 
-    // Add photo if uploaded
+    // Check if a new userPhoto is uploaded
     if (req.file) {
-      updates.photo = req.file.path;
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(req.file.path);
+        updates.userPhoto = uploadResponse.secure_url;
+      } catch (uploadError) {
+        return res.status(500).json({
+          message: 'Failed to upload userPhoto to Cloudinary',
+          error: uploadError.message,
+        });
+      }
     }
 
     const user = await User.findByIdAndUpdate(req.user._id, updates, {

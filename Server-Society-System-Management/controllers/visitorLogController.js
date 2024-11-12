@@ -12,8 +12,8 @@ exports.createVisitorLog = async (req, res) => {
       unit,
       wing,
       time,
-      society: societyId,
-      admin: adminId
+      societyId: req.user.society._id,
+      adminId: req.user._id
     });
 
     await visitorLog.save();
@@ -26,7 +26,7 @@ exports.createVisitorLog = async (req, res) => {
 // Get all visitor logs for a specific society
 exports.getVisitorLogs = async (req, res) => {
   try {
-    const visitorLogs = await VisitorLog.find({ society: req.user.society })
+    const visitorLogs = await VisitorLog.find({ societyId: req.user.society._id })
       .populate('createdBy', 'name')
       .sort({ date: -1 }); // Sort by date, most recent first
 

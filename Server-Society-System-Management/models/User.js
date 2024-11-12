@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   city: { type: String, required: true },
   society: { type: mongoose.Schema.Types.ObjectId, ref: 'Society',required: true,  },
   password: { type: String, required: [true, 'Password is required'] },
-  photo: { type: String }, // Store the file path or URL for the profile photo  
+  userPhoto: { type: String }, // Store the file path or URL for the profile photo  
   role: { 
     type: String, 
     enum: ['residents', 'admin', 'security'], 
