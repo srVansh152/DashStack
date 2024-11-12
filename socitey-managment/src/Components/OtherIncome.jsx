@@ -117,9 +117,9 @@ function OtherIncome() {
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">Home</span>
               <span className="text-gray-500">/</span>
-              <Link className={`text-gray-500 ${window.location.pathname === '/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/financial'}> Maintenance</Link>
+              <Link className={`text-gray-500 ${window.location.pathname === '/admin/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/financial'}> Maintenance</Link>
               <span className="text-gray-500">/</span>
-              <Link className={`text-blue-500 ${window.location.pathname === '/otherincome' ? 'font-bold' : 'text-gray-600'}`} to={'/otherincome'}> otherincome</Link>
+              <Link className={`text-blue-500 ${window.location.pathname === '/admin/otherincome' ? 'font-bold' : 'text-gray-600'}`} to={'/otherincome'}> otherincome</Link>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ function OtherIncome() {
             </div>
 
             {/* Profile Section */}
-            <Link to="/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
+            <Link to="/admin/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
               <img
                 src="/api/placeholder/32/32"
                 alt="Profile"
@@ -199,11 +199,11 @@ function OtherIncome() {
         <div className="container mx-auto p-6">
           <div className="flex justify-between items-center mb-4">
             <div className="flex">
-              <Link to="/financial" className="px-4 py-2 text-gray-600 font-medium">Maintenance</Link>
+              <Link to="/admin/financial" className="px-4 py-2 text-gray-600 font-medium">Maintenance</Link>
               <button className="px-4 py-2 bg-orange-500 text-white font-medium rounded-t-lg">Other Income</button>
             </div>
             <div className='flex gap-4'>
-              <Link to="/memberlist">
+              <Link to="/admin/memberlist">
                 <button className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
                   <EyeIcon className="w-5 h-5 mr-2" />
                   Views
@@ -225,7 +225,7 @@ function OtherIncome() {
                     <button className="text-gray-500 hover:text-gray-700">
                       <PencilIcon className="w-5 h-5" />
                     </button>
-                    <Link to="/memberlist">
+                    <Link to="/admin/memberlist">
                       <button className="text-gray-500 mt-1 pointer hover:text-gray-700">
                         <EyeIcon className="w-5 h-5" />
                       </button>
@@ -349,7 +349,7 @@ function OtherIncome() {
                   >
                     Cancel
                   </button>
-                  <Link to="/otherincome">
+                  <Link to="/admin/otherincome">
                     <button
                       type="submit"
                       className="w-full px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"

@@ -172,7 +172,7 @@ const DashboardLayout = () => {
                 </div>
 
                 {/* Profile Section */}
-                <Link to="/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
+                <Link to="/admin/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
                     <img
                         src="/api/placeholder/32/32"
                         alt="Profile"
@@ -194,7 +194,7 @@ const DashboardLayout = () => {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
-        <Link to='/update'>
+        <Link to='/admin/update'>
           <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200">
             <Pencil className="w-4 h-4 mr-2" />
             Edit Profile

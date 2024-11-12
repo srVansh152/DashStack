@@ -114,7 +114,7 @@ function VisitorsLogs() {
             </div>
 
             <Link
-              to="/editprofile"
+              to="/admin/editprofile"
               className="hidden cursor-pointer items-center gap-2 rounded-lg p-2 transition-all hover:bg-gray-50 sm:flex"
             >
               <img
@@ -188,7 +188,7 @@ function VisitorsLogs() {
         </div>
       </div>
     </div>
-  )
+  ) 
 }
 
 export default VisitorsLogs

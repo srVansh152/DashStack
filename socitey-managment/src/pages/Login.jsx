@@ -37,7 +37,7 @@ function Login() {
       
       if (response.ok) {
         localStorage.setItem('token', data.token)
-        navigate('/dashboard')
+        navigate('/admin/dashboard')
       } else {
         alert(data.message || 'Login failed')
       }
