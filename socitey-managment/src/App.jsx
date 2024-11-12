@@ -42,22 +42,22 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/password' element={<ForgetPassword/>}/>
           <Route path='/otp' element={<OtpVerification/>}/>
-          <Route path='/dashboard' element={<DashboardLayout/>}/>
+          <Route path='/admin/dashboard' element={<DashboardLayout/>}/>
           <Route path='/reset' element={<ResetPassword/>}/>
           <Route path='/editprofile' element={<Editprofile/>}/>
           <Route path='/update' element={<Update/>}/>
-          <Route path='/residence' element={<Residence/>}/>
+          <Route path='/admin/residence' element={<Residence/>}/>
           <Route path='/ownerform' element={<OwnerForm/>}/>
           <Route path='/viewmodel' element={<Viewmodel/>}/>
           <Route path='/deletemodel' element={<Deletemodel/>}/>
           <Route path='/form' element={<Form/>}/>
-          <Route path='/financial' element={<FinanceManagment/>}/>
+          <Route path='/admin/financial' element={<FinanceManagment/>}/>
           <Route path='/admin/otherincome' element={<OtherIncome/>}/>
           <Route path='/addmain' element={<AddMaintain/>}/>
           <Route path='/memberlist' element={<MemberList/>}/>
           <Route path='/admin/note' element={<Note/>}/>
           <Route path='/admin/Facilitymanagment' element={<Facilitymanagment/>}/>
-          <Route path='/announcment' element={<Announcment/>}/>
+          <Route path='/admin/announcment' element={<Announcment/>}/>
           <Route path='/admin/Createcomplain' element={<CreateComplain/>}/>
           <Route path='/admin/requesttracking' element={<RequestTracking/>}/>
           <Route path='/admin/visitorslogs' element={<VisitorsLogs/>}/>
