@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, Bell } from 'lucide-react'
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, Bell, Calendar, Clock , X } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import Aside from './Aside';
 import { Info, MoreVertical } from "lucide-react"
@@ -9,6 +9,8 @@ import { Info, MoreVertical } from "lucide-react"
 function Announcment() {
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
+    const [openEditModel, setOpenEditModel] = useState(false);
+    const [openViewModel, setOpenViewModel] = useState(false);
     const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
@@ -32,7 +34,16 @@ function Announcment() {
         }))
     }
 
-    const handleDeleteIncome = () => {
+    const handleAddModel = () => {
+        setOpenModel(true);
+    };
+    const handleEditModel = () => {
+        setOpenEditModel(true);
+    };
+    const handleViewModel = () => {
+        setOpenViewModel(true);
+    };
+    const handleDeleteModel = () => {
         setOpenDeleteModel(true);
     };
 
@@ -197,7 +208,7 @@ function Announcment() {
                     <div className="p-6 bg-gray-50 min-h-screen">
                         <div className="flex justify-between items-center mb-6">
                             <h1 className="text-2xl font-semibold text-gray-900">Announcement</h1>
-                            <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
+                            <button onClick={handleAddModel} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
                                 Create Announcement
                             </button>
                         </div>
@@ -212,23 +223,24 @@ function Announcment() {
                                         </div>
                                         {/* Attach dropdown to all cards */}
                                         <div className="relative group">
-                                            <button className="text-white hover:bg-blue-600 p-1 rounded">
-                                                <MoreVertical className="w-5 h-5" />
-                                            </button>
-                                            <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg hidden group-hover:block transition-opacity duration-300 ease-in-out">
-                                                <div className="py-1">
-                                                    <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                        Edit
-                                                    </button>
-                                                    <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                        View
-                                                    </button>
-                                                    <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
+    <button className="text-white hover:bg-blue-600 p-1 rounded">
+        <MoreVertical className="w-5 h-5" />
+    </button>
+    <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all duration-300 ease-in-out">
+        <div className="py-1">
+            <button onClick={handleEditModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Edit
+            </button>
+            <button onClick={handleViewModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                View
+            </button>
+            <button onClick={handleDeleteModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
                                     </div>
                                     <div className="p-4">
                                         <div className="space-y-2">
@@ -259,113 +271,70 @@ function Announcment() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
                         <div className="p-6">
-                            <h1 className="text-xl font-bold text-gray-900 mb-6">Create Other Income</h1>
+                        <h1 className="text-xl font-semibold mb-6">Add Announcement</h1>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm mb-1">
+              Announcement Title<span className="text-red-500">*</span>
+            </label>
+            <input 
+              type="text"
+             
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+          </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                                        Title<span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="title"
-                                        name="title"
-                                        value={formData.title}
-                                        onChange={handleChange}
-                                        placeholder="Enter Title"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
+          <div>
+            <label className="block text-sm mb-1">
+              Description<span className="text-red-500">*</span>
+            </label>
+            <textarea
+             
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[80px]"
+            />
+          </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-                                            Date<span className="text-red-500">*</span>
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="date"
-                                                id="date"
-                                                name="date"
-                                                value={formData.date}
-                                                onChange={handleChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
+          <div className="grid grid-cols-2 gap-4">
+    {/* Announcement Date Input */}
+    <div>
+        <label className="block text-sm mb-1">
+            Announcement Date<span className="text-red-500">*</span>
+        </label>
+        <div className="relative">
+            <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+            
+        </div>
+    </div>
 
-                                    <div>
-                                        <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
-                                            Due Date<span className="text-red-500">*</span>
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="date"
-                                                id="dueDate"
-                                                name="dueDate"
-                                                value={formData.dueDate}
-                                                onChange={handleChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+    {/* Announcement Time Input */}
+    <div>
+        <label className="block text-sm mb-1">
+            Announcement Time<span className="text-red-500">*</span>
+        </label>
+        <div className="relative">
+            <input
+                type="time"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+           
+        </div>
+    </div>
+</div>
 
-                                <div>
-                                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                                        Description<span className="text-red-500">*</span>
-                                    </label>
-                                    <textarea
-                                        id="description"
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        placeholder="Enter Description"
-                                        rows={3}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                </div>
 
-                                <div>
-                                    <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
-                                        Amount<span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
-                                        <input
-                                            type="number"
-                                            id="amount"
-                                            name="amount"
-                                            value={formData.amount}
-                                            onChange={handleChange}
-                                            placeholder="0000"
-                                            className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 pt-2">
-                                    <button onClick={() => setOpenModel(false)}
-                                        type="button"
-                                        className="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <Link to="/otherincome">
-                                        <button
-                                            type="submit"
-                                            className="w-full px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        >
-                                            Save
-                                        </button>
-                                    </Link>
-                                </div>
-                            </form>
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            <button onClick={()=> setOpenModel(false)} className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+              Cancel
+            </button>
+            <button className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors">
+              Save
+            </button>
+          </div>
+        </div>
                         </div>
                     </div>
                 </div>
@@ -402,6 +371,163 @@ function Announcment() {
                     </div>
                 </div>
             )}
+
+{openEditModel && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                        <div className="p-6">
+                        <h1 className="text-xl font-semibold mb-6">Edit Announcement</h1>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm mb-1">
+              Announcement Title<span className="text-red-500">*</span>
+            </label>
+            <input 
+              type="text"
+              defaultValue="Community Initiatives"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm mb-1">
+              Description<span className="text-red-500">*</span>
+            </label>
+            <textarea
+              defaultValue="The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[80px]"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm mb-1">
+                Announcement Date<span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  defaultValue="01/02/2024"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                <Calendar className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">
+                Announcement Time<span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  defaultValue="10:15 AM"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                <Clock className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            <button onClick={()=> setOpenEditModel(false)} className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+              Cancel
+            </button>
+            <button className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors">
+              Save
+            </button>
+          </div>
+        </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+{openViewModel && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+          <div className="p-6 space-y-4">
+          <div className="flex justify-between items-center mb-6">
+          <h1 className="text-xl font-semibold">View Security Protocol</h1>
+          <button onClick={()=> setOpenViewModel(false)} className="text-gray-500 hover:text-gray-700">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-500 mb-1">
+              Title
+            </label>
+            <div className="text-sm">
+              Physical Security
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-500 mb-1">
+              Description
+            </label>
+            <div className="text-sm">
+            The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-500 mb-1">
+                Date
+              </label>
+              <div className="text-sm">
+                01/02/2024
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-500 mb-1">
+                Time
+              </label>
+              <div className="text-sm">
+            10:15 AM
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+          </div>
+        </div>
+      )}
+
+{openDeleteModel && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+          <div className="p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-gray-900">Delete Announcement?</h2>
+          
+          <p className="text-gray-500">
+            Are you sure you want to delete this security?
+          </p>
+          
+          <div className="flex gap-4 pt-2">
+            <button onClick={()=>setOpenDeleteModel(false)}
+              type="button"
+              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+          </div>
+        </div>
+      )}
+
+
         </div>
 
 

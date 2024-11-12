@@ -61,6 +61,8 @@ const complaints = [
 function CreateComplain() {
   const [isOpen, setIsOpen] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+  const [openEditModel, setOpenEditModal] = useState(false)
+  const [openViewModel, setOpenViewModal] = useState(false)
   const [openDeleteModel, setOpenDeleteModel] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
@@ -83,7 +85,16 @@ function CreateComplain() {
     }))
   }
 
-  const handleDeleteIncome = () => {
+  const handleAddModel = () => {
+    setOpenModal(true)
+  }
+  const handleEditModel = () => {
+    setOpenEditModal(true)
+  }
+  const handleViewModel = () => {
+    setOpenViewModal(true)
+  }
+  const handleDeleteModel = () => {
     setOpenDeleteModel(true)
   }
 
@@ -242,7 +253,7 @@ function CreateComplain() {
           <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Create Complaint</h1>
-              <button className="rounded-lg bg-orange-500 px-4 py-2 text-white transition-colors hover:bg-orange-600">
+              <button onClick={handleAddModel} className="rounded-lg bg-orange-500 px-4 py-2 text-white transition-colors hover:bg-orange-600">
                 <Plus className="mr-2 inline-block h-4 w-4" />
                 Create Complaint
               </button>
@@ -316,13 +327,13 @@ function CreateComplain() {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right">
                         <div className="flex justify-end space-x-2">
-                          <button className="rounded p-1 text-green-600 hover:bg-green-50">
+                          <button onClick={handleEditModel} className="rounded p-1 text-green-600 hover:bg-green-50">
                             <PencilIcon className="h-4 w-4" />
                           </button>
-                          <button className="rounded p-1 text-blue-600 hover:bg-blue-50">
+                          <button onClick={handleViewModel}  className="rounded p-1 text-blue-600 hover:bg-blue-50">
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button className="rounded p-1 text-red-600 hover:bg-red-50">
+                          <button onClick={handleDeleteModel} className="rounded p-1 text-red-600 hover:bg-red-50">
                             <Trash className="h-4 w-4" />
                           </button>
                         </div>
@@ -339,142 +350,438 @@ function CreateComplain() {
       {openModal && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-            <div className="p-6">
-              <h1 className="mb-6 text-xl font-bold text-gray-900">Create Other Income</h1>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="title" className="mb-1 block text-sm font-medium text-gray-700">
-                    Title<span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    placeholder="Enter Title"
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="date" className="mb-1 block text-sm font-medium text-gray-700">
-                      Date<span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        id="date"
-                        name="date"
-                        value={formData.date}
-                        onChange={handleChange}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="dueDate" className="mb-1 block text-sm font-medium text-gray-700">
-                      Due Date<span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        id="dueDate"
-                        name="dueDate"
-                        value={formData.dueDate}
-                        onChange={handleChange}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">
-                    Description<span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Enter Description"
-                    rows={3}
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="amount" className="mb-1 block text-sm font-medium text-gray-700">
-                    Amount<span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
-                    <input
-                      type="number"
-                      id="amount"
-                      name="amount"
-                      value={formData.amount}
-                      onChange={handleChange}
-                      placeholder="0000"
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 pl-7 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-2">
-                  <button
-                    onClick={() => setOpenModal(false)}
-                    type="button"
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                  >
-                    Cancel
-                  </button>
-                  <Link to="/otherincome">
-                    <button
-                      type="submit"
-                      className="w-full rounded-lg bg-orange-600 px-4 py-2 text-white hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      Save
-                    </button>
-                  </Link>
-                </div>
-              </form>
+          <div className="p-6 space-y-6">
+          <h2 className="text-xl font-semibold text-gray-900">Create Complaint  </h2>
+          
+          <form className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Requester Name<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+              
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
             </div>
+            
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Request Name<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+              
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+            
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Request Date<span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg
+                    className="w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium">
+                  Wing<span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium">
+                  Unit<span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+               
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Priority<span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-4 ">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="priority"
+                    value="high"
+                    className="w-4 h-4  text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">High</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="priority"
+                    value="medium"
+              
+                    className="w-4 h-4 text-
+                    orange border-gray-300 focus:ring-orange"
+                  />
+                  <span className="ml-2 text-sm">Medium</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="priority"
+                    value="low"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Low</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Status<span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="open"
+                  
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Open</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="pending"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Pending</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="solve"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Solve</span>
+                </label>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 pt-4">
+              <button onClick={()=> setOpenModal(false)}
+                type="button"
+                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
           </div>
         </div>
       )}
 
-      {openDeleteModel && (
+{openViewModel && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-            <div className="p-6">
-              <h2 className="p-3 text-xl font-semibold text-gray-900">Delete Ganesh Chaturthi?</h2>
-              <p className="p-3 text-gray-500">Are you sure you want to delete this?</p>
+          <div className="relative p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">View Complaint</h2>
+            <button onClick={()=> setOpenViewModal(false)} className="text-gray-400 hover:text-gray-500">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span className="sr-only">Close</span>
+            </button>
+          </div>
 
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <button
-                  onClick={() => setOpenDeleteModel(false)}
-                  className="rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="rounded-lg bg-[#f1523d] px-6 py-2.5 font-medium text-white hover:bg-[#d13d2a] focus:outline-none focus:ring-2 focus:ring-[#f1523d]"
-                >
-                  Delete
-                </button>
+          <div className="flex items-center space-x-3 mb-6">
+            <img
+              src="/placeholder.svg?height=48&width=48"
+              alt="Evelyn Harper"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <div>
+              <h3 className="font-medium text-gray-900">Evelyn Harper</h3>
+              <p className="text-sm text-gray-500">Aug 5, 2024</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-500">Request Name</label>
+              <p className="text-gray-900">Unethical Behavior</p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-500">Description</label>
+              <p className="text-gray-900">
+                Offering, giving, receiving, or soliciting of value to influence the actions of an.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm text-gray-500">Wing</label>
+                <p className="text-gray-900">A</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-500">Unit</label>
+                <p className="text-gray-900">1002</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-500">Priority</label>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Medium
+                </span>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-500">Status</label>
+                <span className="text-blue-600">Open</span>
               </div>
             </div>
+          </div>
+        </div>
+          </div>
+        </div>
+      )}
+
+
+
+      {openEditModel && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+          <div className="p-6 space-y-6">
+          <h2 className="text-xl font-semibold text-gray-900">Edit Complaint</h2>
+          
+          <form className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Complainer Name<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                defaultValue="Evelyn Harper"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+            
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Complaint Name<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                defaultValue="Unethical Behavior"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+            
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Description<span className="text-red-500">*</span>
+              </label>
+              <textarea
+                defaultValue="The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident."
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium">
+                  Wing<span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  defaultValue="A"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium">
+                  Unit<span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  defaultValue="1001"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Priority<span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="priority"
+                    value="high"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">High</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="priority"
+                    value="medium"
+                    defaultChecked
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Medium</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="priority"
+                    value="low"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Low</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Status<span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="open"
+                    defaultChecked
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Open</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="pending"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Pending</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="solve"
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">Solve</span>
+                </label>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 pt-4">
+              <button onClick={()=> setOpenEditModal(false)}
+                type="button"
+                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+          </div>
+        </div>
+      )}
+
+{openDeleteModel && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+          <div className="p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-gray-900">Delete Complain?</h2>
+          
+          <p className="text-gray-500">
+            Are you sure you want to delete this Complain?
+          </p>
+          
+          <div className="flex gap-4 pt-2">
+            <button onClick={()=>setOpenDeleteModel(false)}
+              type="button"
+              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
           </div>
         </div>
       )}

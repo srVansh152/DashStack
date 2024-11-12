@@ -134,10 +134,7 @@ function VisitorsLogs() {
           <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Visitor Logs</h1>
-              <button className="rounded-lg bg-orange-500 px-4 py-2 text-white transition-colors hover:bg-orange-600">
-                <Plus className="mr-2 inline-block h-4 w-4" />
-                Add New Visitor
-              </button>
+              
             </div>
 
             <div className="overflow-x-auto rounded-lg border bg-white">
