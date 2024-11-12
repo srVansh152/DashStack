@@ -34,41 +34,47 @@ import SecurityProtocols from './Components/SecurityProtocols'
 function App() {
   return (
     <div className="App">
-        {/* <Aside/> */}
-        <div className="">
+      {/* <Aside/> */}
+      <div className="">
         <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<RegistrationPage/>}/>
-          <Route path='/login' element={<Login/>}/>
-          <Route path='/password' element={<ForgetPassword/>}/>
-          <Route path='/otp' element={<OtpVerification/>}/>
-          <Route path='/dashboard' element={<DashboardLayout/>}/>
-          <Route path='/reset' element={<ResetPassword/>}/>
-          <Route path='/editprofile' element={<Editprofile/>}/>
-          <Route path='/update' element={<Update/>}/>
-          <Route path='/residence' element={<Residence/>}/>
-          <Route path='/ownerform' element={<OwnerForm/>}/>
-          <Route path='/viewmodel' element={<Viewmodel/>}/>
-          <Route path='/deletemodel' element={<Deletemodel/>}/>
-          <Route path='/form' element={<Form/>}/>
-          <Route path='/financial' element={<FinanceManagment/>}/>
-          <Route path='/otherincome' element={<OtherIncome/>}/>
-          <Route path='/addmain' element={<AddMaintain/>}/>
-          <Route path='/memberlist' element={<MemberList/>}/>
-          <Route path='/note' element={<Note/>}/>
-          <Route path='/Facilitymanagment' element={<Facilitymanagment/>}/>
-          <Route path='/announcment' element={<Announcment/>}/>
-          <Route path='/Createcomplain' element={<CreateComplain/>}/>
-          <Route path='/requesttracking' element={<RequestTracking/>}/>
-          <Route path='/visitorslogs' element={<VisitorsLogs/>}/>
-          <Route path='/securityprotocols' element={<SecurityProtocols/>}/>
-        </Routes>
+
+          <Routes>
+            <Route path='/' element={<RegistrationPage />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/reset' element={<ResetPassword />} />
+            <Route path='/password' element={<ForgetPassword />} />
+            <Route path='/otp' element={<OtpVerification />} />
+            <Route path='/admin'>
+              <Route path='dashboard' element={<DashboardLayout />} />
+              <Route path='editprofile' element={<Editprofile />} />
+              <Route path='update' element={<Update />} />
+              <Route path='residence' element={<Residence />} />
+              <Route path='ownerform' element={<OwnerForm />} />
+              <Route path='viewmodel' element={<Viewmodel />} />
+              <Route path='deletemodel' element={<Deletemodel />} />
+              <Route path='form' element={<Form />} />
+              <Route path='financial' element={<FinanceManagment />} />
+              <Route path='otherincome' element={<OtherIncome />} />
+              <Route path='addmain' element={<AddMaintain />} />
+              <Route path='memberlist' element={<MemberList />} />
+              <Route path='note' element={<Note />} />
+              <Route path='Facilitymanagment' element={<Facilitymanagment />} />
+              <Route path='announcment' element={<Announcment />} />
+              <Route path='Createcomplain' element={<CreateComplain />} />
+              <Route path='requesttracking' element={<RequestTracking />} />
+              <Route path='visitorslogs' element={<VisitorsLogs />} />
+              <Route path='securityprotocols' element={<SecurityProtocols />} />
+
+            </Route>
+
+
+          </Routes>
         </BrowserRouter>
-    
-        </div>
-    
+
+      </div>
+
     </div>
   )
 }
 
-export default App
+export default App

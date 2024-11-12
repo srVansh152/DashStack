@@ -181,7 +181,7 @@ function Facilitymanagment() {
                         </div>
 
                         {/* Profile Section */}
-                        <Link to="/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
+                        <Link to="/admin/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
                             <img
                                 src="/api/placeholder/32/32"
                                 alt="Profile"
