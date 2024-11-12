@@ -27,7 +27,7 @@ const DashboardLayout = () => {
     const [status, setStatus] = useState('Open'); // State for status
     const [importantNumbers, setImportantNumbers] = useState([]); // State for important numbers
     const [deleteId, setDeleteId] = useState(null);
-    console.log(importantNumbers);
+  
 
 
     const handleAddDetails = () => {

@@ -20,7 +20,7 @@ import FinanceManagment from './Components/FinanceManagment'
 import OtherIncome from './Components/OtherIncome'
 import AddMaintain from './Models/AddMaintain'
 import MemberList from './Components/MemberList'
-import Note from './Components/note'
+import Note from './Components/Note'
 import Facilitymanagment from './Components/facilitymanagment'
 import Announcment from './Components/Announcment'
 import CreateComplain from './Components/CreateComplain'
@@ -52,16 +52,16 @@ function App() {
           <Route path='/deletemodel' element={<Deletemodel/>}/>
           <Route path='/form' element={<Form/>}/>
           <Route path='/financial' element={<FinanceManagment/>}/>
-          <Route path='/otherincome' element={<OtherIncome/>}/>
+          <Route path='/admin/otherincome' element={<OtherIncome/>}/>
           <Route path='/addmain' element={<AddMaintain/>}/>
           <Route path='/memberlist' element={<MemberList/>}/>
-          <Route path='/note' element={<Note/>}/>
-          <Route path='/Facilitymanagment' element={<Facilitymanagment/>}/>
+          <Route path='/admin/note' element={<Note/>}/>
+          <Route path='/admin/Facilitymanagment' element={<Facilitymanagment/>}/>
           <Route path='/announcment' element={<Announcment/>}/>
-          <Route path='/Createcomplain' element={<CreateComplain/>}/>
-          <Route path='/requesttracking' element={<RequestTracking/>}/>
-          <Route path='/visitorslogs' element={<VisitorsLogs/>}/>
-          <Route path='/securityprotocols' element={<SecurityProtocols/>}/>
+          <Route path='/admin/Createcomplain' element={<CreateComplain/>}/>
+          <Route path='/admin/requesttracking' element={<RequestTracking/>}/>
+          <Route path='/admin/visitorslogs' element={<VisitorsLogs/>}/>
+          <Route path='/admin/securityprotocols' element={<SecurityProtocols/>}/>
         </Routes>
         </BrowserRouter>
 

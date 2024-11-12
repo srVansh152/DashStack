@@ -6,16 +6,28 @@ import Aside from './Aside';
 
 
 function Note() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
-    const [openEditModel, setOpenEditModel] = useState(false);
-    const [formData, setFormData] = useState({
-        title: '',
-        date: '',
-        dueDate: '',
-        description: '',
-        amount: ''
-    })
+  const [isOpen, setIsOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [openEditModel, setOpenEditModel] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [date, setDate] = useState('');
+  const [titlee, setTitlee] = useState('Rent or Mortgage');
+  const [descriptionn, setDescriptionn] = useState('The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.');
+  const [datee, setDatee] = useState('2024-05-12');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic, e.g., saving or sending the data
+    console.log({ title, description, date });
+  };
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here, e.g., sending data to a server
+    console.log({ titlee, descriptionn, datee });
+  };
+
 
   const handleAddModel = () => {
     setOpenModal(true);
@@ -24,25 +36,11 @@ function Note() {
     setOpenEditModel(true);
   };
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(formData)
-
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-    }
 
 
 
-  const handleDeleteIncome = () => {
-    setOpenDeleteModel(true);
-  };
+
+
 
   const facilities = [
     {
@@ -253,166 +251,177 @@ function Note() {
         </div>
       </div>
 
-            {openModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                        <div className="p-6 space-y-6">
-                        <h2 className="text-xl font-semibold text-gray-900">Add Note</h2>
-          
-          <form className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Title<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Enter Title"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Description<span className="text-red-500">*</span>
-              </label>
-              <textarea
-                placeholder="Enter Description"
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Date<span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  placeholder="Select Date"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 pt-4">
-              <button onClick={()=> setOpenModal(false)}
-                type="button"
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              >
-                Save
-              </button>
-            </div>
-          </form>
-                        </div>
-                    </div>
-                </div>
-            )}
+      {openModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900">Add Note</h2>
 
-            {openEditModel && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                    <div className="p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Edit Note</h2>
-          
-          <form className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Title<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                defaultValue="Rent or Mortgage"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Description<span className="text-red-500">*</span>
-              </label>
-              <textarea
-                defaultValue="The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident."
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium">
-                Date<span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  defaultValue="2024-05-12"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                  required
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Title<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Description<span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    placeholder="Enter Description"
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Date<span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      placeholder="Select Date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      required
                     />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-4 pt-4">
-              <button onClick={()=> setOpenEditModel(false)}
-                type="button"
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-              >
-                Save
-              </button>
-            </div>
-          </form>
-        </div>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
                     </div>
+                  </div>
                 </div>
-            )}
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setOpenModal(false)}
+                    className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      )}
+
+      {openEditModel && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900">Edit Note</h2>
+
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Title<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={titlee}
+                    onChange={(e) => setTitlee(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Description<span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={descriptionn}
+                    onChange={(e) => setDescriptionn(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Date<span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={datee}
+                      onChange={(e) => setDatee(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      required
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setOpenEditModel(false)}
+                    className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
 
 
 

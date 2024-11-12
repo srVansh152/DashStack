@@ -30,7 +30,7 @@ const DashboardLayout = () => {
         ...prevValues,
         [name]: value,
       }));
-      console.log(formValues);
+
       
     };
 
