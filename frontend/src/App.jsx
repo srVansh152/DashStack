@@ -46,7 +46,7 @@ function App() {
           <Route path='/otp' element={<OtpVerification/>}/>
           <Route path='/admin/dashboard' element={<DashboardLayout/>}/>
           <Route path='/reset' element={<ResetPassword/>}/>
-          <Route path='/editprofile' element={<Editprofile/>}/>
+          <Route path='/admin/editprofile' element={<Editprofile/>}/>
           <Route path='/admin/update' element={<Update/>}/>
           <Route path='/admin/residence' element={<Residence/>}/>
           <Route path='/ownerform' element={<OwnerForm/>}/>
