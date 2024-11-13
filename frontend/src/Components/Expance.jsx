@@ -1,11 +1,105 @@
 import React, { useState } from 'react'
-import { Bell, Eye, FileText, Plus, Pencil, Trash2} from 'lucide-react'
-import { Link } from 'react-router-dom'; 
+import { Bell, Eye, FileText, Plus, Pencil, Trash2, Calendar, X } from 'lucide-react'
 import Aside from './Aside'
-
+import { Link } from 'react-router-dom'
 
 export default function ExpenseTracker() {
     const [isOpen, setIsOpen] = useState(false)
+    const [openModel, setOpenModel] = useState(false);
+    const [openEditModel, setOpenEditModel] = useState(false);
+    const [openViewModel, setOpenViewModel] = useState(false);
+    const [openDeleteModel, setOpenDeleteModel] = useState(false);
+    const [file, setFile] = useState(null)
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [date, setDate] = useState('')
+    const [amount, setAmount] = useState('')
+
+    const expenseData = {
+        title: 'Rent Or Mortgage',
+        description: 'A visual representation of your spending categories visual representation.',
+        date: '01/02/2024',
+        amount: '1,500',
+        bill: {
+            name: 'Adharcard Front Side.JPG',
+            size: '3.5 MB'
+        }
+    }
+
+    const [formData, setFormData] = useState({
+        title: 'Rent or Mortgage',
+        description: 'The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.',
+        date: '2024-05-12',
+        amount: '1500',
+        file: {
+            name: 'Syncfusion Essential Rentagreement.GIF',
+            size: '3.5 MB'
+        }
+    })
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        // Your submit logic here
+        console.log('Form submitted', formData);
+    };
+
+
+
+    const handleAddModel = () => {
+        setOpenModel(true);
+    };
+    const handleEditModel = () => {
+        setOpenEditModel(true);
+    };
+    const handleViewModel = () => {
+        setOpenViewModel(true);
+    };
+    const handleDeleteModel = () => {
+        setOpenDeleteModel(true);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault()
+        const droppedFile = e.dataTransfer.files[0]
+        if (droppedFile && droppedFile.size <= 10 * 1024 * 1024) { // 10MB limit
+            setFile(droppedFile)
+        }
+    }
+
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files?.[0]
+        if (selectedFile && selectedFile.size <= 10 * 1024 * 1024) { // 10MB limit
+            setFile(selectedFile)
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const expenseData = {
+            title,
+            description,
+            date,
+            amount,
+            file
+        }
+
+
+        setTitle('')
+        setDescription('')
+        setDate('')
+        setAmount('')
+        setFile(null)
+        setOpenModel(false)
+    }
 
     const expenses = [
         {
@@ -175,7 +269,7 @@ export default function ExpenseTracker() {
                         <main className="p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <h1 className="text-2xl font-semibold">Add Expenses Details</h1>
-                                <button className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
+                                <button onClick={handleAddModel} className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                                     <Plus className="w-4 h-4 mr-2" />
                                     Add New Expenses details
                                 </button>
@@ -207,13 +301,13 @@ export default function ExpenseTracker() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
-                                                        <button className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
+                                                        <button onClick={handleEditModel} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
                                                             <Pencil className="w-6 h-5" />
                                                         </button>
-                                                        <button className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
+                                                        <button onClick={handleViewModel} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
                                                             <Eye className="w-6 h-5" />
                                                         </button>
-                                                        <button className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
+                                                        <button onClick={handleDeleteModel} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
                                                             <Trash2 className="w-6 h-5" />
                                                         </button>
                                                     </div>
@@ -226,6 +320,323 @@ export default function ExpenseTracker() {
                         </main>
                     </div>
                 </div>
+                {openModel && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                            <div className="p-6">
+                                <h2 className="text-xl font-semibold">Add Expenses Details</h2>
+
+                                <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium">
+                                            Title<span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            placeholder="Enter Title"
+                                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium">
+                                            Description<span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            placeholder="Enter Description"
+                                            rows={3}
+                                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium">
+                                                Date<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type="date"
+                                                    value={date}
+                                                    onChange={(e) => setDate(e.target.value)}
+                                                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                                                    required
+                                                />
+                                                <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium">
+                                                Amount<span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-2.5">₹</span>
+                                                <input
+                                                    type="number"
+                                                    value={amount}
+                                                    onChange={(e) => setAmount(e.target.value)}
+                                                    placeholder="0000"
+                                                    className="w-full px-3 py-2 pl-7 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium">
+                                            Upload Bill<span className="text-red-500">*</span>
+                                        </label>
+                                        <div
+                                            className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50"
+                                            onDragOver={(e) => e.preventDefault()}
+                                            onDrop={handleDrop}
+                                            onClick={() => document.getElementById('file-upload')?.click()}
+                                        >
+                                            <input
+                                                id="file-upload"
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/png,image/jpeg,image/gif"
+                                                onChange={handleFileChange}
+                                            />
+                                            <div className="mx-auto w-12 h-12 border-2 rounded-lg flex items-center justify-center mb-2">
+                                                <span className="text-2xl">+</span>
+                                            </div>
+                                            <div className="text-sm font-medium">
+                                                {file ? file.name : (
+                                                    <>
+                                                        <span className="text-blue-600">Upload a file</span> or drag and drop
+                                                    </>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                PNG, JPG, GIF up to 10MB
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between pt-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setOpenModel(false)}
+                                            className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {openEditModel && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                            <div className="p-6">
+                                <h2 className="text-xl font-semibold">Edit Expenses</h2>
+
+                                <form onSubmit={handleEditSubmit} className="mt-6 space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium">
+                                            Title<span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="title"
+                                            value={formData.title}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium">
+                                            Description<span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            name="description"
+                                            value={formData.description}
+                                            onChange={handleChange}
+                                            rows={3}
+                                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium">
+                                                Date<span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="date"
+                                                name="date"
+                                                value={formData.date}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="block text-sm font-medium">
+                                                Amount<span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="amount"
+                                                value={formData.amount}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium">
+                                            Upload Bill<span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="file"
+                                            name="file"
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                setFormData((prevData) => ({
+                                                    ...prevData,
+                                                    file: {
+                                                        name: file.name,
+                                                        size: file.size
+                                                    }
+                                                }));
+                                            }}
+                                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="flex justify-between pt-4">
+                                        <button
+                                            onClick={() => setOpenEditModel(false)}
+                                            type="button"
+                                            className="px-6 py-2 border rounded-md hover:bg-gray-50"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {openViewModel && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                            <div className="p-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-xl font-semibold">View Expense Details</h2>
+                                    <button onClick={() => setOpenViewModel(false)} className="p-1 hover:bg-gray-100 rounded-full">
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm text-gray-500">Title</label>
+                                        <p className="mt-1 text-base">{expenseData.title}</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm text-gray-500">Description</label>
+                                        <p className="mt-1 text-base">{expenseData.description}</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm text-gray-500">Date</label>
+                                            <p className="mt-1 text-base">{expenseData.date}</p>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm text-gray-500">Amount</label>
+                                            <p className="mt-1 text-base">₹ {expenseData.amount}</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm text-gray-500">Bill</label>
+                                        <div className="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <div className="h-10 w-10 flex-shrink-0 rounded-lg border bg-white flex items-center justify-center">
+                                                <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium">{expenseData.bill.name}</p>
+                                                <p className="text-xs text-gray-500">{expenseData.bill.size}</p>
+                                            </div>
+                                            <button className="ml-auto p-1.5 hover:bg-gray-200 rounded-md">
+                                                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {openDeleteModel && (
+                    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+                        <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+                            <div className="p-6 space-y-4">
+                                <h2 className="text-xl font-semibold text-gray-900">Delete Expense?</h2>
+
+                                <p className="text-gray-500">
+                                    Are you sure you want to delete this Expense?
+                                </p>
+
+                                <div className="flex gap-4 pt-2">
+                                    <button onClick={() => setOpenDeleteModel(false)}
+                                        type="button"
+                                        className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </>
     )
