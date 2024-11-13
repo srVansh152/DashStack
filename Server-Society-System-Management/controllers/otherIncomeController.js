@@ -1,5 +1,6 @@
 const OtherIncome = require('../models/OtherIncome');
-const Society = require('../models/Society');
+const Payment = require('../models/Payment');
+
 
 // Create a new Other Income record
 exports.createOtherIncome = async (req, res) => {
@@ -16,8 +17,8 @@ exports.createOtherIncome = async (req, res) => {
       dueDate,
       description,
       amount,
-      adminId: req.user._id,  // Get admin ID from middleware
-      societyId: req.user.society._id,  // Get society ID from middleware
+      adminId: req.user._id,
+      societyId: req.user.society._id,
     });
 
     await otherIncome.save();
@@ -31,13 +32,14 @@ exports.createOtherIncome = async (req, res) => {
 exports.getOtherIncomes = async (req, res) => {
   try {
     const otherIncomes = await OtherIncome.find({ societyId: req.user.society._id })
-      .populate('paidByResidents', 'firstname lastname');
+      .populate('paidByResidents'); 
 
     res.json(otherIncomes);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // View details of a specific Other Income record
 exports.getOtherIncomeById = async (req, res) => {
@@ -89,20 +91,27 @@ exports.deleteExpiredOtherIncome = async (req, res) => {
 // Mark resident as paid for a specific Other Income
 exports.markResidentPaid = async (req, res) => {
   try {
-    const { residentId } = req.body;
+    const { residentId, amount } = req.body;
     const otherIncome = await OtherIncome.findById(req.params.id);
 
     if (!otherIncome) {
       return res.status(404).json({ message: 'Other Income record not found' });
     }
 
-    // Add resident to paidByResidents array if not already present
-    if (!otherIncome.paidByResidents.includes(residentId)) {
-      otherIncome.paidByResidents.push(residentId);
-      await otherIncome.save();
-    }
+    const payment = new Payment({
+      residentId,
+      amount,
+      paymentType: 'OtherIncome',  // Specify the type as OtherIncome
+      incomeId: otherIncome._id,    // Link to the OtherIncome document
+      societyId: otherIncome.societyId,
+      adminId: req.user._id
+    });
 
-    res.json(otherIncome);
+    await payment.save();
+    otherIncome.paidByResidents.push(payment._id);  // Track the payment in OtherIncome
+    await otherIncome.save();
+
+    res.json({ message: 'Payment recorded successfully', payment });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

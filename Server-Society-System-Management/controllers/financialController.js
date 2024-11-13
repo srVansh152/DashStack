@@ -1,48 +1,66 @@
-const FinancialIncome = require('../models/FinancialIncome');
+const FinancialIncome = require('../models/Financial');
+const Payment = require('../models/Payment');
 const Society = require('../models/Society');
 
 // Create a new Financial Income record
+
 exports.createFinancialIncome = async (req, res) => {
   const { title, dueDate, description, amount } = req.body;
 
   try {
-    // Get all residents of the society
     const society = await Society.findById(req.user.society._id).populate('residents');
-
-    const residentStatus = society.residents.map((resident) => ({
-      residentId: resident._id,
-      hasPaid: false,
-      penaltyAmount: 0,
-    }));
-
     const financialIncome = new FinancialIncome({
       title,
       amount,
       dueDate,
       description,
-      adminId: req.user._id,  // Admin ID from middleware
-      societyId: req.user.society._id,  // Society ID from middleware
-      residentStatus,
+      adminId: req.user._id,
+      societyId: req.user.society._id
     });
 
     await financialIncome.save();
+
+    const paymentPromises = society.residents.map(resident => {
+      return Payment.create({
+        residentId: resident._id,
+        financialIncomeId: financialIncome._id,
+        societyId: req.user.society._id,
+        adminId: req.user._id
+      });
+    });
+
+    await Promise.all(paymentPromises);
     res.status(201).json(financialIncome);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
+
 // Get all Financial Income records with payment status for each resident
 exports.getFinancialIncomes = async (req, res) => {
   try {
-    const financialIncomes = await FinancialIncome.find({ societyId: req.user.society._id })
-      .populate('residentStatus.residentId');
+    const financialIncomes = await FinancialIncome.find({ societyId: req.user.society._id });
+    const paymentData = await Payment.find({
+      financialIncomeId: { $in: financialIncomes.map(f => f._id) }
+    }).populate('residentId');
 
-    res.json(financialIncomes);
+    const financialData = financialIncomes.map(financialIncome => {
+      const payments = paymentData.filter(payment => 
+        payment.financialIncomeId.toString() === financialIncome._id.toString()
+      );
+      return {
+        financialIncome,
+        payments
+      };
+    });
+
+    res.json(financialData);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // View payment status for each resident in a specific Financial Income record
 exports.getFinancialIncomeById = async (req, res) => {
@@ -63,45 +81,28 @@ exports.getFinancialIncomeById = async (req, res) => {
 // Mark a resident as paid for a specific Financial Income
 exports.markResidentPaid = async (req, res) => {
   try {
-    const { residentId } = req.body;
+    const { residentId, amount } = req.body;
     const financialIncome = await FinancialIncome.findById(req.params.id);
 
     if (!financialIncome) {
       return res.status(404).json({ message: 'Financial Income record not found' });
     }
 
-    const residentStatus = financialIncome.residentStatus.find(
-      (status) => status.residentId.toString() === residentId
-    );
+    const payment = new Payment({
+      residentId,
+      amount,
+      paymentType: 'FinancialIncome',  // Specify the type as FinancialIncome
+      incomeId: financialIncome._id,    // Link to the FinancialIncome document
+      societyId: financialIncome.societyId,
+      adminId: req.user._id
+    });
 
-    if (residentStatus) {
-      residentStatus.hasPaid = true;
-      residentStatus.penaltyAmount = 0;  // Clear penalty if paid
-      await financialIncome.save();
-    } else {
-      return res.status(404).json({ message: 'Resident not found in this income record' });
-    }
+    await payment.save();
+    financialIncome.paidByResidents.push(payment._id);  // Track the payment in FinancialIncome
+    await financialIncome.save();
 
-    res.json(financialIncome);
+    res.json({ message: 'Payment recorded successfully', payment });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
-
-// Update financial record status to complete
-// exports.payFinancialRecord = async (req, res) => {
-//     try {
-//         const financial = await Financial.findById(req.params.id);
-//         if (!financial) {
-//             return res.status(404).json({ message: 'Financial record not found' });
-//         }
-
-//         financial.status = 'complete'; // Mark as complete
-//         financial.lastPenaltyDate = new Date(); // Update last penalty date to now
-//         await financial.save();
-
-//         res.json(financial);
-//     } catch (error) {
-//         res.status(400).json({ message: 'Error updating financial record', error });
-//     }
-// };
