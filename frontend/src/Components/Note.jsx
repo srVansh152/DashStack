@@ -119,9 +119,9 @@ function Note() {
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">Home</span>
               <span className="text-gray-500">/</span>
-              <Link className={`text-gray-500 ${window.location.pathname === '/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/financial'}> Maintenance</Link>
+              <Link className={`text-gray-500 ${window.location.pathname === '/admin/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/admin/financial'}> Maintenance</Link>
               <span className="text-gray-500">/</span>
-              <Link className={`text-blue-500 ${window.location.pathname === '/note' ? 'font-bold' : 'text-gray-600'}`} to={'/otherincome'}> Note</Link>
+              <Link className={`text-blue-500 ${window.location.pathname === '/admin/note' ? 'font-bold' : 'text-gray-600'}`} to={'/admin/note'}> Note</Link>
             </div>
           </div>
 

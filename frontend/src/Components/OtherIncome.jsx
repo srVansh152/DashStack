@@ -117,9 +117,9 @@ function OtherIncome() {
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">Home</span>
               <span className="text-gray-500">/</span>
-              <Link className={`text-gray-500 ${window.location.pathname === '/admin/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/financial'}> Maintenance</Link>
+              <Link className={`text-gray-500 ${window.location.pathname === '/admin/financial' ? 'font-bold' : 'text-gray-600'}`} to={'/admin/financial'}> Maintenance</Link>
               <span className="text-gray-500">/</span>
-              <Link className={`text-blue-500 ${window.location.pathname === '/admin/otherincome' ? 'font-bold' : 'text-gray-600'}`} to={'/otherincome'}> otherincome</Link>
+              <Link className={`text-blue-500 ${window.location.pathname === '/admin/otherincome' ? 'font-bold' : 'text-gray-600'}`} to={'/admin/otherincome'}> otherincome</Link>
             </div>
           </div>
 
