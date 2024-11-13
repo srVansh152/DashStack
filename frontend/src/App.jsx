@@ -27,6 +27,8 @@ import CreateComplain from './Components/CreateComplain'
 import RequestTracking from './Components/RequestTracking'
 import VisitorsLogs from './Components/VisitorsLogs'
 import SecurityProtocols from './Components/SecurityProtocols'
+import SecurityGuard from './Components/SecurityGuard'
+import Expance from './Components/expance'
 
 
 
@@ -62,6 +64,8 @@ function App() {
           <Route path='/admin/requesttracking' element={<RequestTracking/>}/>
           <Route path='/admin/visitorslogs' element={<VisitorsLogs/>}/>
           <Route path='/admin/securityprotocols' element={<SecurityProtocols/>}/>
+          <Route path='/admin/securityguard' element={<SecurityGuard/>}/>
+          <Route path='/admin/expance' element={<Expance/>}/>
         </Routes>
         </BrowserRouter>
 
