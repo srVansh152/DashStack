@@ -29,10 +29,6 @@ function Facilitymanagment() {
 
   };
 
-
-
-
-
   const handleAddIncome = () => {
     setOpenModel(true);
   };
@@ -117,7 +113,7 @@ function Facilitymanagment() {
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">Home</span>
               <span className="text-gray-500">/</span>
-              <Link className={`text-blue-500 ${window.location.pathname === '/Facilitymanagment' ? 'font-bold' : 'text-gray-600'}`} to={'/otherincome'}> Facility Managment</Link>
+              <Link className={`text-blue-500 ${window.location.pathname === '/admin/Facilitymanagment' ? 'font-bold' : 'text-gray-600'}`} to={'/admin/Facilitymanagment'}> Facility Managment</Link>
             </div>
           </div>
 

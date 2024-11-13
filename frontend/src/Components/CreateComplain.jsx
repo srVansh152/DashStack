@@ -176,21 +176,11 @@ function CreateComplain() {
               <span className="text-gray-500">Home</span>
               <span className="text-gray-500">/</span>
               <Link
-                className={`text-gray-500 ${
-                  window.location.pathname === '/financial' ? 'font-bold' : 'text-gray-600'
-                }`}
-                to={'/financial'}
+                className={`text-blue-500 ${window.location.pathname === '/admin/createcomplain' ? 'font-bold' : 'text-gray-600'}`}
+                to={'/admin/createcomplain'}
               >
                 {' '}
-                Maintenance
-              </Link>
-              <span className="text-gray-500">/</span>
-              <Link
-                className={`text-blue-500 ${window.location.pathname === '/note' ? 'font-bold' : 'text-gray-600'}`}
-                to={'/otherincome'}
-              >
-                {' '}
-                Note
+                CreateComplain
               </Link>
             </div>
           </div>

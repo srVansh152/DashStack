@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Bell, Eye, FileText, Plus, Pencil, Trash2, Link } from 'lucide-react'
+import { Bell, Eye, FileText, Plus, Pencil, Trash2} from 'lucide-react'
+import { Link } from 'react-router-dom'; 
 import Aside from './Aside'
 
 
@@ -88,56 +89,63 @@ export default function ExpenseTracker() {
 
 
                     <div className="flex-1">
-                        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-white p-4 shadow-sm">
-                            <div className="flex flex-1 items-center">
+                        <header className="bg-white p-4 border-b flex justify-between items-center shadow-sm sticky top-0 z-10">
+                            {/* Search Bar - hidden on smaller screens */}
+                            <div className="flex items-center flex-1">
                                 <div className="flex items-center space-x-2">
                                     <span className="text-gray-500">Home</span>
                                     <span className="text-gray-500">/</span>
-                                    <span className="text-blue-500">Expance</span>
-
+                                    <Link className={`text-blue-500 ${window.location.pathname === '/admin/expance' ? 'font-bold' : 'text-gray-600'}`} to={'/admin/expance'}> Expance</Link>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4">
                                 <div className="relative">
+                                    {/* Notification Bell Button */}
                                     <button
                                         onClick={() => setIsOpen(!isOpen)}
-                                        className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
                                     >
-                                        <Bell className="h-5 w-5" />
-                                        <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500"></span>
+                                        <Bell className="w-5 h-5 text-gray-600" />
+                                        <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                                     </button>
 
+                                    {/* Notification Dropdown Panel */}
                                     {isOpen && (
-                                        <div className="absolute right-0 z-20 mt-2 w-80 overflow-hidden rounded-lg border bg-white shadow-lg md:w-96">
-                                            <div className="flex items-center justify-between border-b p-4">
+                                        <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg border overflow-hidden z-20">
+                                            <div className="flex justify-between items-center p-4 border-b">
                                                 <h2 className="font-semibold text-gray-800">Notifications</h2>
-                                                <button className="text-sm text-blue-500 hover:text-blue-600">
+                                                <button
+                                                    onClick={() => { }}
+                                                    className="text-sm text-blue-500 hover:text-blue-600 transition-colors"
+                                                >
                                                     Clear all
                                                 </button>
                                             </div>
-                                            <div className="max-h-96 overflow-auto">
+                                            <div className="max-h-96 overflow-hidden">
                                                 {notifications.map((notification) => (
-                                                    <div key={notification.id} className="border-b p-4 transition-colors hover:bg-gray-50">
+                                                    <div key={notification.id} className="p-4 border-b hover:bg-gray-50 transition-colors">
                                                         <div className="flex gap-3">
+                                                            {/* Avatar or Icon */}
                                                             {notification.type !== 'event' ? (
-                                                                <Image
-                                                                    src="/placeholder.svg?height=40&width=40"
+                                                                <img
+                                                                    src='/image/3504bec22d3fe96515e7c73aeadb9d13.jpg'
                                                                     alt=""
-                                                                    width={40}
-                                                                    height={40}
-                                                                    className="rounded-full"
+                                                                    className="w-10 h-10 rounded-full"
                                                                 />
                                                             ) : (
-                                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                                                                    <span className="text-xl text-blue-500">G</span>
+                                                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                                    <span className="text-blue-500 text-xl">G</span>
                                                                 </div>
                                                             )}
+
+                                                            {/* Content */}
                                                             <div className="flex-1">
                                                                 <p className="text-sm text-gray-800">
                                                                     <span className="font-medium">{notification.user}</span> {notification.message}
-                                                                    {notification.linkText && <span className="text-blue-500"> {notification.linkText}</span>}
-                                                                    {notification.amount}
+                                                                    {notification.linkText && (
+                                                                        <span className="text-blue-500"> {notification.linkText}</span>
+                                                                    )}
                                                                 </p>
                                                                 <span className="text-xs text-gray-400">{notification.time}</span>
                                                             </div>
@@ -149,11 +157,13 @@ export default function ExpenseTracker() {
                                     )}
                                 </div>
 
-                                <Link
-                                    href="/editprofile"
-                                    className="hidden cursor-pointer items-center gap-2 rounded-lg p-2 transition-all hover:bg-gray-50 sm:flex"
-                                >
-
+                                {/* Profile Section */}
+                                <Link to="/admin/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
+                                    <img
+                                        src="/api/placeholder/32/32"
+                                        alt="Profile"
+                                        className="w-8 h-8 rounded-full border-2 border-transparent hover:border-orange-500 transition-all"
+                                    />
                                     <div className="hidden md:block">
                                         <p className="text-sm font-medium">Moni Roy</p>
                                         <p className="text-xs text-gray-500">admin</p>
