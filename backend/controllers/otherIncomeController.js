@@ -98,17 +98,33 @@ exports.markResidentPaid = async (req, res) => {
       return res.status(404).json({ message: 'Other Income record not found' });
     }
 
+    // Check if the resident has already paid for this Other Income record
+    const existingPayment = await Payment.findOne({
+      residentId,
+      incomeId: otherIncome._id,
+      paymentType: 'OtherIncome'
+    });
+
+    if (existingPayment) {
+      return res.status(400).json({ message: 'Resident has already paid for this income record.' });
+    }
+
+    // Create a new payment record
     const payment = new Payment({
       residentId,
       amount,
-      paymentType: 'OtherIncome',  // Specify the type as OtherIncome
-      incomeId: otherIncome._id,    // Link to the OtherIncome document
+      paymentType: 'OtherIncome',
+      incomeId: otherIncome._id,
       societyId: otherIncome.societyId,
-      adminId: req.user._id
+      adminId: req.user._id,
+      hasPaid: true,
+      paymentDate: new Date()
     });
 
     await payment.save();
-    otherIncome.paidByResidents.push(payment._id);  // Track the payment in OtherIncome
+
+    // Add payment reference to the OtherIncome record
+    otherIncome.paidByResidents.push(payment._id);
     await otherIncome.save();
 
     res.json({ message: 'Payment recorded successfully', payment });

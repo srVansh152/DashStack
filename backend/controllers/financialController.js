@@ -3,33 +3,29 @@ const Payment = require('../models/Payment');
 const Society = require('../models/Society');
 
 // Create a new Financial Income record
-
 exports.createFinancialIncome = async (req, res) => {
   const { title, dueDate, description, amount } = req.body;
 
   try {
     const society = await Society.findById(req.user.society._id).populate('residents');
+
+    const residentStatus = society.residents.map(resident => ({
+      residentId: resident._id,
+      hasPaid: false,
+      penaltyAmount: 0
+    }));
+
     const financialIncome = new FinancialIncome({
       title,
       amount,
       dueDate,
       description,
       adminId: req.user._id,
-      societyId: req.user.society._id
+      societyId: req.user.society._id,
+      residentStatus
     });
 
     await financialIncome.save();
-
-    const paymentPromises = society.residents.map(resident => {
-      return Payment.create({
-        residentId: resident._id,
-        financialIncomeId: financialIncome._id,
-        societyId: req.user.society._id,
-        adminId: req.user._id
-      });
-    });
-
-    await Promise.all(paymentPromises);
     res.status(201).json(financialIncome);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -88,20 +84,23 @@ exports.markResidentPaid = async (req, res) => {
       return res.status(404).json({ message: 'Financial Income record not found' });
     }
 
-    const payment = new Payment({
-      residentId,
-      amount,
-      paymentType: 'FinancialIncome',  // Specify the type as FinancialIncome
-      incomeId: financialIncome._id,    // Link to the FinancialIncome document
-      societyId: financialIncome.societyId,
-      adminId: req.user._id
-    });
+    const residentStatus = financialIncome.residentStatus.find(
+      status => status.residentId.toString() === residentId
+    );
 
-    await payment.save();
-    financialIncome.paidByResidents.push(payment._id);  // Track the payment in FinancialIncome
+    if (!residentStatus) {
+      return res.status(404).json({ message: 'Resident not found in this Financial Income record' });
+    }
+
+    if (residentStatus.hasPaid) {
+      return res.status(400).json({ message: 'Resident has already paid for this income record.' });
+    }
+
+    // Update payment status directly in residentStatus
+    residentStatus.hasPaid = true;
     await financialIncome.save();
 
-    res.json({ message: 'Payment recorded successfully', payment });
+    res.json({ message: 'Payment recorded successfully', financialIncome });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
