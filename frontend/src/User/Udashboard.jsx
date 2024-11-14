@@ -227,10 +227,10 @@ const Udashboard = () => {
                 priority,
                 status
             });
-            console.log(response.data); // Handle success response
-            setOpenEditComplaintsModel(false); // Close modal
+            console.log(response.data);
+            setOpenEditComplaintsModel(false);
         } catch (error) {
-            console.error(error); // Handle error
+            console.error(error);
         }
     };
 

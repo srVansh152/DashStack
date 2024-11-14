@@ -30,6 +30,7 @@ import UserLogin from './User/UserLogin'
 import UAside from './User/UAside'
 import Udashboard from './User/Udashboard'
 import Upersonaldetail from './User/Upersonaldetail'
+import UMaintenace from './User/UMaintenace'
 
 
 
@@ -72,6 +73,7 @@ function App() {
             <Route path='/user/aside' element={<UAside/>}/>
             <Route path='/user/udashboard' element={<Udashboard/>}/>
             <Route path='/user/upersonaldetail' element={<Upersonaldetail/>}/>
+            <Route path='/user/Maintenace' element={<UMaintenace/>}/>
           </Routes>
         </BrowserRouter>
 
