@@ -8,10 +8,13 @@ const paymentSchema = new mongoose.Schema({
   incomeId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    refPath: 'paymentType' 
+    refPath: 'paymentType'
   },
   societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
-  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  hasPaid: { type: Boolean, default: false },
+  penaltyAmount: { type: Number, default: 0, min: 0 },
+  paymentDate: { type: Date }
 });
 
 module.exports = mongoose.model('Payment', paymentSchema);
