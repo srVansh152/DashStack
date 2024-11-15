@@ -28,24 +28,6 @@ app.get('/protected', protect, (req, res) => {
 });
 
 
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
-
-// // Replace with a local image file for testing
-// const imagePath = 'C:\\Users\\01\\Pictures\\Screenshots\\Screenshot 2024-11-04 211030.png';
-
-
-// cloudinary.uploader.upload(imagePath, {
-//   folder: 'resident', // Specify the folder name here
-// }).then((result) => {
-//   console.log('Upload Successful:', result);
-// }).catch((error) => {
-//   console.error('Upload Error:', error);
-// });
-
 // Auth and society routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/society', require('./routes/society'));
