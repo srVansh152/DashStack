@@ -78,7 +78,7 @@ const UOtherincome = () => {
     <div className='flex h-screen bg-gray-50'>
       <UAside />
       <div className="flex-1 overflow-auto">
-        <header className="bg-white py-2 mb-3 border-b flex justify-between items-center shadow-sm  top-0 z-10">
+        <header className="bg-white py-2 mb-3 border-b flex justify-between items-center shadow-sm sticky  top-0 z-10">
           {/* Search Bar - hidden on smaller screens */}
           <div className="flex items-center flex-1">
             <input
