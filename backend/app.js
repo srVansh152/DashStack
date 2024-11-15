@@ -28,8 +28,10 @@ app.get('/protected', protect, (req, res) => {
 });
 
 
-// Auth and society routes
+// Auth routes
 app.use('/api/auth', require('./routes/auth'));
+
+// society routes 
 app.use('/api/society', require('./routes/society'));
 
 // Important numbers routes
@@ -41,31 +43,40 @@ app.use('/api/residents', require('./routes/resident'));
 // Middleware to protect routes
 app.use('/api/financial', require('./routes/financialRoutes'));
 
+//other income routes 
+app.use('/api/other-income', require('./routes/otherIncomeRoutes'));
+
+// payments routes 
+app.use('/api/payments', require('./routes/paymentRoutes'));
+
+// visitors log routes 
+app.use('/api/visitor-logs', require('./routes/visitorLogRoutes'));
+
+// security guards routes 
+app.use('/api/security-guards', require('./routes/securityGuardRoutes'));
+
 // Expense routes
 app.use('/api/expenses', require('./routes/expenseRoutes'));
 
-// note
+// note routes 
 app.use('/api/notes', require('./routes/noteRoutes'));
 
-// facilities
+// facilities routes
 app.use('/api/facilities', require("./routes/facilityRoutes"));
 
-// Complaints route
+// Complaints routes
 app.use('/api/complaints', require("./routes/complaintRoutes"));
 
-// visitor logs
-app.use('/api/visitor-logs', require("./routes/visitorLogRoutes"));
-
-// security protocol
+// security protocol routes
 app.use('/api/security-protocols', require("./routes/securityProtocolRoutes"));
 
-// announcement
+// announcement routes
 app.use('/api/announcements', require("./routes/announcementRoutes"));
 
-//emergency
+//emergency routes
 app.use('/api/emergency-alerts', require("./routes/emergencyRoutes"));
 
-// Health check route
+// Health check routes
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
