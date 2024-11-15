@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 
 
 function UAside() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpenn, setIsOpenn] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenn, setIsOpenn] = useState(false);
 
   return (
     <div className='flex h-screen sticky top-0'>
-         <div className="w-64 bg-white shadow-lg flex flex-col">
+      <div className="w-64 bg-white shadow-lg flex flex-col">
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold">
             <span className="text-orange-500">Dash</span>
@@ -109,10 +109,10 @@ function UAside() {
                 className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               >
                 <div className="flex items-center">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                </svg>
-                Payment Portal
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                  </svg>
+                  Payment Portal
                 </div>
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -120,7 +120,7 @@ function UAside() {
                 <ul className="pl-12 mt-2 space-y-2">
                   <li>
                     <Link
-                     to="/user/Maintenace"
+                      to="/user/Maintenace"
                       className="block py-2 text-sm text-orange-500 hover:bg-gray-100 hover:text-orange-500"
                     >
                       Maintenace invoices
@@ -134,12 +134,12 @@ function UAside() {
                       Other Income invoice
                     </Link>
                   </li>
-                 
+
                 </ul>
               )}
             </li>
-            
-          
+
+
             <li>
               <Link to="/user/usecurityprotocol" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

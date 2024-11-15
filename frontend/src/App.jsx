@@ -31,6 +31,8 @@ import UAside from './User/UAside'
 import Udashboard from './User/Udashboard'
 import Upersonaldetail from './User/Upersonaldetail'
 import UMaintenace from './User/UMaintenace'
+import UOtherincome from './User/UOtherincome'
+import UsecurityProtocol from './User/UsecurityProtocol'
 
 
 
@@ -74,6 +76,8 @@ function App() {
             <Route path='/user/udashboard' element={<Udashboard/>}/>
             <Route path='/user/upersonaldetail' element={<Upersonaldetail/>}/>
             <Route path='/user/Maintenace' element={<UMaintenace/>}/>
+            <Route path='/user/otherincome' element={<UOtherincome/>}/>
+            <Route path='/user/usecurityprotocol' element={<UsecurityProtocol/>}/>
           </Routes>
         </BrowserRouter>
 

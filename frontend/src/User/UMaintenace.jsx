@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 
 const UMaintenace = () => {
-    const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const notifications = [
     {
@@ -145,85 +145,85 @@ const UMaintenace = () => {
             </div>
           </div>
 
-        {/* Pending Maintenance */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-medium">Pending Maintenance</h2>
-            <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
-              View Invoice
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="bg-white rounded-lg p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="bg-blue-500  text-white px-4 py-2 rounded">Maintenance</div>
-                  <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
-                </div>
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Bill Date</span>
-                    <span>1/01/2024</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Pending Date</span>
-                    <span>1/01/2024</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Maintenance Amount</span>
-                    <span>1000.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Maintenance Penalty Amount</span>
-                    <span>250.00</span>
-                  </div>
-                  <div className="flex justify-between font-medium">
-                    <span>Grand Total</span>
-                    <span className="text-green-600">₹ 1,250</span>
-                  </div>
-                </div>
-                <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
-                  Pay Now
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+          {/* Pending Maintenance */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-medium">Pending Maintenance</h2>
+              <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
+                View Invoice
+              </button>
+            </div>
 
-        {/* Due Maintenance */}
-        <div>
-          <h2 className="text-lg font-medium mb-4">Due Maintenance</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2].map((item) => (
-              <div key={item} className="bg-white rounded-lg p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="bg-blue-500 text-white px-4 py-2 rounded">Maintenance</div>
-                  <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="bg-white rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="bg-blue-500  text-white px-4 py-2 rounded">Maintenance</div>
+                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
+                  </div>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Bill Date</span>
+                      <span>1/01/2024</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Pending Date</span>
+                      <span>1/01/2024</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Maintenance Amount</span>
+                      <span>1000.00</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Maintenance Penalty Amount</span>
+                      <span>250.00</span>
+                    </div>
+                    <div className="flex justify-between font-medium">
+                      <span>Grand Total</span>
+                      <span className="text-green-600">₹ 1,250</span>
+                    </div>
+                  </div>
+                  <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
+                    Pay Now
+                  </button>
                 </div>
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Date</span>
-                    <span>1/01/2024</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Amount</span>
-                    <span>1000.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Due Maintenance Amount</span>
-                    <span>250.00</span>
-                  </div>
-                </div>
-                <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
-                  Pay Now
-                </button>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </main>
-     </div>
+
+          {/* Due Maintenance */}
+          <div>
+            <h2 className="text-lg font-medium mb-4">Due Maintenance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2].map((item) => (
+                <div key={item} className="bg-white rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="bg-blue-500 text-white px-4 py-2 rounded">Maintenance</div>
+                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
+                  </div>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Date</span>
+                      <span>1/01/2024</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Amount</span>
+                      <span>1000.00</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Due Maintenance Amount</span>
+                      <span>250.00</span>
+                    </div>
+                  </div>
+                  <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
+                    Pay Now
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
