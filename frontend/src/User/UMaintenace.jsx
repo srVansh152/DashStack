@@ -6,6 +6,11 @@ import { Link } from 'react-router-dom';
 
 const UMaintenace = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openModel, setOpenModel] = useState(false);
+
+  const handleAddModel = () => {
+    setOpenModel(true);
+  };
 
   const notifications = [
     {
@@ -149,12 +154,14 @@ const UMaintenace = () => {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-medium">Pending Maintenance</h2>
-              <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
+             <Link to="/user/Uview">
+             <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
                 View Invoice
               </button>
+             </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2, 3].map((item) => (
                 <div key={item} className="bg-white rounded-lg p-4">
                   <div className="flex justify-between items-center mb-4">
@@ -183,7 +190,7 @@ const UMaintenace = () => {
                       <span className="text-green-600">₹ 1,250</span>
                     </div>
                   </div>
-                  <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
+                  <button onClick={handleAddModel} className="w-full py-2 bg-orange-600 text-white rounded-lg">
                     Pay Now
                   </button>
                 </div>
@@ -194,7 +201,7 @@ const UMaintenace = () => {
           {/* Due Maintenance */}
           <div>
             <h2 className="text-lg font-medium mb-4">Due Maintenance</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2].map((item) => (
                 <div key={item} className="bg-white rounded-lg p-4">
                   <div className="flex justify-between items-center mb-4">
@@ -215,7 +222,7 @@ const UMaintenace = () => {
                       <span>250.00</span>
                     </div>
                   </div>
-                  <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
+                  <button onClick={handleAddModel} className="w-full py-2 bg-orange-600 text-white rounded-lg">
                     Pay Now
                   </button>
                 </div>
@@ -224,6 +231,76 @@ const UMaintenace = () => {
           </div>
         </main>
       </div>
+      {openModel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+          <h2 className="text-lg font-medium mb-4">Payment Method</h2>
+          
+          <div className="space-y-3">
+            {/* Master Card */}
+            <label className="flex items-center justify-between p-3 rounded-lg border-2 hover:border-orange-500 bg-orange-50/50">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded ">
+                  <img src="/image/master.png" alt="" />
+                </div>
+                <span className="font-medium">Master Card</span>
+              </div>
+              <input 
+                type="radio" 
+                name="payment" 
+                defaultChecked
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+              />
+            </label>
+
+            {/* Visa Card */}
+            <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded">
+                <img src="/image/visa.png" alt="" />
+
+                </div>
+                <span className="text-gray-500">Visa Card</span>
+              </div>
+              <input 
+                type="radio" 
+                name="payment"
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+              />
+            </label>
+
+            {/* Cash Payment */}
+            <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded">
+                <img src="/image/Frame.png" alt="" />
+
+                </div>
+                <span className="text-gray-500">Cash Payment</span>
+              </div>
+              <input 
+                type="radio" 
+                name="payment"
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className="p-4 flex gap-3">
+          <button onClick={()=> setOpenModel(false)} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50">
+            Cancel
+          </button>
+          <Link to="/user/Ucard">
+          <button className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+            Pay Now
+          </button>
+          </Link>
+        </div>
+            </div>
+          </div>
+        )}
     </div>
   )
 }

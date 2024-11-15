@@ -272,7 +272,7 @@ const UcardDetail = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div className="p-4">
-          <h2 className="text-lg font-medium mb-6">Payment Method</h2>
+          <h2 className="text-lg font-medium mb-6">Detail of the Per Person</h2>
           
           <form className="space-y-4" onSubmit={handleSubmit}>
       {/* Card Name */}
@@ -320,7 +320,7 @@ const UcardDetail = () => {
           </label>
           <div className="relative">
             <input
-              type="text"
+              type="date"
               name="expiryDate"
               value={formData.expiryDate}
               onChange={handleChange}

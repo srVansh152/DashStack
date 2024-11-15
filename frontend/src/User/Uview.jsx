@@ -140,63 +140,66 @@ const Uviw = () => {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left border-b">
-                  <th className="pb-3">Invoice ID</th>
-                  <th className="pb-3">Owner Name</th>
-                  <th className="pb-3">Bill Date</th>
-                  <th className="pb-3">Payment Date</th>
-                  <th className="pb-3">Phone Number</th>
-                  <th className="pb-3">Email</th>
-                  <th className="pb-3">Maintenance Amount</th>
-                  <th className="pb-3">Pending Amount</th>
-                  <th className="pb-3">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  {
-                    id: '152563',
-                    owner: 'Terry Rhiel Madsen',
-                    billDate: '10/02/2024',
-                    paymentDate: '10/02/2024',
-                    phone: '9764816457',
-                    email: 'FrancesLHarris@rhyta.com',
-                    amount: '1500',
-                    pending: '2500'
-                  },
-                  {
-                    id: '152563',
-                    owner: 'Marcus Vaccaro',
-                    billDate: '10/02/2024',
-                    paymentDate: '10/02/2024',
-                    phone: '9601765987',
-                    email: 'DavidRSkley@dayrep.com',
-                    amount: '1500',
-                    pending: '6500'
-                  },
-                  // Add more rows as needed
-                ].map((invoice, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="py-4">{invoice.id}</td>
-                    <td className="py-4">{invoice.owner}</td>
-                    <td className="py-4">{invoice.billDate}</td>
-                    <td className="py-4">{invoice.paymentDate}</td>
-                    <td className="py-4">{invoice.phone}</td>
-                    <td className="py-4">{invoice.email}</td>
-                    <td className="py-4 text-green-600">₹ {invoice.amount}</td>
-                    <td className="py-4 text-red-500">{invoice.pending}</td>
-                    <td className="py-4">
-                      <button onClick={handleAddModel} className="p-2 rounded-full bg-blue-100 text-blue-600">
-                        •••
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+  <table className="w-full table-auto border-collapse">
+    <thead>
+      <tr className="text-left border-b bg-gray-100">
+        <th className="pb-3 px-4">Invoice ID</th>
+        <th className="pb-3 px-4">Owner Name</th>
+        <th className="pb-3 px-4">Bill Date</th>
+        <th className="pb-3 px-4">Payment Date</th>
+        <th className="pb-3 px-4">Phone Number</th>
+        <th className="pb-3 px-4">Email</th>
+        <th className="pb-3 px-4">Maintenance Amount</th>
+        <th className="pb-3 px-4">Pending Amount</th>
+        <th className="pb-3 px-4">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        {
+          id: "152563",
+          owner: "Terry Rhiel Madsen",
+          billDate: "10/02/2024",
+          paymentDate: "10/02/2024",
+          phone: "9764816457",
+          email: "FrancesLHarris@rhyta.com",
+          amount: "1500",
+          pending: "2500",
+        },
+        {
+          id: "152563",
+          owner: "Marcus Vaccaro",
+          billDate: "10/02/2024",
+          paymentDate: "10/02/2024",
+          phone: "9601765987",
+          email: "DavidRSkley@dayrep.com",
+          amount: "1500",
+          pending: "6500",
+        },
+        // Add more rows as needed
+      ].map((invoice, index) => (
+        <tr key={index} className="border-b hover:bg-gray-50">
+          <td className="py-4 px-4">{invoice.id}</td>
+          <td className="py-4 px-4">{invoice.owner}</td>
+          <td className="py-4 px-4">{invoice.billDate}</td>
+          <td className="py-4 px-4">{invoice.paymentDate}</td>
+          <td className="py-4 px-4">{invoice.phone}</td>
+          <td className="py-4 px-4">{invoice.email}</td>
+          <td className="py-4 px-4 text-green-600">₹ {invoice.amount}</td>
+          <td className="py-4 px-4 text-red-500">{invoice.pending}</td>
+          <td className="py-4 px-4">
+            <button
+              onClick={handleAddModel}
+              className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200"
+            >
+              •••
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
         </div>
       </main>
      </div>

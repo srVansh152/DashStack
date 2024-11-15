@@ -1,21 +1,35 @@
 import React, { useState } from 'react'
-import { ChevronDown, Search, MoreVertical, Phone, Video, Paperclip, Smile, Mic } from 'lucide-react'
+import { ChevronDown, Menu } from 'lucide-react'
 import { Link } from 'react-router-dom';
-
 
 function UAside() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenn, setIsOpenn] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className='flex h-screen sticky top-0'>
-      <div className="w-64 bg-white shadow-lg flex flex-col">
+    <div className="flex h-screen">
+      {/* Mobile Sidebar Toggle Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="p-2 bg-orange-500 text-white rounded-md sm:hidden fixed top-4 left-4 z-50"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Sidebar */}
+      <div
+        className={`w-64 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0 sm:static`}
+      >
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold">
             <span className="text-orange-500">Dash</span>
             <span className="text-gray-800">Stack</span>
           </h1>
         </div>
+
         <nav className="flex-1 overflow-y-auto">
           <ul className="space-y-2 py-4">
             <li>
@@ -139,7 +153,6 @@ function UAside() {
               )}
             </li>
 
-
             <li>
               <Link to="/user/usecurityprotocol" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -163,4 +176,4 @@ function UAside() {
   )
 }
 
-export default UAside
+export default UAside;

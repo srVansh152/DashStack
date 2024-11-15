@@ -33,6 +33,10 @@ import Upersonaldetail from './User/Upersonaldetail'
 import UMaintenace from './User/UMaintenace'
 import UOtherincome from './User/UOtherincome'
 import UsecurityProtocol from './User/UsecurityProtocol'
+import Uviw from './User/Uview'
+import UcardDetail from './User/UcardDetail'
+import UpaymentCard from './User/UpaymentCard'
+
 
 
 
@@ -76,8 +80,12 @@ function App() {
             <Route path='/user/udashboard' element={<Udashboard/>}/>
             <Route path='/user/upersonaldetail' element={<Upersonaldetail/>}/>
             <Route path='/user/Maintenace' element={<UMaintenace/>}/>
+            <Route path='/user/Uview' element={<Uviw/>}/>
+            <Route path='/user/Ucard' element={<UcardDetail/>}/>
+            <Route path='/user/Upaymentcard' element={<UpaymentCard/>}/>
             <Route path='/user/otherincome' element={<UOtherincome/>}/>
             <Route path='/user/usecurityprotocol' element={<UsecurityProtocol/>}/>
+          
           </Routes>
         </BrowserRouter>
 
