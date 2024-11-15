@@ -8,7 +8,7 @@ function UAside() {
     const [isOpenn, setIsOpenn] = useState(false);
 
   return (
-    <div className='flex h-screen'>
+    <div className='flex h-screen sticky top-0'>
          <div className="w-64 bg-white shadow-lg flex flex-col">
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold">
@@ -128,7 +128,7 @@ function UAside() {
                   </li>
                   <li>
                     <Link
-                      href="#"
+                      to="/user/otherincome"
                       className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
                     >
                       Other Income invoice
@@ -141,7 +141,7 @@ function UAside() {
             
           
             <li>
-              <Link href="#" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
+              <Link to="/user/usecurityprotocol" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>

@@ -4,7 +4,7 @@ import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 
-const UMaintenace = () => {
+const UOtherincome = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const notifications = [
@@ -40,6 +40,31 @@ const UMaintenace = () => {
       type: 'event'
     }
   ];
+
+  const payments = [
+    {
+      eventName: "Navratri",
+      dueDate: "11/01/2024",
+      amount: "1000.00",
+    },
+    {
+      eventName: "Navratri",
+      dueDate: "11/01/2024",
+      amount: "1000.00",
+    },
+    {
+      eventName: "Navratri",
+      dueDate: "11/01/2024",
+      amount: "1000.00",
+    },
+    {
+      eventName: "Navratri",
+      dueDate: "11/01/2024",
+      amount: "1000.00",
+    },
+  ]
+
+
   return (
     <div className='flex h-screen bg-gray-50'>
       <UAside />
@@ -126,106 +151,46 @@ const UMaintenace = () => {
             </Link>
           </div>
         </header>
-        <main className="p-6">
-          {/* Breadcrumb */}
-
-
-          {/* Maintenance Details */}
-          <div className="bg-white rounded-lg p-6 mb-8">
-            <h2 className="text-lg font-medium mb-4">Show Maintenance Details</h2>
-            <div className="flex gap-8 justify-end">
-              <div>
-                <div className="text-sm text-gray-500">Maintenance Amount</div>
-                <div className="text-2xl font-medium text-green-600">₹ 1,500</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Penalty Amount</div>
-                <div className="text-2xl font-medium text-red-500">₹ 500</div>
-              </div>
-            </div>
+        <div className="w-full p-6 space-y-4 bg-gray-100">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Due Event Payment</h2>
+            <button className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+              View Invoice
+            </button>
           </div>
-
-          {/* Pending Maintenance */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-medium">Pending Maintenance</h2>
-              <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
-                View Invoice
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="bg-white rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="bg-blue-500  text-white px-4 py-2 rounded">Maintenance</div>
-                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
-                  </div>
-                  <div className="space-y-2 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {payments.map((payment, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="p-4 bg-blue-500 text-white flex justify-between items-center">
+                  <div className="text-sm font-medium">Due Event Payment</div>
+                  <span className="text-xs bg-blue-400 px-2 py-1 rounded">Pending</span>
+                </div>
+                <div className="p-4 space-y-4">
+                  <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Bill Date</span>
-                      <span>1/01/2024</span>
+                      <span className="text-sm text-gray-600">Event Name</span>
+                      <span className="text-sm font-medium">{payment.eventName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Pending Date</span>
-                      <span>1/01/2024</span>
+                      <span className="text-sm text-gray-600">Event Due Date</span>
+                      <span className="text-sm font-medium">{payment.dueDate}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Maintenance Amount</span>
-                      <span>1000.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Maintenance Penalty Amount</span>
-                      <span>250.00</span>
-                    </div>
-                    <div className="flex justify-between font-medium">
-                      <span>Grand Total</span>
-                      <span className="text-green-600">₹ 1,250</span>
+                      <span className="text-sm text-gray-600">Amount</span>
+                      <span className="text-sm font-medium">${payment.amount}</span>
                     </div>
                   </div>
-                  <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
+                  <button className="w-full py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
                     Pay Now
                   </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-
-          {/* Due Maintenance */}
-          <div>
-            <h2 className="text-lg font-medium mb-4">Due Maintenance</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[1, 2].map((item) => (
-                <div key={item} className="bg-white rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="bg-blue-500 text-white px-4 py-2 rounded">Maintenance</div>
-                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Date</span>
-                      <span>1/01/2024</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Amount</span>
-                      <span>1000.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Due Maintenance Amount</span>
-                      <span>250.00</span>
-                    </div>
-                  </div>
-                  <button className="w-full py-2 bg-orange-600 text-white rounded-lg">
-                    Pay Now
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </main>
+        </div>
       </div>
     </div>
   )
 }
 
-export default UMaintenace
+export default UOtherincome
