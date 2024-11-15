@@ -6,6 +6,7 @@ import axios from "axios";
 
 
 export default function RegistrationPage() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [societies, setSocieties] = useState([]);
   const [formData, setFormData] = useState({
@@ -33,7 +34,6 @@ export default function RegistrationPage() {
 
   const navigate = useNavigate();
 
-  // fatching societey 
   useEffect(() => {
     const fetchSocieties = async () => {
       try {
@@ -47,7 +47,6 @@ export default function RegistrationPage() {
     fetchSocieties();
   }, []);
 
-  // register handling 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,12 +71,15 @@ export default function RegistrationPage() {
     try {
       console.log("Sending data:", payload);
 
-      const response = await registerUser(payload)
+      const response = await axios.post(
+        "https://socitey-management-system-server.onrender.com/api/auth/register",
+        payload
+      );
 
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         console.log("Token received:", response.data.token);
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
       } else {
         alert(response.data.message || "Registration failed. Please try again.");
       }
@@ -87,10 +89,13 @@ export default function RegistrationPage() {
     }
   };
 
-  // societey handling 
+
   const handleCreateSociety = async (societyData) => {
     try {
-      const response = await createSociety(societyData);
+      const response = await axios.post(
+        "https://socitey-management-system-server.onrender.com/api/society/create",
+        societyData
+      );
 
       if (response.data) {
         // Add new society to the societies list
@@ -248,21 +253,52 @@ export default function RegistrationPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <label htmlFor="society" className="block text-sm font-medium text-gray-700">Select Society*</label>
+              <label htmlFor="society" className="block text-sm font-medium text-gray-700">
+                Select Society*
+              </label>
               <div className="mt-1 relative">
-                <select className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                  onChange={(e) => setFormData({ ...formData, society: e.target.value })}
-                  value={formData.society}>
-                  {societies.map((val) => (
-                    <option key={val._id} value={val._id}>
-                      {val.societyname}
-                    </option>
-                  ))}
-                </select>
+                {/* Dropdown button */}
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white text-left"
+                >
+                  {formData.society
+                    ? societies.find((s) => s._id === formData.society)?.societyname || "Select Society"
+                    : "Select Society"}
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    ▼
+                  </span>
+                </button>
+
+                {/* Dropdown menu */}
+                {isDropdownOpen && (
+                  <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg">
+                    {societies.map((val) => (
+                      <li
+                        key={val._id}
+                        onClick={() => {
+                          setFormData({ ...formData, society: val._id });
+                          setIsDropdownOpen(false);
+                        }}
+                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
+                      >
+                        {val.societyname}
+                      </li>
+                    ))}
+                    {/* Create Society Option */}
+                    <li
+                      className="cursor-pointer px-4 py-2 hover:bg-gray-100 text-orange-600 font-semibold"
+                      onClick={() => {
+                        openModal(); // Opens the modal for creating a new society
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      Create New Society
+                    </li>
+                  </ul>
+                )}
               </div>
-              <button type="button" onClick={openModal} className="text-blue-600 hover:underline">
-                Create New Society
-              </button>
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password*</label>
