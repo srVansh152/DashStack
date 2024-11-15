@@ -32,6 +32,7 @@ import Udashboard from './User/Udashboard'
 import Upersonaldetail from './User/Upersonaldetail'
 import UMaintenace from './User/UMaintenace'
 import Uviw from './User/Uview'
+import UcardDetail from './User/UcardDetail'
 
 
 
@@ -76,6 +77,7 @@ function App() {
             <Route path='/user/upersonaldetail' element={<Upersonaldetail/>}/>
             <Route path='/user/Maintenace' element={<UMaintenace/>}/>
             <Route path='/user/Uview' element={<Uviw/>}/>
+            <Route path='/user/Ucard' element={<UcardDetail/>}/>
           </Routes>
         </BrowserRouter>
 
