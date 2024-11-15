@@ -31,6 +31,7 @@ import UAside from './User/UAside'
 import Udashboard from './User/Udashboard'
 import Upersonaldetail from './User/Upersonaldetail'
 import UMaintenace from './User/UMaintenace'
+import Uviw from './User/Uview'
 
 
 
@@ -74,6 +75,7 @@ function App() {
             <Route path='/user/udashboard' element={<Udashboard/>}/>
             <Route path='/user/upersonaldetail' element={<Upersonaldetail/>}/>
             <Route path='/user/Maintenace' element={<UMaintenace/>}/>
+            <Route path='/user/Uview' element={<Uviw/>}/>
           </Routes>
         </BrowserRouter>
 
