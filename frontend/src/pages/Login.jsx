@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import { loginUser } from '../utils/api'
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false)
@@ -21,33 +22,31 @@ function Login() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    
+    e.preventDefault(); // Prevent form default submission
+    setLoading(true); // Show loading state
+  
     try {
-      const response = await fetch('https://socitey-management-system-server.onrender.com/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      })
-      
-      const data = await response.json()
-      
-      if (response.ok) {
-        localStorage.setItem('token', data.token)
-        navigate('/admin/dashboard')
+      // Call loginUser with the formData directly
+      const data = await loginUser(formData);
+  
+      if (data.token) {
+        // Save the token to local storage
+        localStorage.setItem("token", data.token);
+  
+        // Navigate to the dashboard
+        navigate("/admin/dashboard");
       } else {
-        alert(data.message || 'Login failed')
+        // Handle login failure
+        alert(data.message || "Login failed. Please try again.");
       }
     } catch (error) {
-      console.error('Login error:', error)
-      alert('An error occurred while logging in')
+      console.error("Login error:", error);
+      alert("An error occurred while logging in. Please try again later.");
     } finally {
-      setLoading(false)
+      setLoading(false); // Reset loading state
     }
-  }
+  };
+  
 
   return (
     <div className="flex min-h-screen">
