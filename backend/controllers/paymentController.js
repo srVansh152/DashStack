@@ -1,5 +1,5 @@
 const Payment = require('../models/Payment');
-const FinancialIncome = require('../models/FinancialIncome');
+const FinancialIncome = require('../models/Financial');
 const OtherIncome = require('../models/OtherIncome');
 const Society = require('../models/Society');
 

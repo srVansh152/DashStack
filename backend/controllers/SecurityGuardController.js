@@ -1,4 +1,4 @@
-const SecurityGuard = require('../models/SecurityGuard');
+const SecurityGuard = require('../models/SecurityGuardModel');
 const cloudinary = require('cloudinary').v2;
 
 // Add a new security guard

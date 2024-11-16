@@ -6,7 +6,8 @@ const {
   resetPassword,
   verifyOtp,
   getProfile,
-  updateMe
+  updateMe,
+  resendOtp
 } = require('../controllers/authController');
 const { protect, restrictTo } = require('../middlewares/authMiddleware');
 const upload = require('../config/multer'); // Use Cloudinary storage configuration
@@ -16,6 +17,7 @@ router.post('/register', upload.single('userPhoto'), register);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.get('/verify-otp', verifyOtp); // Verify OTP before reset
+router.post('/resendOtp', resendOtp);
 router.post('/reset-password', resetPassword);
 
 // Routes for individual user profile management

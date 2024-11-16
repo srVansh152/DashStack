@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const Resident = require('../models/Resident');
 const { generateToken } = require('../utils/token');
-const cloudinary = require('../config/cloudinaryConfig'); 
+const cloudinary = require('../config/cloudinaryConfig');
 
 
 // Email sending utility function
@@ -158,32 +158,74 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-
+//verify otp 
 exports.verifyOtp = async (req, res) => {
   const { emailOrPhone, otp } = req.body;
 
   try {
-    // Find the user by email/phone and OTP, ensure OTP is valid and not expired
+    // Log the incoming OTP
+    console.log('Incoming OTP:', otp);
+
+    // Search for user in both User and Resident models
     const user = await User.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
-      resetOtp: otp,
-      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+      resetOtp: otp.toString(), // Ensure consistent type
+      otpExpires: { $gt: Date.now() }, // Check expiration
     }) || await Resident.findOne({
-      email: emailOrPhone,
-      resetOtp: otp,
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      resetOtp: otp.toString(), // Ensure consistent type
       otpExpires: { $gt: Date.now() },
     });
+
+    // Log the retrieved user
+    console.log('User found for OTP verification:', user);
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
     }
 
-    // OTP is valid, allow user to proceed with password reset
     res.json({ message: 'OTP verified successfully. Proceed to reset password.' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to verify OTP', error: error.message });
   }
 };
+
+//Resent Otp 
+// Resend OTP
+exports.resendOtp = async (req, res) => {
+  const { emailOrPhone } = req.body;
+
+  try {
+    // Find user in User or Resident models
+    let user = await User.findOne({
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+    });
+
+    if (!user) {
+      user = await Resident.findOne({
+        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User or Resident not found' });
+    }
+
+    // Generate new OTP and set expiration
+    const otp = generateOTP();
+    user.resetOtp = otp;
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
+    await user.save();
+
+    // Send OTP to user's email
+    await sendEmail(user.email, 'Your OTP Code', `Your new OTP is ${otp}`);
+
+    res.json({ message: 'New OTP sent to your email' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to resend OTP', error: error.message });
+  }
+};
+
 
 // Reset Password - Verify OTP before this step
 exports.resetPassword = async (req, res) => {
