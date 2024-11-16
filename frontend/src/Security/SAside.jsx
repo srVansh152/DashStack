@@ -63,20 +63,20 @@ function SAside() {
                 <ul className="pl-12 mt-2 space-y-2">
                   
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="/security/Svisitor"
                       className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
                     >
                       Visitor Tracking
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="/security/Semergency"
                       className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
                     >
-                      Emergency Mangement
-                    </a>
+                      Emergency Management
+                    </Link>
                   </li>
                 </ul>
               )}
