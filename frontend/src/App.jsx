@@ -67,7 +67,7 @@ function App() {
             <Route path='/admin/financial' element={<FinanceManagment />} />
             <Route path='/admin/otherincome' element={<OtherIncome />} />
             <Route path='/addmain' element={<AddMaintain />} />
-            <Route path='/memberlist' element={<MemberList />} />
+            <Route path='/admin/memberlist' element={<MemberList />} />
             <Route path='/admin/note' element={<Note />} />
             <Route path='/admin/Facilitymanagment' element={<Facilitymanagment />} />
             <Route path='/admin/announcment' element={<Announcment />} />
