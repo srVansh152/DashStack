@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import SAside from './SAside';
 
-const SemergencyManagment = () => {
+const Svisitor = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
@@ -11,6 +11,20 @@ const SemergencyManagment = () => {
     const handleAddModel = () => {
         setOpenModel(true);
     };
+
+    const visitors = [
+        { name: "Evelyn Harper", phone: "97852 12359", date: "10/01/2024", unit: "1001", time: "3:45 PM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Wade Warren", phone: "97852 25893", date: "10/01/2024", unit: "1002", time: "2:45 AM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Guy Hawkins", phone: "975869 55553", date: "10/01/2024", unit: "1003", time: "3:00 PM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Robert Fox", phone: "97444 96323", date: "10/01/2024", unit: "1004", time: "5:30AM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Jacob Jones", phone: "97123 12583", date: "10/01/2024", unit: "2001", time: "12:45 PM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Ronald Richards", phone: "97259 12363", date: "10/01/2024", unit: "2002", time: "3:45 PM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Annette Black", phone: "97569 77763", date: "10/01/2024", unit: "2003", time: "6:00 AM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Jerome Bell", phone: "97123 25863", date: "10/01/2024", unit: "2004", time: "3:45 PM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Theresa Webb", phone: "97258 3656", date: "10/01/2024", unit: "3001", time: "7:00 PM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Kathryn Murphy", phone: "97577 66963", date: "10/01/2024", unit: "3002", time: "6:00 AM", avatar: "/placeholder.svg?height=32&width=32" },
+        { name: "Eleanor Pena", phone: "97259 69963", date: "10/01/2024", unit: "3003", time: "7:00 PM", avatar: "/placeholder.svg?height=32&width=32" },
+    ]
 
     const notifications = [
         {
@@ -57,7 +71,7 @@ const SemergencyManagment = () => {
                         <div className="flex items-center space-x-2">
                             <span className="text-gray-500">Home</span>
                             <span className="text-gray-500">/</span>
-                            <Link className={`text-blue-500 ${window.location.pathname === '/security/Semergency' ? 'font-xxl-bold' : 'text-gray-600'}`} to={'/admin/Facilitymanagment'}>Emergency Managment</Link>
+                            <Link className={`text-blue-500 ${window.location.pathname === '/security/Svisitor' ? 'font-xxl-bold' : 'text-gray-600'}`} to={'/admin/Facilitymanagment'}>Visitors Tracking</Link>
                         </div>
                     </div>
 
@@ -135,51 +149,57 @@ const SemergencyManagment = () => {
                 </header>
 
                 {/* Main Content */}
-                <main className="flex items-center justify-center p-4" style={{ height: "92vh" }}>
-                    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
-                        <h1 className="mb-6 text-xl font-semibold">Alert</h1>
-
-                        <form className="space-y-4">
-                            <div className="space-y-2">
-                                <label htmlFor="alertType" className="block text-sm font-medium text-gray-700">
-                                    Alert Type*
-                                </label>
-                                <select
-                                    id="alertType"
-                                    className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    defaultValue=""
-                                >
-                                    <option value="" disabled>Select Alert</option>
-                                    <option value="emergency">Emergency</option>
-                                    <option value="warning">Warning</option>
-                                    <option value="info">Information</option>
+                <div >
+                    <div className="p-6 ">
+                        <div className="flex justify-between items-center mb-6">
+                            <h1 className="text-xl font-semibold">Visitor Tracking</h1>
+                            <div className="flex gap-4">
+                                <select className="px-3 py-2 border rounded-md bg-white">
+                                    <option>Week</option>
                                 </select>
+                                <button className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                                    Add Visitor details
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow">
+                            <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-gray-500">
+                                <div>Visitor Name</div>
+                                <div>Phone Number</div>
+                                <div>Date</div>
+                                <div>Unit Number</div>
+                                <div>Time</div>
                             </div>
 
-                            <div className="space-y-2">
-                                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                                    Description*
-                                </label>
-                                <textarea
-                                    id="description"
-                                    rows={4}
-                                    className="w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="An emergency description typically refers to a detailed account or explanation of an emergency situation..."
-                                />
+                            <div className="divide-y">
+                                {visitors.map((visitor, index) => (
+                                    <div
+                                        key={index}
+                                        className="grid grid-cols-5 gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <img
+                                                src={visitor.avatar}
+                                                alt=""
+                                                className="w-8 h-8 rounded-full"
+                                            />
+                                            <span className="font-medium">{visitor.name}</span>
+                                        </div>
+                                        <div>{visitor.phone}</div>
+                                        <div>{visitor.date}</div>
+                                        <div>{visitor.unit}</div>
+                                        <div>{visitor.time}</div>
+                                    </div>
+                                ))}
                             </div>
-
-                            <button
-                                type="submit"
-                                className="w-full py-2 text-sm font-medium text-white bg-orange-600 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                                Send
-                            </button>
-                        </form>
+                        </div>
                     </div>
-                </main>
+
+                </div>
             </div>
         </div>
     )
 }
 
-export default SemergencyManagment
+export default Svisitor
