@@ -24,7 +24,7 @@ export default function Component() {
   // Financial menu items
   const financialMenuItems = [
     { id: 2, label: 'Income', path: '/admin/otherincome' },
-    { id: 3, label: 'Expanse', path: '/admin/financial/expanse' },
+    { id: 3, label: 'Expanse', path: '/admin/expance' },
     { id: 4, label: 'Note', path: '/admin/note' },
   ]
 

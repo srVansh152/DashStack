@@ -6,6 +6,7 @@ import axios from "axios";
 
 
 export default function RegistrationPage() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [societies, setSocieties] = useState([]);
   const [formData, setFormData] = useState({
@@ -78,7 +79,7 @@ export default function RegistrationPage() {
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         console.log("Token received:", response.data.token);
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
       } else {
         alert(response.data.message || "Registration failed. Please try again.");
       }
@@ -99,7 +100,7 @@ export default function RegistrationPage() {
       if (response.data) {
         // Add new society to the societies list
         setSocieties(prevSocieties => [...prevSocieties, response.data]);
-        
+
         // Reset the society form data
         setSocietyData({
           societyname: "",
@@ -112,14 +113,14 @@ export default function RegistrationPage() {
 
         // Close the modal
         setOpenModel(false);
-        
+
         // Show success message
         alert("Society created successfully!");
       }
     } catch (error) {
       // More detailed error handling
       console.error("Error creating society:", error);
-      
+
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
@@ -164,157 +165,188 @@ export default function RegistrationPage() {
 
       {/* Right side */}
       <div className="lg:w-1/2 p-8 relative">
-  <div className="absolute inset-0 z-0">
-    <img src="public/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
-  </div>
-  <div className="w-3/5 mx-auto shadow-lg p-10 rounded-lg relative z-10 bg-white">
-    <h1 className="text-2xl font-bold mb-6">Registration</h1>
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name*</label>
-          <input
-            id="firstName"
-            type="text"
-            placeholder="Enter First Name"
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-            value={formData.firstName}
-          />
+        <div className="absolute inset-0 z-0">
+          <img src="public/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
         </div>
-        <div className="space-y-2">
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name*</label>
-          <input
-            id="lastName"
-            type="text"
-            placeholder="Enter Last Name"
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-            value={formData.lastName}
-          />
+        <div className="w-3/5 mx-auto shadow-lg p-10 rounded-lg relative z-10 bg-white">
+          <h1 className="text-2xl font-bold mb-6">Registration</h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name*</label>
+                <input
+                  id="firstName"
+                  type="text"
+                  placeholder="Enter First Name"
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  value={formData.firstName}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name*</label>
+                <input
+                  id="lastName"
+                  type="text"
+                  placeholder="Enter Last Name"
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  value={formData.lastName}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address*</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter Email Address"
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={formData.email}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number*</label>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="Enter Phone Number"
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                value={formData.phone}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country*</label>
+                <input
+                  id="country"
+                  type="text"
+                  placeholder="Enter Country"
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  value={formData.country}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="state" className="block text-sm font-medium text-gray-700">State*</label>
+                <input
+                  id="state"
+                  type="text"
+                  placeholder="Enter State"
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  value={formData.state}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700">City*</label>
+                <input
+                  id="city"
+                  type="text"
+                  placeholder="Enter City"
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  value={formData.city}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="society" className="block text-sm font-medium text-gray-700">
+                Select Society*
+              </label>
+              <div className="mt-1 relative">
+                {/* Dropdown button */}
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white text-left"
+                >
+                  {formData.society
+                    ? societies.find((s) => s._id === formData.society)?.societyname || "Select Society"
+                    : "Select Society"}
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    ▼
+                  </span>
+                </button>
+
+                {/* Dropdown menu */}
+                {isDropdownOpen && (
+                  <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg">
+                    {societies.map((val) => (
+                      <li
+                        key={val._id}
+                        onClick={() => {
+                          setFormData({ ...formData, society: val._id });
+                          setIsDropdownOpen(false);
+                        }}
+                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
+                      >
+                        {val.societyname}
+                      </li>
+                    ))}
+                    {/* Create Society Option */}
+                    <li
+                      className="cursor-pointer px-4 py-2 hover:bg-gray-100 text-orange-600 font-semibold"
+                      onClick={() => {
+                        openModal(); // Opens the modal for creating a new society
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      Create New Society
+                    </li>
+                  </ul>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password*</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter Password"
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                value={formData.password}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password*</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                value={formData.confirmPassword}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="terms"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
+                checked={formData.agreeToTerms}
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600">
+                I agree to all the Terms and Privacy Policies
+              </label>
+            </div>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Register
+            </button>
+          </form>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">Login</a>
+          </p>
         </div>
       </div>
-      <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address*</label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Enter Email Address"
-          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          value={formData.email}
-        />
-      </div>
-      <div className="space-y-2">
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number*</label>
-        <input
-          id="phone"
-          type="tel"
-          placeholder="Enter Phone Number"
-          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          value={formData.phone}
-        />
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country*</label>
-          <input
-            id="country"
-            type="text"
-            placeholder="Enter Country"
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-            value={formData.country}
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="state" className="block text-sm font-medium text-gray-700">State*</label>
-          <input
-            id="state"
-            type="text"
-            placeholder="Enter State"
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-            value={formData.state}
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="city" className="block text-sm font-medium text-gray-700">City*</label>
-          <input
-            id="city"
-            type="text"
-            placeholder="Enter City"
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-            value={formData.city}
-          />
-        </div>
-      </div>
-      <div className="space-y-2">
-        <label htmlFor="society" className="block text-sm font-medium text-gray-700">Select Society*</label>
-        <div className="mt-1 relative">
-          <select className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md" 
-                  onChange={(e) => setFormData({ ...formData, society: e.target.value })}
-                  value={formData.society}>
-            {societies.map((val) => (
-              <option key={val._id} value={val._id}>
-                {val.societyname}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="button" onClick={openModal} className="text-blue-600 hover:underline">
-          Create New Society
-        </button>
-      </div>
-      <div className="space-y-2">
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password*</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter Password"
-          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          value={formData.password}
-        />
-      </div>
-      <div className="space-y-2">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password*</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-          value={formData.confirmPassword}
-        />
-      </div>
-      <div className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          id="terms"
-          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
-          checked={formData.agreeToTerms}
-        />
-        <label htmlFor="terms" className="text-sm text-gray-600">
-          I agree to all the Terms and Privacy Policies
-        </label>
-      </div>
-      <button
-        type="submit"
-        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        Register
-      </button>
-    </form>
-    <p className="mt-4 text-center text-sm text-gray-600">
-      Already have an account?{" "}
-      <a href="/login" className="text-blue-600 hover:underline">Login</a>
-    </p>
-  </div>
-</div>
 
       {openModel && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">

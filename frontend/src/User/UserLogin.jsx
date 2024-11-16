@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { loginUser } from '../utils/api'
 
-function Login() {
+function UserLogin() {
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
@@ -22,31 +21,33 @@ function Login() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form default submission
-    setLoading(true); // Show loading state
-  
+    e.preventDefault()
+    setLoading(true)
+    
     try {
-      // Call loginUser with the formData directly
-      const data = await loginUser(formData);
-  
-      if (data.token) {
-        // Save the token to local storage
-        localStorage.setItem("token", data.token);
-  
-        // Navigate to the dashboard
-        navigate("/admin/dashboard");
+      const response = await fetch('https://socitey-management-system-server.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        localStorage.setItem('token', data.token)
+        navigate('/admin/dashboard')
       } else {
-        // Handle login failure
-        alert(data.message || "Login failed. Please try again.");
+        alert(data.message || 'Login failed')
       }
     } catch (error) {
-      console.error("Login error:", error);
-      alert("An error occurred while logging in. Please try again later.");
+      console.error('Login error:', error)
+      alert('An error occurred while logging in')
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false)
     }
-  };
-  
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -143,16 +144,10 @@ function Login() {
               </button>
             </div>
           </form>
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to='/' href="#" className="font-medium text-orange-600 hover:text-orange-500">
-              Registration
-            </Link>
-          </p>
         </div>
       </div>
     </div>
   )
 }
 
-export default Login
+export default UserLogin

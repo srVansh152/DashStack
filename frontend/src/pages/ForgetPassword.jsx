@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { forgotPassword } from '../utils/api'
 
 function ForgetPassword() {
   const [emailOrPhone, setEmailOrPhone] = useState('')
@@ -8,34 +9,28 @@ function ForgetPassword() {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage({ type: '', text: '' })
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
 
     try {
-      // Replace with your actual API endpoint
-      const response = await fetch('https://socitey-management-system-server.onrender.com/api/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ emailOrPhone: emailOrPhone }),
-      })
+      const data = await forgotPassword(emailOrPhone);
 
-      const data = await response.json()
-
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'OTP sent successfully! Check your email.' })
-        navigate('/otp')
+      if (data) {
+        setMessage({ type: 'success', text: 'OTP sent successfully! Check your email.' });
+        // Adding a slight delay before navigation to show the success message
+        setTimeout(() => {
+          navigate('/otp'); // Redirect to OTP page after success
+        }, 500);
       } else {
-        setMessage({ type: 'error', text: data.message || 'Failed to send OTP' })
+        setMessage({ type: 'error', text: data.message || 'Failed to send OTP' });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' })
+      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -63,9 +58,8 @@ function ForgetPassword() {
           </p>
 
           {message.text && (
-            <div className={`p-4 rounded-md mb-4 ${
-              message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-            }`}>
+            <div className={`p-4 rounded-md mb-4 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+              }`}>
               {message.text}
             </div>
           )}
@@ -90,11 +84,10 @@ function ForgetPassword() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                  loading 
-                    ? 'bg-orange-400 cursor-not-allowed' 
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${loading
+                    ? 'bg-orange-400 cursor-not-allowed'
                     : 'bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
-                }`}
+                  }`}
               >
                 {loading ? 'Sending...' : 'Get OTP'}
               </button>
@@ -111,4 +104,4 @@ function ForgetPassword() {
   )
 }
 
-export default ForgetPassword;
+export default ForgetPassword;
