@@ -37,7 +37,6 @@ import Uviw from './User/Uview'
 import UcardDetail from './User/UcardDetail'
 import UpaymentCard from './User/UpaymentCard'
 import SLogin from './Security/SLogin'
-import SemergencyManagment from './Security/SemergencyManagment'
 
 
 
