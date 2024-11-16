@@ -37,6 +37,7 @@ import Uviw from './User/Uview'
 import UcardDetail from './User/UcardDetail'
 import UpaymentCard from './User/UpaymentCard'
 import SLogin from './Security/SLogin'
+import SemergencyManagment from './Security/SemergencyManagment'
 
 
 
@@ -88,6 +89,7 @@ function App() {
             <Route path='/user/usecurityprotocol' element={<UsecurityProtocol/>}/>
             //security routes
             <Route path='/security/Slogin' element={<SLogin/>}/>
+            <Route path='/security/Semergency' element={<SemergencyManagment/>}/>
           </Routes>
         </BrowserRouter>
 
