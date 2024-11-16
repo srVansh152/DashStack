@@ -7,6 +7,27 @@ const Svisitor = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        wing: "",
+        unit: "",
+        date: "",
+        time: "",
+      });
+
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      };
+    
+      const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent default form submission
+        console.log("Form Data Submitted:", formData);
+        // Perform further actions, such as API calls, validation, etc.
+      };
 
     const handleAddModel = () => {
         setOpenModel(true);
@@ -157,7 +178,7 @@ const Svisitor = () => {
                                 <select className="px-3 py-2 border rounded-md bg-white">
                                     <option>Week</option>
                                 </select>
-                                <button className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                                <button onClick={handleAddModel} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
                                     Add Visitor details
                                 </button>
                             </div>
@@ -198,6 +219,109 @@ const Svisitor = () => {
 
                 </div>
             </div>
+            {openModel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+            <h2 className="text-xl font-semibold mb-6">Add Visitor Details.</h2>
+        
+            <form className="space-y-4" onSubmit={handleSubmit}>
+      <div>
+        <label className="block text-sm mb-1">
+          Visitor Name<span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          name="name"
+          placeholder="Enter Name"
+          value={formData.name}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm mb-1">
+            Wing<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="wing"
+            placeholder="Enter Wing"
+            value={formData.wing}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm mb-1">
+            Unit<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="unit"
+            placeholder="Enter Unit"
+            value={formData.unit}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm mb-1">
+            Date<span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              name="date"
+              placeholder="Select Date"
+              value={formData.date}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm mb-1">
+            Time<span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              name="time"
+              placeholder="Select Time"
+              value={formData.time}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mt-6">
+        <button
+          type="button"
+          onClick={() => setOpenModel(false)}
+          className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-700 focus:outline-none"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+      </div>
+            </div>
+          </div>
+        )}
         </div>
     )
 }
