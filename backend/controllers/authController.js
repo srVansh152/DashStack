@@ -152,7 +152,6 @@ exports.forgotPassword = async (req, res) => {
 
     // Send OTP to user's email
     await sendEmail(user.email, 'Your OTP Code', `Your OTP is ${otp}`);
-    console.log(user);
     res.json({ message: 'OTP sent to your email' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to send OTP email', error: error.message });
@@ -164,39 +163,32 @@ exports.verifyOtp = async (req, res) => {
   const { emailOrPhone, otp } = req.body;
 
   try {
-    // Log the incoming OTP for debugging purposes
+    // Log the incoming OTP
     console.log('Incoming OTP:', otp);
 
-    // Find the user by email or phone
-    const user = await User.findOne({ 
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }] 
+    // Search for user in both User and Resident models
+    const user = await User.findOne({
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      resetOtp: otp.toString(), // Ensure consistent type
+      otpExpires: { $gt: Date.now() }, // Check expiration
+    }) || await Resident.findOne({
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      resetOtp: otp.toString(), // Ensure consistent type
+      otpExpires: { $gt: Date.now() },
     });
 
-    // Log the user found
-    console.log('User found:', user);
+    // Log the retrieved user
+    console.log('User found for OTP verification:', user);
 
-    // If no user found, return error
     if (!user) {
-      return res.status(400).json({ message: 'User not found' });
+      return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
     }
 
-    // Check if the OTP matches and is not expired
-    if (user.resetOtp !== otp.toString()) {
-      return res.status(400).json({ message: 'Invalid OTP' });
-    }
-
-    if (user.otpExpires <= Date.now()) {
-      return res.status(400).json({ message: 'OTP expired' });
-    }
-
-    // If OTP is valid and not expired
     res.json({ message: 'OTP verified successfully. Proceed to reset password.' });
   } catch (error) {
-    console.error('Error during OTP verification:', error);
     res.status(500).json({ message: 'Failed to verify OTP', error: error.message });
   }
 };
-
 
 //Resent Otp 
 // Resend OTP
