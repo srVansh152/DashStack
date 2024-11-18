@@ -198,7 +198,7 @@ exports.resetPassword = async (req, res) => {
   try {
     // Find the user by email/phone and OTP, ensure OTP is valid and not expired
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      email: emailOrPhone,
       resetOtp: otp,
       otpExpires: { $gt: Date.now() },
     }) || await Resident.findOne({
