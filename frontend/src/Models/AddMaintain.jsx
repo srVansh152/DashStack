@@ -396,7 +396,7 @@ function AddMaintain() {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Link to="/financial">
+            <Link to="/admin/financial">
               <button onClick={() => setOpenAddModel(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                 Cancel
               </button>
