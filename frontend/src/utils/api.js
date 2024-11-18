@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Unified base URL
-const API_BASE_URL = 'https://socitey-management-system-server.onrender.com/api'; 
+const API_BASE_URL = 'https://socitey-management-system-server.onrender.com/api';
 
 // Create an Axios instance
 const api = axios.create({
@@ -32,7 +32,7 @@ api.interceptors.request.use(
   }
 );
 
-// Register admin function not header 
+// Register admin function not header
 export const registerUser = async (userData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/register`, userData);
@@ -121,7 +121,7 @@ export const updateProfile = async (token, updateData) => {
   }
 };
 
-// Create a new society function not header 
+// Create a new society function not header
 export const createSociety = async (societyData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/society/create`, societyData);
@@ -132,7 +132,7 @@ export const createSociety = async (societyData) => {
   }
 };
 
-// Fetch all societies function not header 
+// Fetch all societies function not header
 export const getSocieties = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/society`);
@@ -143,7 +143,7 @@ export const getSocieties = async () => {
   }
 };
 
-// Admin get important number  not header 
+// Admin get important number  not header
 export const getImportantNumbers = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/important-numbers`);
