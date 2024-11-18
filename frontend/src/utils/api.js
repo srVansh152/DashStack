@@ -57,7 +57,7 @@ export const loginUser = async (credentials) => {
 // Forgot Password
 export const forgotPassword = async (email) => {
   try {
-    const response = await axios.post(`http://localhost:5000/api/auth/forgot-password`, { email });
+    const response = await axios.post(`${API_BASE_URL}/auth/forgot-password`, { email });
     return response.data;
   } catch (error) {
     console.error("Forgot password error:", error);
@@ -68,8 +68,7 @@ export const forgotPassword = async (email) => {
 // Verify OTP
 export const verifyOtp = async (otpData) => {
   try {
-    const response = await axios.post(`http://localhost:5000/api/auth/verify-otp`, otpData);
-    console.log("data aagay",response.data);
+    const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, otpData);
     return response.data;
   } catch (error) {
     console.error("OTP verification error:", error);
@@ -77,16 +76,6 @@ export const verifyOtp = async (otpData) => {
   }
 };
 
-// Resend OTP
-export const resendOtp = async (email) => {
-  try {
-    const response = await axios.post(`http://localhost:5000/api/auth/resendOtp`, { email });
-    return response.data;
-  } catch (error) {
-    console.error("Resend OTP error:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to resend OTP." };
-  }
-};
 
 // Reset Password
 export const resetPassword = async (resetData) => {
@@ -113,7 +102,7 @@ export const getProfile = async (token) => {
 // Update user profile
 export const updateProfile = async (token, updateData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/auth/profile`, updateData,  { isMultipart: true });
+    const response = await axios.put(`${API_BASE_URL}/auth/profile`, updateData, { isMultipart: true });
     return response.data;
   } catch (error) {
     console.error("Update profile error:", error);
