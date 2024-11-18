@@ -190,42 +190,6 @@ exports.verifyOtp = async (req, res) => {
   }
 };
 
-//Resent Otp 
-// Resend OTP
-exports.resendOtp = async (req, res) => {
-  const { emailOrPhone } = req.body;
-
-  try {
-    // Find user in User or Resident models
-    let user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
-    });
-
-    if (!user) {
-      user = await Resident.findOne({
-        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
-      });
-    }
-
-    if (!user) {
-      return res.status(404).json({ message: 'User or Resident not found' });
-    }
-
-    // Generate new OTP and set expiration
-    const otp = generateOTP();
-    user.resetOtp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 minutes
-    await user.save();
-
-    // Send OTP to user's email
-    await sendEmail(user.email, 'Your OTP Code', `Your new OTP is ${otp}`);
-
-    res.json({ message: 'New OTP sent to your email' });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to resend OTP', error: error.message });
-  }
-};
-
 
 // Reset Password - Verify OTP before this step
 exports.resetPassword = async (req, res) => {
