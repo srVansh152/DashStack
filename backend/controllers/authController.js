@@ -217,7 +217,7 @@ exports.resetPassword = async (req, res) => {
     user.otpExpires = undefined;
     await user.save();
 
-    res.json({ message: 'Password reset successful' });
+    res.status(200).json({ message: 'Password reset successful' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to reset password', error: error.message });
   }
