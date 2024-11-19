@@ -39,6 +39,7 @@ import UpaymentCard from './User/UpaymentCard'
 import SLogin from './Security/SLogin'
 import SemergencyManagment from './Security/SemergencyManagment'
 import Svisitor from './Security/Svisitor'
+import Uchat from './User/Uchat'
 
 
 
@@ -88,6 +89,7 @@ function App() {
             <Route path='/user/Upaymentcard' element={<UpaymentCard/>}/>
             <Route path='/user/otherincome' element={<UOtherincome/>}/>
             <Route path='/user/usecurityprotocol' element={<UsecurityProtocol/>}/>
+            <Route path='/user/uchat' element={<Uchat/>}/>
             //security routes
             <Route path='/security/Slogin' element={<SLogin/>}/>
             <Route path='/security/Semergency' element={<SemergencyManagment/>}/>

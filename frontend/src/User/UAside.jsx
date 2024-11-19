@@ -91,12 +91,12 @@ function UAside() {
               {isOpen && (
                 <ul className="pl-12 mt-2 space-y-2">
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="/user/uchat"
                       className="block py-2 text-sm text-orange-500 hover:bg-gray-100 hover:text-orange-500"
                     >
                       Access Forums
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a

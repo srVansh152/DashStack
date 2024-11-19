@@ -19,9 +19,8 @@ function SAside() {
 
       {/* Sidebar */}
       <div
-        className={`w-64 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 sm:static`}
+        className={`w-64 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } sm:translate-x-0 sm:static`}
       >
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold">
@@ -32,13 +31,13 @@ function SAside() {
 
         <nav className="flex-1 overflow-y-auto">
           <ul className="space-y-2 py-4">
-            
+
             <li>
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               >
-                 <div className="flex items-center">
+                <div className="flex items-center">
                   <span className="mr-2">
                     <svg
                       className="h-5 w-5"
@@ -61,7 +60,7 @@ function SAside() {
               </button>
               {isOpen && (
                 <ul className="pl-12 mt-2 space-y-2">
-                  
+
                   <li>
                     <Link
                       to="/security/Svisitor"
@@ -81,7 +80,7 @@ function SAside() {
                 </ul>
               )}
             </li>
-           
+
           </ul>
         </nav>
         <div className="p-4 border-t">
