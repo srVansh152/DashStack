@@ -125,12 +125,11 @@ exports.login = async (req, res) => {
 
 // Forgot Password - Send OTP required to reset password
 exports.forgotPassword = async (req, res) => {
-  const { emailOrPhone } = req.body;
-
+  const { email } = req.body;
   try {
     // Find user by email or phone in both User and Resident models
     let user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      email: email
     });
 
     if (!user) {
@@ -160,19 +159,20 @@ exports.forgotPassword = async (req, res) => {
 
 //verify otp 
 exports.verifyOtp = async (req, res) => {
-  const { emailOrPhone, otp } = req.body;
+  const { email, otp } = req.body;
 
   try {
     // Log the incoming OTP
+    console.log(email);
     console.log('Incoming OTP:', otp);
 
     // Search for user in both User and Resident models
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      email: email,
       resetOtp: otp.toString(), // Ensure consistent type
       otpExpires: { $gt: Date.now() }, // Check expiration
     }) || await Resident.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      email: email,
       resetOtp: otp.toString(), // Ensure consistent type
       otpExpires: { $gt: Date.now() },
     });
