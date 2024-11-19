@@ -184,7 +184,7 @@ exports.verifyOtp = async (req, res) => {
       return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
     }
 
-    res.json({ message: 'OTP verified successfully. Proceed to reset password.' });
+    res.status(200).json({ message: 'OTP verified successfully. Proceed to reset password.' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to verify OTP', error: error.message });
   }
