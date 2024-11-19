@@ -135,7 +135,7 @@ exports.forgotPassword = async (req, res) => {
     if (!user) {
       // If user not found in User model, check in Resident model
       user = await Resident.findOne({
-        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+        email: email
       });
     }
 
