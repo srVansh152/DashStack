@@ -40,6 +40,8 @@ import SLogin from './Security/SLogin'
 import SemergencyManagment from './Security/SemergencyManagment'
 import Svisitor from './Security/Svisitor'
 import Uchat from './User/Uchat'
+import Upools from './User/Upools'
+import Uevents from './User/Uevents'
 
 
 
@@ -98,6 +100,8 @@ function App() {
             <Route path='otherincome' element={<UOtherincome/>}/>
             <Route path='usecurityprotocol' element={<UsecurityProtocol/>}/>
             <Route path='uchat' element={<Uchat/>}/>
+            <Route path='upools' element={<Upools/>}/>
+            <Route path='uevents' element={<Uevents/>}/>
             </Route>
             
             //security routes
