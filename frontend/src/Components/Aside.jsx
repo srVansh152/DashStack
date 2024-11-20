@@ -23,21 +23,21 @@ export default function Component() {
 
   // Financial menu items
   const financialMenuItems = [
-    { id: 2, label: 'Income', path: '/admin/otherincome' },
-    { id: 3, label: 'Expanse', path: '/admin/expance' },
-    { id: 4, label: 'Note', path: '/admin/note' },
+    { id: 2, label: 'Income', path: 'otherincome' },
+    { id: 3, label: 'Expanse', path: 'expance' },
+    { id: 4, label: 'Note', path: 'note' },
   ]
 
   // Complaint menu items
   const complaintMenuItems = [
-    { id: 1, label: 'Create Complaint', path: '/admin/createcomplain' },
-    { id: 2, label: 'Request Tracking', path: '/admin/requesttracking' },
+    { id: 1, label: 'Create Complaint', path: 'createcomplain' },
+    { id: 2, label: 'Request Tracking', path: 'requesttracking' },
   ]
 
   // Security management menu items
   const securityManagement = [
-    { id: 1, label: 'Vistors Logs', path: '/admin/visitorslogs' },
-    { id: 2, label: 'Security Protocals', path: '/admin/securityprotocols' },
+    { id: 1, label: 'Vistors Logs', path: 'visitorslogs' },
+    { id: 2, label: 'Security Protocals', path: 'securityprotocols' },
   ]
 
   const handleComplaintClick = () => {
@@ -97,7 +97,7 @@ export default function Component() {
           <SidebarItem
             icon={Activity}
             label="Dashboard"
-            path="/admin/dashboard"
+            path="dashboard"
             active={activeMenu === 'Dashboard'}
             hovered={hoveredMenu === 'Dashboard'}
             onClick={() => {
@@ -113,7 +113,7 @@ export default function Component() {
           <SidebarItem
             icon={Users}
             label="Resident Management"
-            path="/admin/residence"
+            path="residence"
             active={activeMenu === 'Resident Management'}
             hovered={hoveredMenu === 'Resident Management'}
             onClick={() => {
@@ -142,7 +142,7 @@ export default function Component() {
            <SidebarItem
             icon={Package}
             label="Facility Management"
-            path="/admin/Facilitymanagment"
+            path="Facilitymanagment"
             active={activeMenu === 'Facility Management'}
             hovered={hoveredMenu === 'Facility Management'}
             onClick={() => {
@@ -185,7 +185,7 @@ export default function Component() {
           <SidebarItem
             icon={Package}
             label="Security Guard"
-            path="/admin/securityguard"
+            path="securityguard"
             active={activeMenu === 'Security Guard'}
             hovered={hoveredMenu === 'Security Guard'}
             onClick={() => {
@@ -200,7 +200,7 @@ export default function Component() {
           <SidebarItem
             icon={Bell}
             label="Announcement"
-            path="/admin/announcment"
+            path="announcment"
             active={activeMenu === 'Announcement'}
             hovered={hoveredMenu === 'Announcement'}
             onClick={() => {
