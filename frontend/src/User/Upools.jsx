@@ -1,12 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
 import UAside from './UAside'
-import { Bell, X } from 'lucide-react';
+import { Bell, X , ChevronDown, Hash, List, Radio, Star, Type } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Upools = () => {
     const [isOpen, setIsOpen] = useState(false);
-
+    const [isOpenn, setIsOpenn] = useState(false);
+    const [openModel, setOpenModel] = useState(false);
     const [activeTab, setActiveTab] = useState('own')
+    const [selectedPoll, setSelectedPoll] = useState("")
+
+   
+    const [formValues, setFormValues] = useState({
+      question: "",
+      option1: "",
+      option2: "",
+    });
+  
+    const pollTypes = [
+        { name: "Multichoice polls", icon: <Radio className="w-4 h-4" /> },
+        { name: "Ranking polls", icon: <List className="w-4 h-4" /> },
+        { name: "Rating polls", icon: <Star className="w-4 h-4" /> },
+        { name: "Numeric polls", icon: <Hash className="w-4 h-4" /> },
+        { name: "Text polls", icon: <Type className="w-4 h-4" /> },
+      ]
+  
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    };
+  
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      console.log("Form Values:", { ...formValues, selectedPoll });
+
+    };
 
     const polls = Array(4).fill({
         author: "Arlene McCoy",
@@ -18,6 +49,10 @@ const Upools = () => {
         },
         timestamp: "01/07/2024, 10:00 AM"
     })
+
+    const handleAddModel = () => {
+        setOpenModel(true);
+      };
 
 
     const notifications = [
@@ -176,7 +211,7 @@ const Upools = () => {
                     <div className="bg-white p-6 rounded-xl shadow">
                         <div className="flex items-center justify-between px-4 py-3">
                             <h1 className="text-lg font-medium text-gray-900">Polls</h1>
-                            <button className="rounded-full bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors">
+                            <button onClick={handleAddModel} className="rounded-full bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors">
                                 Create Polls
                             </button>
                         </div>
@@ -292,6 +327,104 @@ const Upools = () => {
                     </div>
                 </div>
             </div>
+            {openModel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className=" p-6 space-y-6">
+        <h2 className="text-xl font-semibold text-gray-900">Create Polls</h2>
+        
+        <form onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <div className="relative">
+          <div
+            className="w-full border rounded-lg p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50"
+            onClick={() => setIsOpenn(!isOpenn)}
+          >
+            <span className="text-gray-500">{selectedPoll || "Select Polls"}</span>
+            <ChevronDown
+              className={`w-5 h-5 text-gray-400 transition-transform ${isOpenn ? "rotate-180" : ""}`}
+            />
+          </div>
+
+          {isOpenn && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-auto">
+              {pollTypes.map((type) => (
+                <div
+                  key={type.name}
+                  className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    setSelectedPoll(type.name);
+                    setIsOpenn(false);
+                  }}
+                >
+                  {type.icon}
+                  <span className="text-gray-700">{type.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Question<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="question"
+            value={formValues.question}
+            onChange={handleChange}
+            placeholder="Ask a question"
+            className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Option 1<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="option1"
+            value={formValues.option1}
+            onChange={handleChange}
+            placeholder="Add"
+            className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Option 2<span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="option2"
+            value={formValues.option2}
+            onChange={handleChange}
+            placeholder="Add"
+            className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-3 pt-4">
+        <button
+          type="button"
+          onClick={() =>setOpenModel(false)}
+          className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+        >
+          Cancel
+        </button>
+        <button type="submit" className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-blue-700">
+          Create
+        </button>
+      </div>
+    </form>
+      </div>
+            </div>
+          </div>
+        )}
         </div>
 
     )
