@@ -1,28 +1,52 @@
 import { useState } from 'react';
+import { resetPassword } from '../utils/api'; // Adjust the import path if needed
+import { useNavigate, useNavigationType } from 'react-router';
 
 function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch('https://socitey-management-system-server.onrender.com/api/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password: newPassword }),
-      });
 
-      if (response.ok) {
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      alert('Passwords do not match. Please try again.');
+      return;
+    }
+
+    try {
+      // Retrieve email/phone and OTP from localStorage
+      const emailOrPhone = localStorage.getItem('emailForOtp');
+      const otp = localStorage.getItem('otp');
+      console.log(otp);
+
+      if (!emailOrPhone || !otp) {
+        alert('Missing OTP or email/phone. Please try the reset process again.');
+        return;
+      }
+
+      // Prepare reset data
+      const resetData = { emailOrPhone, otp, newPassword };
+
+      // Call the resetPassword API function
+      const response = await resetPassword(resetData);
+
+      if (response.success) {
         alert('Password reset successful!');
+        // Clear localStorage
+        localStorage.removeItem('emailOrPhone');
+        localStorage.removeItem('otp');
+        return navigate('/login');
       } else {
-        alert('Failed to reset password. Please try again.');
+        alert(`Failed to reset password: ${response.message}`);
       }
     } catch (error) {
-      alert('An error occurred. Please try again.');
+      console.error('Error resetting password:', error);
+      alert('An unexpected error occurred. Please try again.');
     }
   };
 
@@ -44,7 +68,7 @@ function ResetPassword() {
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">Reset Password</h2>
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-1">
                 New Password*
@@ -100,6 +124,8 @@ function ResetPassword() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500"
                   placeholder="••••••••"
                   required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button
                   type="button"
@@ -134,7 +160,6 @@ function ResetPassword() {
             <button
               type="submit"
               className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-              onClick={handleSubmit}
             >
               Reset Password
             </button>

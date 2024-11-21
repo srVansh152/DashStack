@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { Link } from 'react-router-dom';
 import Aside from './Aside';
 import axios from 'axios'; // Import axios for API calls
-import { getImportantNumbers } from '../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, } from '../utils/api';
 
 const DashboardLayout = () => {
 
@@ -27,16 +27,22 @@ const DashboardLayout = () => {
     const [status, setStatus] = useState('Open'); // State for status
     const [importantNumbers, setImportantNumbers] = useState([]); // State for important numbers
     const [deleteId, setDeleteId] = useState(null);
-  
+    const [editId, setEditId] = useState(null);
+
 
 
     const handleAddDetails = () => {
         setOpenModel(true);
     };
 
-    const handleEditDetails = () => {
-        setOpenEditModel(true);
+    const handleEditDetails = (importantNumber) => {
+        setname(importantNumber.name); // Populate name field
+        setPhoneNumber(importantNumber.phoneNumber); // Populate phone number field
+        setWork(importantNumber.work); // Populate work field
+        setEditId(importantNumber._id); // Store the ID of the important number being edited
+        setOpenEditModel(true); // Open the edit modal
     };
+
     const handleDeleteDetails = () => {
         setOpenDeleteModel(true);
     };
@@ -143,77 +149,104 @@ const DashboardLayout = () => {
         }
     ];
 
+    // Fetch important numbers from the API
+    const loadImportantNumbers = async () => {
+        const result = await fetchImportantNumbers();
+        if (result.success) {
+            setImportantNumbers(result.data); // Update the state with fetched data
+        } else {
+            console.error("Failed to load important numbers:", result.message);
+            setImportantNumbers([]); // Reset state on failure
+        }
+    };
+
     useEffect(() => {
-        const fetchImportantNumbers = async () => {
-            try {
-                const token = localStorage.getItem('token'); // Retrieve the token
-                const response = await axios.get('https://socitey-management-system-server.onrender.com/api/important-numbers', {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Include the token in the headers
-                    }
-                });
-                console.log("API Response:", response.data.data); // Log the response data
-
-                // Ensure the response data is an array
-                if (Array.isArray(response.data.data)) {
-                    setImportantNumbers(response.data.data);
-                    console.log("Important Numbers Set:", response.data); // Log the data being set
-                } else {
-                    console.error("Unexpected data format:", response.data);
-                    setImportantNumbers([]); // Reset to empty array on unexpected format
-                }
-            } catch (error) {
-                console.error("Error fetching important numbers:", error);
-                setImportantNumbers([]); // Reset to empty array on error
-            }
-        };
-
-        fetchImportantNumbers();
+        loadImportantNumbers();
     }, []);
 
     // Function to handle adding important number
     const handleAddImportantNumber = async (e) => {
         e.preventDefault(); // Prevent default form submission
+
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('https://socitey-management-system-server.onrender.com/api/important-numbers', {
-                name,
-                phoneNumber,
-                work
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}` // Set the Authorization header
-                }
-            });
-            console.log(response);
-            console.log(response.data); // Handle success response
-            setImportantNumbers([...importantNumbers, response.data]);
-            setOpenModel(false); // Close modal
+            // Prepare the important number data
+            const numberData = { name, phoneNumber, work };
+
+            // Call the API
+            const response = await createImportantNumber(numberData);
+
+            if (response.success) {
+                console.log("New important number:", response.data);
+
+                // Reload the important numbers list
+                await loadImportantNumbers();
+
+                // Close the modal
+                setOpenModel(false);
+            } else {
+                console.error("Error:", response.message); // Log the error message
+            }
         } catch (error) {
-            console.error(error); // Handle error
+            console.error("Unexpected error:", error);
         }
     };
 
     // Function to handle deleting important number
     const handleDeleteImportantNumber = async () => {
-        console.log(deleteId)
         if (deleteId) {
             try {
-                const token = localStorage.getItem('token');
-                await axios.delete(`https://socitey-management-system-server.onrender.com/api/important-numbers/${deleteId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Set the Authorization header
-                    }
-                });
-                // Remove the deleted number from the state
-                setImportantNumbers(importantNumbers.filter(number => number.id !== deleteId));
-                console.log("Deleted successfully");
-                setOpenDeleteModel(false); // Close the delete modal
+                console.log("Attempting to delete important number with ID:", deleteId);
+
+                // Call the API to delete the number
+                const response = await deleteImportantNumber(deleteId);
+
+                if (response.success) {
+                    // Update the state to remove the deleted number
+                    loadImportantNumbers((prevNumbers) =>
+                        prevNumbers.filter((number) => number.id !== deleteId)
+                    );
+                    // Close the delete modal
+                    setOpenDeleteModel(false);
+                } else {
+                    console.error("Error:", response.message); // Log error message
+                }
             } catch (error) {
-                console.error("Error deleting important number:", error);
+                console.error("Unexpected error while deleting important number:", error);
             }
+        } else {
+            console.error("Delete ID is missing.");
         }
     };
+
+    const handleEditImportantNumber = async (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        try {
+            const updatedData = { name, phoneNumber, work }; // Prepare the updated data
+
+            // Call the API to update the important number
+            const response = await updateImportantNumber(editId, updatedData);
+             // Pass the edit ID and the updated data
+
+            if (response.success) {
+                // Log the updated important number
+                console.log("Updated important number:", response.data);
+
+                // Reload the important numbers list or update the local state
+                await loadImportantNumbers(); // Assuming this function reloads the important numbers list
+
+                // Close the modal
+                setOpenEditModel(false);
+            } else {
+                console.error("Error:", response.message); // Log the error message
+            }
+        } catch (error) {
+            console.error("Unexpected error while updating important number:", error);
+        }
+    };
+
+
+
 
     // Function to handle editing complaint
     const handleEditComplaint = async (e) => {
@@ -399,10 +432,11 @@ const DashboardLayout = () => {
                                                         </div>
                                                         <div className="flex gap-2">
                                                             <button onClick={() => {
-                                                                openDeleteModal(number._id)}} className="p-1 text-red-500 hover:bg-red-50 rounded">
+                                                                openDeleteModal(number._id)
+                                                            }} className="p-1 text-red-500 hover:bg-red-50 rounded">
                                                                 <Trash2 size={16} />
                                                             </button>
-                                                            <button onClick={() => handleEditDetails()} className="p-1 text-green-500 hover:bg-green-50 rounded">
+                                                            <button onClick={() => handleEditDetails(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
                                                                 <CheckCircle size={16} />
                                                             </button>
                                                         </div>
@@ -602,13 +636,15 @@ const DashboardLayout = () => {
                         <div className="fixed inset-0 flex items-center justify-center z-50">
                             <div className="w-[400px] bg-white rounded-lg shadow-lg p-6">
                                 <h1 className="font-title text-lg font-semibold text-neutral-900 mb-4">Edit Important Number</h1>
-                                <form className="space-y-4">
+                                <form className="space-y-4" onSubmit={handleEditImportantNumber}>
                                     <div>
                                         <label className="block text-neutral-700 text-sm font-medium">
                                             Full Name<span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
+                                            value={name}
+                                            onChange={(e) => setname(e.target.value)} // Update the name state
                                             placeholder="Enter Full Name"
                                             className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                                         />
@@ -620,6 +656,8 @@ const DashboardLayout = () => {
                                         </label>
                                         <input
                                             type="text"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)} // Update the phone number state
                                             placeholder="+91"
                                             className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                                         />
@@ -631,6 +669,8 @@ const DashboardLayout = () => {
                                         </label>
                                         <input
                                             type="text"
+                                            value={work}
+                                            onChange={(e) => setWork(e.target.value)} // Update the work state
                                             placeholder="Enter Work"
                                             className="w-full mt-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                                         />
@@ -639,13 +679,14 @@ const DashboardLayout = () => {
                                     <div className="flex justify-between mt-6">
                                         <button
                                             type="button"
-                                            className="px-6 py-2 border border-neutral-300 rounded-md text-neutral-500 hover:bg-neutral-100 w-[47%]" onClick={() => setOpenEditModel(false)}
+                                            className="px-6 py-2 border border-neutral-300 rounded-md text-neutral-500 hover:bg-neutral-100 w-[47%]"
+                                            onClick={() => setOpenEditModel(false)}
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-6 py-2 bg-[#F6F8FB] text-black rounded-md  w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
+                                            className="px-6 py-2 bg-[#F6F8FB] text-black rounded-md w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
                                         >
                                             Save
                                         </button>
@@ -653,11 +694,7 @@ const DashboardLayout = () => {
                                 </form>
                             </div>
 
-                            <div
-                                className="onsite-modal-overlay"
-
-                            ></div>
-
+                            <div className="onsite-modal-overlay"></div>
                         </div>
                     </div>
                 )}

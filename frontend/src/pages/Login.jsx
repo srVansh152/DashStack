@@ -24,20 +24,20 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form default submission
     setLoading(true); // Show loading state
-  
+
     try {
-      // Call loginUser with the formData directly
-      const data = await loginUser(formData);
-  
-      if (data.token) {
+      console.log(formData); // Debug: Check form data
+      const data = await loginUser(formData)
+
+      if (data.success && data.data.token) {
         // Save the token to local storage
-        localStorage.setItem("token", data.token);
-  
+        localStorage.setItem("token", data.data.token);
+
         // Navigate to the dashboard
         navigate("/admin/dashboard");
       } else {
         // Handle login failure
-        alert(data.message || "Login failed. Please try again.");
+        alert("Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -46,7 +46,8 @@ function Login() {
       setLoading(false); // Reset loading state
     }
   };
-  
+
+
 
   return (
     <div className="flex min-h-screen">
@@ -56,13 +57,13 @@ function Login() {
           <div className="text-4xl font-bold text-gray-800">
             Dash<span className="text-orange-500">Stack</span>
           </div>
-          
+
         </div>
         <div className="flex-grow  flex items-center justify-center">
           <img src="/image/Group.png.png" alt="Society Management Illustration" className="max-w-full h-auto" />
         </div>
-        
-       
+
+
       </div>
 
       {/* Right side with login form */}
@@ -155,4 +156,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Login
