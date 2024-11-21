@@ -42,6 +42,7 @@ import Svisitor from './Security/Svisitor'
 import Uchat from './User/Uchat'
 import Upools from './User/Upools'
 import Uevents from './User/Uevents'
+import Ucommunity from './User/Ucommunity'
 
 
 
@@ -102,6 +103,7 @@ function App() {
             <Route path='uchat' element={<Uchat/>}/>
             <Route path='upools' element={<Upools/>}/>
             <Route path='uevents' element={<Uevents/>}/>
+            <Route path='ucommunity' element={<Ucommunity/>}/>
             </Route>
             
             //security routes
