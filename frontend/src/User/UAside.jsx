@@ -19,9 +19,8 @@ function UAside() {
 
       {/* Sidebar */}
       <div
-        className={`w-64 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 sm:static`}
+        className={`w-64 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } sm:translate-x-0 sm:static`}
       >
         <div className="p-4 border-b">
           <h1 className="text-2xl font-bold">
@@ -107,12 +106,12 @@ function UAside() {
                     </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="/user/ucommunity"
                       className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
                     >
                       Communities Discussion
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               )}
