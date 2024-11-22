@@ -228,9 +228,9 @@ const Uchat = () => {
                         </Link>
                     </div>
                 </header>
-                <div className="flex shadow bg-white p-2 h-[860px]">
+                <div className="flex shadow bg-white p-2 h-[860px] flex-col md:flex-row">
                     {/* Left Sidebar */}
-                    <div className="w-80 border-r flex flex-col">
+                    <div className="w-full md:w-80 border-r flex flex-col">
                         <div className="p-4 border-b">
                             <div className="relative">
                                 <input
@@ -272,8 +272,8 @@ const Uchat = () => {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200" />
                                 <div>
-                                    <h2 className="font-semibold">{selectedContact?.name}</h2>
-                                    <p className="text-sm text-gray-500">Active Now</p>
+                                    <h2 className="font-semibold">{selectedContact?.name || 'Select a contact'}</h2>
+                                    <p className="text-sm text-gray-500">{selectedContact ? 'Active Now' : 'No contact selected'}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ const Uchat = () => {
 
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                            {messages.map((msg) => (
+                            {selectedContact && messages.map((msg) => (
                                 <div key={msg.id} className={`flex items-start gap-2.5 ${msg.sender === 'You' ? 'flex-row-reverse' : ''}`}>
                                     <div className="w-8 h-8 rounded-full bg-gray-200" />
                                     <div className={`flex flex-col gap-1 ${msg.sender === 'You' ? 'items-end' : ''}`}>

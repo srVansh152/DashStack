@@ -139,7 +139,7 @@ const Ucommunity = () => {
                     </div>
                 </header>
                 <div className="flex h-screen bg-gray-100">
-                    <aside className="w-1/4 bg-white p-4 border-r border-gray-200">
+                    <aside className="w-full sm:w-1/4 bg-white p-4 border-r border-gray-200">
                         <h1 className="text-xl font-bold mb-4">Chat</h1>
                         <div className="relative mb-4">
                             <input
@@ -184,61 +184,61 @@ const Ucommunity = () => {
                             ))}
                         </ul>
                     </aside>
-                    <main className="flex-1 p-4">
-                        <header className="flex items-center justify-between mb-4">
-                            <div className="flex items-center">
-                                <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                                <div>
-                                    <h2 className="text-xl font-bold">Community</h2>
-                                    <p className="text-sm text-gray-500">9:00 Pm</p>
-                                </div>
-                            </div>
-                            <button className="bg-orange-500 text-white px-4 py-2 rounded-md flex items-center">
-                                Ask Question
-                                <svg
-                                    className="w-4 h-4 ml-2"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                                </svg>
-                            </button>
-                        </header>
-                        <div className="space-y-4 overflow-auto h-[calc(100vh-8rem)]">
-                         
-                                <div  className="bg-white p-4 rounded-lg shadow">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <div>
-                                            <p className="text-sm text-gray-500">
-                                                {votes} votes • {answers} answers
-                                            </p>
-                                            <h3 className="font-semibold">{questions}</h3>
-                                        </div>
-                                        <div className="flex items-center text-gray-500">
-                                            <svg
-                                                className="w-4 h-4 mr-1"
-                                                fill="none"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                            {views}
-                                        </div>
-                                    </div>
-                                    <p className="text-sm text-gray-600">{contents}</p>
-                                </div>
-                         <Utitle/>
-                        </div>
-                    </main>
+                    <main className="flex-1 p-4 hidden lg:block">
+    <header className="flex items-center justify-between mb-4 flex-col sm:hidden">
+        <div className="flex items-center mb-2 sm:mb-0">
+            <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
+            <div>
+                <h2 className="text-xl font-bold">Community</h2>
+                <p className="text-sm text-gray-500">9:00 PM</p>
+            </div>
+        </div>
+        <button className="bg-orange-500 text-white px-4 py-2 rounded-md flex items-center">
+            Ask Question
+            <svg
+                className="w-4 h-4 ml-2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+            </svg>
+        </button>
+    </header>
+    <div className="space-y-4 overflow-auto h-[calc(100vh-8rem)]">
+        <div className="bg-white p-4 rounded-lg shadow">
+            <div className="flex justify-between items-start mb-2">
+                <div>
+                    <p className="text-sm text-gray-500">
+                        {votes} votes • {answers} answers
+                    </p>
+                    <h3 className="font-semibold">{questions}</h3>
+                </div>
+                <div className="flex items-center text-gray-500">
+                    <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    {views}
+                </div>
+            </div>
+            <p className="text-sm text-gray-600">{contents}</p>
+        </div>
+        <Utitle />
+    </div>
+</main>
+
                 </div>
 
             </div>
