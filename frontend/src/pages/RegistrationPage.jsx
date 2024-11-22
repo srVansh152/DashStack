@@ -34,28 +34,31 @@ export default function RegistrationPage() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSocieties = async () => {
-      try {
-        const data = await getSocieties();
+  const fetchSocieties = async () => {
+    try {
+      const data = await getSocieties();
 
-        setSocieties(data);
-      } catch (error) {
-        console.error("Error fetching societies:", error);
-      }
-    };
+      setSocieties(data.data);
+    } catch (error) {
+      console.error("Error fetching societies:", error);
+    }
+  };
+
+  useEffect(() => {
+    // get socitey data 
     fetchSocieties();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate that passwords match
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    // Map formData to match backend fields
+    // Prepare payload for the register API
     const payload = {
       firstname: formData.firstName,
       lastname: formData.lastName,
@@ -69,25 +72,22 @@ export default function RegistrationPage() {
     };
 
     try {
-      console.log("Sending data:", payload);
-
-      const response = await axios.post(
-        "https://socitey-management-system-server.onrender.com/api/auth/register",
-        payload
-      );
-
-      if (response.data.token) {
+      // Call the registerUser function from api.js
+      const response = await registerUser(payload);
+      console.log(response.data.token);
+      if (response.success) {
         localStorage.setItem('token', response.data.token);
-        console.log("Token received:", response.data.token);
+        alert("Registration successful!");
         navigate('/admin/dashboard');
       } else {
-        alert(response.data.message || "Registration failed. Please try again.");
+        alert(response.message || "Registration failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error during registration:", error.response ? error.response.data : error.message);
-      alert(`Registration failed: ${error.response?.data?.message || "Server error"}`);
+      console.error("Error during registration:", error);
+      alert("An unexpected error occurred. Please try again.");
     }
   };
+
 
 
   const handleCreateSociety = async (societyData) => {
