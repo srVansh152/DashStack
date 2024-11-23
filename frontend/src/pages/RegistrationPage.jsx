@@ -37,6 +37,7 @@ export default function RegistrationPage() {
   const fetchSocieties = async () => {
     try {
       const data = await getSocieties();
+      console.log(data.data);
 
       setSocieties(data.data);
     } catch (error) {
@@ -90,16 +91,25 @@ export default function RegistrationPage() {
 
 
 
-  const handleCreateSociety = async (societyData) => {
+  const handleCreateSociety = async () => {
     try {
-      const response = await axios.post(
-        "https://socitey-management-system-server.onrender.com/api/society/create",
-        societyData
-      );
+      // Prepare payload for society creation
+      const payload = {
+        societyname: societyData.societyname,
+        societyaddress: societyData.societyaddress,
+        country: societyData.country,
+        state: societyData.state,
+        city: societyData.city,
+        zipcode: societyData.zipcode,
+      };
 
-      if (response.data) {
-        // Add new society to the societies list
+      // Call the createSociety function from api.js
+      const response = await createSociety(payload);
+
+      if (response.success) {
+        
         setSocieties(prevSocieties => [...prevSocieties, response.data]);
+
 
         // Reset the society form data
         setSocietyData({
@@ -116,20 +126,21 @@ export default function RegistrationPage() {
 
         // Show success message
         alert("Society created successfully!");
+      } else {
+        alert(response.message || "Failed to create society. Please try again.");
       }
     } catch (error) {
       // More detailed error handling
       console.error("Error creating society:", error);
 
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
+        // Server responded with a status code out of the 2xx range
         alert(error.response.data.message || "Error creating society. Please try again.");
       } else if (error.request) {
-        // The request was made but no response was received
+        // Request was made, but no response was received
         alert("No response from server. Please check your internet connection.");
       } else {
-        // Something happened in setting up the request that triggered an Error
+        // Other errors
         alert("Error creating society: " + error.message);
       }
     }
@@ -288,6 +299,7 @@ export default function RegistrationPage() {
                     ))}
                     {/* Create Society Option */}
                     <li
+                      key="create-society"
                       className="cursor-pointer px-4 py-2 hover:bg-gray-100 text-orange-600 font-semibold"
                       onClick={() => {
                         openModal(); // Opens the modal for creating a new society
