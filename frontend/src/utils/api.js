@@ -13,7 +13,7 @@ api.interceptors.request.use(
   (config) => {
     // Retrieve the token from localStorage or any other storage
     const token = localStorage.getItem('token');
-
+    console.log(token);
     // Add the Authorization header if token exists
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
@@ -36,7 +36,8 @@ api.interceptors.request.use(
 export const registerUser = async (userData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/register`, userData);
-    return response.data;
+    console.log(response.data)
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Registration error:", error);
     return { success: false, message: "Registration failed due to a server error." };
@@ -47,7 +48,7 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);
-    return response.data;
+    return { success: true, data: response.data };
   } catch (error) {
     console.error("Login error:", error);
     return { success: false, message: error.response?.data?.message || "Login failed due to a server error." };
@@ -58,7 +59,7 @@ export const loginUser = async (credentials) => {
 export const forgotPassword = async (email) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/forgot-password`, { email });
-    return response.data;
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Forgot password error:", error);
     return { success: false, message: error.response?.data?.message || "Failed to process the forgot password request." };
@@ -68,41 +69,51 @@ export const forgotPassword = async (email) => {
 // Verify OTP
 export const verifyOtp = async (otpData) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/auth/verify-otp`, { params: otpData });
-    return response.data;
+    const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, otpData);
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("OTP verification error:", error);
     return { success: false, message: error.response?.data?.message || "Failed to verify OTP." };
   }
 };
 
+
 // Reset Password
 export const resetPassword = async (resetData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/reset-password`, resetData);
-    return response.data;
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Reset password error:", error);
     return { success: false, message: error.response?.data?.message || "Password reset failed." };
   }
 };
 
-// Get user profile
+// Get user profile still remain update 
 export const getProfile = async (token) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/auth/profile`, { isMultipart: true });
-    return response.data;
+    const response = await axios.get(`http://localhost:5000/api/auth/profile`,{
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
+
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Get profile error:", error);
     return { success: false, message: error.response?.data?.message || "Failed to fetch user profile." };
   }
 };
 
-// Update user profile
+// Update user profile still remain update 
 export const updateProfile = async (token, updateData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/auth/profile`, updateData,  { isMultipart: true });
-    return response.data;
+    const response = await axios.put(`http://localhost:5000/api/auth/profile`, updateData,{
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Update profile error:", error);
     return { success: false, message: error.response?.data?.message || "Failed to update profile." };
@@ -113,7 +124,7 @@ export const updateProfile = async (token, updateData) => {
 export const createSociety = async (societyData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/society/create`, societyData);
-    return response.data;
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Error creating society:", error);
     throw error;
@@ -124,135 +135,54 @@ export const createSociety = async (societyData) => {
 export const getSocieties = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/society`);
-    return response.data;
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
     console.error("Error fetching societies:", error);
     throw error;
   }
 };
 
-// Admin get important number  not header
-export const getImportantNumbers = async () => {
+// Admin fetch important number  not header
+export const fetchImportantNumbers = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/important-numbers`);
-    return response.data;
+    const response = await api.get('/important-numbers');
+    return { success: true, data: response.data.data };
   } catch (error) {
-    console.error("Error fetching societies:", error);
-    throw error;
+    console.error("Error fetching important numbers:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch important numbers." };
   }
 };
 
-
-// Complaints API functions
-
-// Create a complaint
-export const createComplaint = async (complaintData, token) => {
+// Create a new important number
+export const createImportantNumber = async (numberData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/complaints/createComplaint`, complaintData, { isMultipart: true });
-    return response.data;
+    const response = await api.post('/important-numbers', numberData);
+    return { success: true, data: response.data.data };
   } catch (error) {
-    console.error("Error creating complaint:", error);
-    throw error;
+    console.error("Error creating important number:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create important number." };
   }
 };
 
-// Update a complaint
-export const updateComplaint = async (id, updatedData, token) => {
+// Update an important number
+export const updateImportantNumber = async (id, updatedData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/complaints/update/${id}`, updatedData, { isMultipart: true });
-    return response.data;
+    const response = await api.put(`/important-numbers/${id}`, updatedData);
+    return { success: true, data: response.data.data };
   } catch (error) {
-    console.error("Error updating complaint:", error);
-    throw error;
+    console.error("Error updating important number:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update important number." };
   }
 };
 
-// View a specific complaint
-export const viewComplaint = async (id, token) => {
+// Delete an important number
+export const deleteImportantNumber = async (id) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/complaints/view/${id}`, { isMultipart: true });
-    return response.data;
+    const response = await api.delete(`/important-numbers/${id}`);
+    return { success: true, message: response.data.message ,data :response.data};
   } catch (error) {
-    console.error("Error viewing complaint:", error);
-    throw error;
+    console.error("Error deleting important number:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete important number." };
   }
 };
 
-// Delete a complaint
-export const deleteComplaint = async (id, token) => {
-  try {
-    const response = await axios.delete(`${API_BASE_URL}/complaints/delete/${id}`, { isMultipart: true });
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting complaint:", error);
-    throw error;
-  }
-};
-
-// List complaints by society and admin
-export const listComplaintsBySocietyAndAdmin = async (token) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/complaints/list`, { isMultipart: true });
-    return response.data;
-  } catch (error) {
-    console.error("Error listing complaints:", error);
-    throw error;
-  }
-};
-
-// Announcements API functions
-
-// Create an announcement
-export const createAnnouncement = async (announcementData, token) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/announcements`, announcementData, { isMultipart: true });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating announcement:", error);
-    throw error;
-  }
-};
-
-// Get all announcements
-export const getAnnouncements = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/announcements`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching announcements:", error);
-    throw error;
-  }
-};
-
-// Get a specific announcement by ID
-export const getAnnouncementById = async (id) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/announcements/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching announcement:", error);
-    throw error;
-  }
-};
-
-// Update an announcement
-export const updateAnnouncement = async (id, updatedData, token) => {
-  try {
-    const response = await axios.put(`${API_BASE_URL}/announcements/${id}`, updatedData, { isMultipart: true });
-    return response.data;
-  } catch (error) {
-    console.error("Error updating announcement:", error);
-    throw error;
-  }
-};
-
-// Delete an announcement
-export const deleteAnnouncement = async (id, token) => {
-  try {
-    const response = await axios.delete(`${API_BASE_URL}/announcements/${id}`, { isMultipart: true });
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting announcement:", error);
-    throw error;
-  }
-};

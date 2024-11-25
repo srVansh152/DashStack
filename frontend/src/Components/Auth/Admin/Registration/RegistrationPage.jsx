@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-
 import { useEffect, useState } from "react";
 import { registerUser, createSociety, getSocieties } from "../../../../utils/api";
 import axios from "axios";
@@ -34,28 +33,32 @@ export default function RegistrationPage() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSocieties = async () => {
-      try {
-        const data = await getSocieties();
+  const fetchSocieties = async () => {
+    try {
+      const data = await getSocieties();
+      console.log(data.data);
 
-        setSocieties(data);
-      } catch (error) {
-        console.error("Error fetching societies:", error);
-      }
-    };
+      setSocieties(data.data);
+    } catch (error) {
+      console.error("Error fetching societies:", error);
+    }
+  };
+
+  useEffect(() => {
+    // get socitey data 
     fetchSocieties();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate that passwords match
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    // Map formData to match backend fields
+    // Prepare payload for the register API
     const payload = {
       firstname: formData.firstName,
       lastname: formData.lastName,
@@ -69,37 +72,43 @@ export default function RegistrationPage() {
     };
 
     try {
-      console.log("Sending data:", payload);
-
-      const response = await axios.post(
-        "https://socitey-management-system-server.onrender.com/api/auth/register",
-        payload
-      );
-
-      if (response.data.token) {
+      // Call the registerUser function from api.js
+      const response = await registerUser(payload);
+      console.log(response.data.token);
+      if (response.success) {
         localStorage.setItem('token', response.data.token);
-        console.log("Token received:", response.data.token);
+        alert("Registration successful!");
         navigate('/admin/dashboard');
       } else {
-        alert(response.data.message || "Registration failed. Please try again.");
+        alert(response.message || "Registration failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error during registration:", error.response ? error.response.data : error.message);
-      alert(`Registration failed: ${error.response?.data?.message || "Server error"}`);
+      console.error("Error during registration:", error);
+      alert("An unexpected error occurred. Please try again.");
     }
   };
 
 
-  const handleCreateSociety = async (societyData) => {
-    try {
-      const response = await axios.post(
-        "https://socitey-management-system-server.onrender.com/api/society/create",
-        societyData
-      );
 
-      if (response.data) {
-        // Add new society to the societies list
+  const handleCreateSociety = async () => {
+    try {
+      // Prepare payload for society creation
+      const payload = {
+        societyname: societyData.societyname,
+        societyaddress: societyData.societyaddress,
+        country: societyData.country,
+        state: societyData.state,
+        city: societyData.city,
+        zipcode: societyData.zipcode,
+      };
+
+      // Call the createSociety function from api.js
+      const response = await createSociety(payload);
+
+      if (response.success) {
+        
         setSocieties(prevSocieties => [...prevSocieties, response.data]);
+
 
         // Reset the society form data
         setSocietyData({
@@ -116,20 +125,21 @@ export default function RegistrationPage() {
 
         // Show success message
         alert("Society created successfully!");
+      } else {
+        alert(response.message || "Failed to create society. Please try again.");
       }
     } catch (error) {
       // More detailed error handling
       console.error("Error creating society:", error);
 
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
+        // Server responded with a status code out of the 2xx range
         alert(error.response.data.message || "Error creating society. Please try again.");
       } else if (error.request) {
-        // The request was made but no response was received
+        // Request was made, but no response was received
         alert("No response from server. Please check your internet connection.");
       } else {
-        // Something happened in setting up the request that triggered an Error
+        // Other errors
         alert("Error creating society: " + error.message);
       }
     }
@@ -288,6 +298,7 @@ export default function RegistrationPage() {
                     ))}
                     {/* Create Society Option */}
                     <li
+                      key="create-society"
                       className="cursor-pointer px-4 py-2 hover:bg-gray-100 text-orange-600 font-semibold"
                       onClick={() => {
                         openModal(); // Opens the modal for creating a new society
