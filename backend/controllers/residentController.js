@@ -22,31 +22,31 @@ exports.createResident = async (req, res) => {
         console.log(req.files);
 
         const files = req.files || {};
-        const societyId = req.user.society._id;
 
+        const societyId = req.user.society._id;
         if (!societyId) {
             return res.status(400).json({ message: "Society ID not found in admin's data." });
         }
 
-        // Check if required files are present
-        if (!files.photo || !files.aadhaarFront || !files.aadhaarBack || !files.addressProof || !files.rentAgreement) {
+        // Check for required files
+        const photo = files.photo?.[0]?.path || req.body.photo;
+        const aadhaarFront = files.aadhaarFront?.[0]?.path || req.body.aadhaarFront;
+        const aadhaarBack = files.aadhaarBack?.[0]?.path || req.body.aadhaarBack;
+        const addressProof = files.addressProof?.[0]?.path || req.body.addressProof;
+        const rentAgreement = files.rentAgreement?.[0]?.path || req.body.rentAgreement;
+
+        if (!photo || !aadhaarFront || !aadhaarBack || !addressProof || !rentAgreement) {
             return res.status(400).json({ message: "Required document uploads are missing." });
         }
 
-        const photo = files.photo[0].path;
-        const aadhaarFront = files.aadhaarFront[0].path;
-        const aadhaarBack = files.aadhaarBack[0].path;
-        const addressProof = files.addressProof[0].path;
-        const rentAgreement = files.rentAgreement[0].path;
-
-        // Parse fields from JSON strings if they are strings
-        const members = typeof req.body.members === 'string' ? JSON.parse(req.body.members) : req.body.members;
-        const vehicles = typeof req.body.vehicles === 'string' ? JSON.parse(req.body.vehicles) : req.body.vehicles;
+        // Parse JSON strings for nested fields if provided
+        const members = typeof req.body.members === 'string' ? JSON.parse(req.body.members) : req.body.members || [];
+        const vehicles = typeof req.body.vehicles === 'string' ? JSON.parse(req.body.vehicles) : req.body.vehicles || [];
         const ownerDetails = typeof req.body.ownerDetails === 'string' ? JSON.parse(req.body.ownerDetails) : req.body.ownerDetails;
 
-        // Ensure required fields in `ownerDetails` are present
-        if (!ownerDetails || !ownerDetails.address || !ownerDetails.phoneNumber || !ownerDetails.fullName) {
-            return res.status(400).json({ message: "Owner details are incomplete or missing." });
+        // Ensure required fields in `ownerDetails` are present for non-owners
+        if (!req.body.owner && (!ownerDetails || !ownerDetails.address || !ownerDetails.phoneNumber || !ownerDetails.fullName)) {
+            return res.status(400).json({ message: "Owner details are incomplete or missing for non-owner residents." });
         }
 
         const randomPassword = generateRandomPassword();
@@ -69,15 +69,6 @@ exports.createResident = async (req, res) => {
 
         const resident = new Resident(residentData);
         await resident.save();
-
-        // Initialize payment entry for this resident
-        // const initialPaymentEntry = new Payment({
-        //     resident: resident._id,
-        //     amount: 0,
-        //     status: 'pending',
-        //     dueDate: null,
-        // });
-        // await initialPaymentEntry.save();
 
         // Update society's resident list and unit count
         await Society.findByIdAndUpdate(
@@ -105,7 +96,7 @@ exports.createResident = async (req, res) => {
                     </table>
                     <p>Regards,<br>Society Management Team</p>
                 </div>
-            `
+            `,
         };
         await transporter.sendMail(mailOptions);
 
@@ -115,7 +106,6 @@ exports.createResident = async (req, res) => {
         res.status(500).json({ message: "Failed to create resident", error: error.message });
     }
 };
-
 // Controller to update resident details
 exports.updateResident = async (req, res) => {
     try {

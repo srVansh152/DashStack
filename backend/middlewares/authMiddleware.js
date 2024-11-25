@@ -12,7 +12,6 @@ const protect = async (req, res, next) => {
       // Identify if the user is an admin or resident based on the token role
       let user = await User.findById(decoded.id).select('-password').populate('society');
       let role = user ? user.role : 'resident';
-
       if (role === 'resident') {
         user = await Resident.findById(decoded.id).populate('society createdBy'); // createdBy is admin
         if (!user) {
@@ -28,7 +27,9 @@ const protect = async (req, res, next) => {
 
       if (user.society) {
         const society = await Society.findById(user.society).populate('residents');
-        req.residents = society.residents;
+        req.residents = society.residents || [];
+        req.user.society = society; // Attach full society object to user
+
       } else {
         req.residents = [];
       }
