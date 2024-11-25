@@ -17,9 +17,7 @@ export default function Aside() {
   const [activeMenu, setActiveMenu] = useState('')
   const [hoveredMenu, setHoveredMenu] = useState(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isFinancialOpen, setIsFinancialOpen] = useState(true)
-  const [isComplaintOpen, setIsComplaintOpen] = useState(true)
-  const [isSecurityOpen, setIsSecurityOpen] = useState(true)
+  const [openDropdown, setOpenDropdown] = useState('')
 
   // Financial menu items
   const financialMenuItems = [
@@ -40,37 +38,8 @@ export default function Aside() {
     { id: 2, label: 'Security Protocals', path: 'securityprotocols' },
   ]
 
-  const handleComplaintClick = () => {
-    setHoveredMenu(null)
-    if (activeMenu === 'Complaint Tracking') {
-      setIsComplaintOpen(!isComplaintOpen)
-    } else {
-      setActiveMenu('Complaint Tracking')
-      setIsComplaintOpen(true)
-      setIsSidebarOpen(false)
-    }
-  }
-
-  const handleSecurityClick = () => {
-    setHoveredMenu(null)
-    if (activeMenu === 'Security Management') {
-      setIsSecurityOpen(!isSecurityOpen)
-    } else {
-      setActiveMenu('Security Management')
-      setIsSecurityOpen(true)
-      setIsSidebarOpen(false)
-    }
-  }
-
-  const handleFinancialClick = () => {
-    setHoveredMenu(null)
-    if (activeMenu === 'Financial Management') {
-      setIsFinancialOpen(!isFinancialOpen)
-    } else {
-      setActiveMenu('Financial Management')
-      setIsFinancialOpen(true)
-      setIsSidebarOpen(false)
-    }
+  const handleDropdownToggle = (dropdown) => {
+    setOpenDropdown(openDropdown === dropdown ? '' : dropdown)
   }
 
   return (
@@ -129,17 +98,17 @@ export default function Aside() {
           <Dropdown
             label="Financial Management"
             icon={DollarSign}
-            isOpen={isFinancialOpen}
+            isOpen={openDropdown === 'Financial Management'}
             active={activeMenu === 'Financial Management'}
             hovered={hoveredMenu === 'Financial Management'}
             items={financialMenuItems}
-            onClick={handleFinancialClick}
+            onClick={() => handleDropdownToggle('Financial Management')}
             onHoverEnter={() => setHoveredMenu('Financial Management')}
             onHoverLeave={() => setHoveredMenu(null)}
           />
 
-           {/* Other menu items */}
-           <SidebarItem
+          {/* Other menu items */}
+          <SidebarItem
             icon={Package}
             label="Facility Management"
             path="Facilitymanagment"
@@ -158,11 +127,11 @@ export default function Aside() {
           <Dropdown
             label="Complaint Tracking"
             icon={Bell}
-            isOpen={isComplaintOpen}
+            isOpen={openDropdown === 'Complaint Tracking'}
             active={activeMenu === 'Complaint Tracking'}
             hovered={hoveredMenu === 'Complaint Tracking'}
             items={complaintMenuItems}
-            onClick={handleComplaintClick}
+            onClick={() => handleDropdownToggle('Complaint Tracking')}
             onHoverEnter={() => setHoveredMenu('Complaint Tracking')}
             onHoverLeave={() => setHoveredMenu(null)}
           />
@@ -171,16 +140,14 @@ export default function Aside() {
           <Dropdown
             label="Security Management"
             icon={Settings}
-            isOpen={isSecurityOpen}
+            isOpen={openDropdown === 'Security Management'}
             active={activeMenu === 'Security Management'}
             hovered={hoveredMenu === 'Security Management'}
             items={securityManagement}
-            onClick={handleSecurityClick}
+            onClick={() => handleDropdownToggle('Security Management')}
             onHoverEnter={() => setHoveredMenu('Security Management')}
             onHoverLeave={() => setHoveredMenu(null)}
           />
-
-         
 
           <SidebarItem
             icon={Package}
@@ -269,9 +236,7 @@ function Dropdown({ label, icon: Icon, isOpen, active, hovered, items, onClick, 
       >
         <div className="flex items-center gap-3">
           <Icon
-            className={`w-5 h-5 transition-transform duration-200 ${
-              hovered ? 'scale-110' : ''
-            }`}
+            className={`w-5 h-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`}
           />
           <span>{label}</span>
         </div>
@@ -281,7 +246,7 @@ function Dropdown({ label, icon: Icon, isOpen, active, hovered, items, onClick, 
 
       {isOpen && (
         <div className="bg-white pl-4">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <a
               key={item.id}
               href={item.path}
@@ -296,4 +261,3 @@ function Dropdown({ label, icon: Icon, isOpen, active, hovered, items, onClick, 
     </div>
   )
 }
-     
