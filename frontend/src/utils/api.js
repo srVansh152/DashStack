@@ -92,7 +92,7 @@ export const resetPassword = async (resetData) => {
 // Get user profile still remain update 
 export const getProfile = async (token) => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/auth/profile`,{
+    const response = await axios.get(`${API_BASE_URL}/auth/profile`,{
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
       },
@@ -108,7 +108,7 @@ export const getProfile = async (token) => {
 // Update user profile still remain update 
 export const updateProfile = async (token, updateData) => {
   try {
-    const response = await axios.put(`http://localhost:5000/api/auth/profile`, updateData,{
+    const response = await axios.put(`${API_BASE_URL}/auth/profile`, updateData,{
       headers: {
         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
       },
