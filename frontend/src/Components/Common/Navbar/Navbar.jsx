@@ -21,6 +21,7 @@ const Navbar = () => {
             </div>
 
             {/* Profile Section */}
+            <div className='profile'>
             <Link to="/admin/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
               <img
                 src="/api/placeholder/32/32"
@@ -32,6 +33,7 @@ const Navbar = () => {
                 <p className="text-xs text-gray-500">admin</p>
               </div>
             </Link>
+            </div>
           </div>
         </header>
     </div>
