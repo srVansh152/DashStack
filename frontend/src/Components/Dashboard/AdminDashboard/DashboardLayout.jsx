@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown } from 'lucide-react';
+import { Activity, DollarSign, Package, Users,  Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router-dom';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import axios from 'axios'; // Import axios for API calls
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, } from '../../../utils/api';
 
 const DashboardLayout = () => {
 
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [openModel, setOpenModel] = useState(false);
     const [openEditModel, setOpenEditModel] = useState(false);
@@ -148,19 +147,32 @@ const DashboardLayout = () => {
         }
     ];
 
-    // Fetch important numbers from the API
-    const loadImportantNumbers = async () => {
-        const result = await fetchImportantNumbers();
-        if (result.success) {
-            setImportantNumbers(result.data); // Update the state with fetched data
-        } else {
-            console.error("Failed to load important numbers:", result.message);
-            setImportantNumbers([]); // Reset state on failure
-        }
-    };
-
     useEffect(() => {
-        loadImportantNumbers();
+        const fetchImportantNumbers = async () => {
+            try {
+                const token = localStorage.getItem('token'); // Retrieve the token
+                const response = await axios.get('https://socitey-management-system-server.onrender.com/api/important-numbers', {
+                    headers: {
+                        Authorization: `Bearer ${token}` // Include the token in the headers
+                    }
+                });
+                console.log("API Response:", response.data.data); // Log the response data
+
+                // Ensure the response data is an array
+                if (Array.isArray(response.data.data)) {
+                    setImportantNumbers(response.data.data);
+                    console.log("Important Numbers Set:", response.data); // Log the data being set
+                } else {
+                    console.error("Unexpected data format:", response.data);
+                    setImportantNumbers([]); // Reset to empty array on unexpected format
+                }
+            } catch (error) {
+                console.error("Error fetching important numbers:", error);
+                setImportantNumbers([]); // Reset to empty array on error
+            }
+        };
+
+        fetchImportantNumbers();
     }, []);
 
     // Function to handle adding important number
@@ -279,7 +291,6 @@ const DashboardLayout = () => {
             <div className="flex h-screen bg-gray-50">
 
                 <div className="flex-1 overflow-auto">
-                    {/* chnage header incompleat */}
                     <header className="bg-white p-4 border-b flex justify-between items-center shadow-sm sticky top-0 z-10">
                         {/* Search Bar - hidden on smaller screens */}
                         <div className="flex items-center flex-1">
