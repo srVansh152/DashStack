@@ -186,3 +186,137 @@ export const deleteImportantNumber = async (id) => {
   }
 };
 
+/**
+ * Expenses API Functions
+ */
+
+// Add a new expense
+export const addExpense = async (expenseData, token) => {
+  try {
+    console.log(expenseData,token);
+    
+    const response = await api.post('/expenses/add', expenseData, { 
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Error adding expense:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to add expense.' };
+  }
+};
+
+// Update an existing expense
+export const updateExpense = async (expenseId, expenseData) => {
+  try {
+    const formData = new FormData();
+    for (const key in expenseData) {
+      formData.append(key, expenseData[key]);
+    }
+
+    const response = await api.put(`/expenses/update/${expenseId}`, formData, { isMultipart: true });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Error updating expense:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to update expense.' };
+  }
+};
+
+// View a single expense by ID
+export const viewExpense = async (expenseId) => {
+  try {
+    const response = await api.get(`/expenses/view/${expenseId}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Error fetching expense:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to fetch expense.' };
+  }
+};
+
+// Delete an expense
+export const deleteExpense = async (expenseId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found. User might not be authenticated.");
+    }
+    console.log(expenseId)
+    const response = await api.delete(`/expenses/delete/${expenseId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // Check if the response indicates success
+    if (response.status === 200) {
+      return { success: true, data: response.data };
+    } else {
+      return { success: false, message: "Failed to delete expense." };
+    }
+  } catch (error) {
+    console.error('Error deleting expense:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to delete expense.' };
+  }
+};
+
+// List all expenses for the authenticated admin's society
+export const listExpenses = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found. User might not be authenticated.");
+    }
+    
+    const response = await api.get('/expenses/list', { 
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Error fetching expenses:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to fetch expenses.' };
+  }
+};
+
+// --- Notes Management APIs ---
+
+// Add a new note
+export const addNote = async (noteData) => {
+  try {
+    const response = await api.post('/notes/notes', noteData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error adding note:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to add note." };
+  }
+};
+
+// Update an existing note
+export const updateNote = async (id, noteData) => {
+  try {
+    const response = await api.put(`/notes/notes/${id}`, noteData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error updating note:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update note." };
+  }
+};
+
+// Get all notes for the authenticated user
+export const getNotes = async () => {
+  try {
+    const response = await api.get('/notes/notes');
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch notes." };
+  }
+};
+
+// Delete a note
+export const deleteNote = async (id) => {
+  try {
+    const response = await api.delete(`/notes/notes/${id}`);
+    return { success: true, message: response.data.message };
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete note." };
+  }
+};

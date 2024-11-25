@@ -1,10 +1,10 @@
-
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bell, Eye, FileText, Plus, Pencil, Trash2, Calendar, X } from 'lucide-react'
 
 import { Link } from 'react-router-dom'
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
+import { addExpense, listExpenses, deleteExpense, viewExpense, updateExpense } from '../../../../utils/api';
 
 export default function ExpenseTracker() {
     
@@ -17,6 +17,9 @@ export default function ExpenseTracker() {
     const [description, setDescription] = useState('')
     const [date, setDate] = useState('')
     const [amount, setAmount] = useState('')
+    const [expenses, setExpenses] = useState([]);
+    const [expenseToDelete, setExpenseToDelete] = useState(null);
+    const [selectedExpense, setSelectedExpense] = useState(null);
 
     const expenseData = {
         title: 'Rent Or Mortgage',
@@ -30,16 +33,12 @@ export default function ExpenseTracker() {
     }
 
     const [formData, setFormData] = useState({
-        title: 'Rent or Mortgage',
-        description: 'The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.',
-        date: '2024-05-12',
-        amount: '1500',
-        file: {
-            name: 'Syncfusion Essential Rentagreement.GIF',
-            size: '3.5 MB'
-        }
-    })
-
+        title: '',
+        description: '',
+        date: '',
+        amount: '',
+        file: null
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -49,23 +48,64 @@ export default function ExpenseTracker() {
         }));
     };
 
-    const handleEditSubmit = (e) => {
+    const handleEditSubmit = async (e) => {
         e.preventDefault();
-        // Your submit logic here
-        console.log('Form submitted', formData);
-    };
+        console.log('Submitting edit form with data:', formData); // Log form data
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error('No token found. Please log in again.'); // Check if token exists
+            }
+            console.log(selectedExpense._id)
+            const response = await updateExpense(selectedExpense._id, formData, token); // Call the update function
+            console.log('Response from updateExpense:', response); // Log the response
 
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+
+            console.log('Expense updated successfully:', response.data);
+            fetchExpenses(); // Refresh the expense list after update
+            setOpenEditModel(false); // Close the edit modal
+        } catch (error) {
+            console.error('Error updating expense:', error);
+        }
+    };
 
 
     const handleAddModel = () => {
         setOpenModel(true);
     };
-    const handleEditModel = () => {
+
+    const handleEditModel = (expense) => {
+        
+        setFormData({
+            id:expense._id,
+            title: expense.title,
+            description: expense.description,
+            date: expense.date,
+            amount: expense.amount,
+            file: expense.file // Assuming file is an object with name and size
+        });
         setOpenEditModel(true);
     };
-    const handleViewModel = () => {
+
+ 
+
+    const handleViewModel = async (expenseId) => {
         setOpenViewModel(true);
+        try {
+            const response = await viewExpense(expenseId);
+            if (response.success) {
+                setSelectedExpense(response.data);
+            } else {
+                throw new Error('Failed to fetch expense details');
+            }
+        } catch (error) {
+            console.error('Error fetching expense details:', error);
+        }
     };
+
     const handleDeleteModel = () => {
         setOpenDeleteModel(true);
     };
@@ -85,62 +125,76 @@ export default function ExpenseTracker() {
         }
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         const expenseData = {
             title,
             description,
             date,
             amount,
             file
+        };
+
+        try {
+            const token = localStorage.getItem("token")
+            const response = await addExpense(expenseData,token)
+            console.log(response)
+
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = response.data
+            console.log('Expense submitted successfully:', data);
+            fetchExpenses();
+            
+            // Reset form fields
+            setTitle('');
+            setDescription('');
+            setDate('');
+            setAmount('');
+            setFile(null);
+            setOpenModel(false);
+        } catch (error) {
+            console.error('Error submitting expense:', error);
         }
+    };
 
+    const fetchExpenses = async () => {
+        try {
+            const response = await listExpenses()
+            if (response.data) {
+                setExpenses(response.data); // Set the fetched expenses to state
+            }
+        } catch (error) {
+            console.error('Error fetching expenses:', error);
+        }
+    };
 
-        setTitle('')
-        setDescription('')
-        setDate('')
-        setAmount('')
-        setFile(null)
-        setOpenModel(false)
-    }
+    const handleDeleteExpense = async (expenseId) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error('No token found. Please log in again.'); // Check if token exists
+            }
+            console.log(expenseId)
+            const response = await deleteExpense(expenseId, token); // Assuming deleteExpense is the API call
+            console.log(response);
 
-    const expenses = [
-        {
-            title: "Rent or Mortgage",
-            description: "A visual representation of your spending categories...",
-            date: "15/02/2024",
-            amount: 1000,
-            format: "JPG",
-        },
-        {
-            title: "Housing Costs",
-            description: "Track the fluctuations in your spending over time...",
-            date: "11/02/2024",
-            amount: 1000,
-            format: "PDF",
-        },
-        {
-            title: "Property Taxes",
-            description: "Easily compare your planned budget against we your...",
-            date: "12/02/2024",
-            amount: 1000,
-            format: "JPG",
-        },
-        {
-            title: "Transportation",
-            description: "Identify your largest expenditures, you a enabling you...",
-            date: "13/02/2024",
-            amount: 1000,
-            format: "PDF",
-        },
-        {
-            title: "Financial Breakdown",
-            description: "Tailor the dashboard to your unique financial we goals...",
-            date: "14/02/2024",
-            amount: 1000,
-            format: "JPG",
-        },
-    ]
+            if (!response.success) {
+                throw new Error(`Failed to delete expense: ${response.message || 'Unknown error'}`); // More informative error message
+            }
+
+            console.log('Expense deleted successfully');
+            fetchExpenses(); // Refresh the expense list after deletion
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchExpenses(); // Call the fetch function
+    }, []); // Empty dependency array to run once on mount
 
     
 
@@ -190,13 +244,16 @@ export default function ExpenseTracker() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
-                                                        <button onClick={handleEditModel} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
+                                                        <button onClick={() => handleEditModel(expense)} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
                                                             <Pencil className="w-6 h-5" />
                                                         </button>
-                                                        <button onClick={handleViewModel} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
+                                                        <button onClick={() => handleViewModel(expense._id)} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
                                                             <Eye className="w-6 h-5" />
                                                         </button>
-                                                        <button onClick={handleDeleteModel} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
+                                                        <button onClick={() => {
+                                                            setOpenDeleteModel(true);
+                                                            setExpenseToDelete(expense._id); 
+                                                        }} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
                                                             <Trash2 className="w-6 h-5" />
                                                         </button>
                                                     </div>
@@ -439,8 +496,8 @@ export default function ExpenseTracker() {
                         </div>
                     </div>
                 )}
-                {openViewModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                {openViewModel && selectedExpense && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
                         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
                             <div className="p-6">
                                 <div className="flex items-center justify-between mb-6">
@@ -453,23 +510,23 @@ export default function ExpenseTracker() {
                                 <div className="space-y-6">
                                     <div>
                                         <label className="block text-sm text-gray-500">Title</label>
-                                        <p className="mt-1 text-base">{expenseData.title}</p>
+                                        <p className="mt-1 text-base">{selectedExpense.title}</p>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm text-gray-500">Description</label>
-                                        <p className="mt-1 text-base">{expenseData.description}</p>
+                                        <p className="mt-1 text-base">{selectedExpense.description}</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm text-gray-500">Date</label>
-                                            <p className="mt-1 text-base">{expenseData.date}</p>
+                                            <p className="mt-1 text-base">{selectedExpense.date}</p>
                                         </div>
 
                                         <div>
                                             <label className="block text-sm text-gray-500">Amount</label>
-                                            <p className="mt-1 text-base">₹ {expenseData.amount}</p>
+                                            <p className="mt-1 text-base">₹ {selectedExpense.amount}</p>
                                         </div>
                                     </div>
 
@@ -477,19 +534,16 @@ export default function ExpenseTracker() {
                                         <label className="block text-sm text-gray-500">Bill</label>
                                         <div className="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                             <div className="h-10 w-10 flex-shrink-0 rounded-lg border bg-white flex items-center justify-center">
-                                                <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
+
+                                                {selectedExpense.billImage ? (
+                                                    <img src={selectedExpense.billImage} alt="Bill" className="h-10 w-10 rounded-lg" />
+                                                ) : (
+                                                    <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                )}
+                                                
                                             </div>
-                                            <div>
-                                                <p className="text-sm font-medium">{expenseData.bill.name}</p>
-                                                <p className="text-xs text-gray-500">{expenseData.bill.size}</p>
-                                            </div>
-                                            <button className="ml-auto p-1.5 hover:bg-gray-200 rounded-md">
-                                                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -502,22 +556,15 @@ export default function ExpenseTracker() {
                         <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
                             <div className="p-6 space-y-4">
                                 <h2 className="text-xl font-semibold text-gray-900">Delete Expense?</h2>
-
-                                <p className="text-gray-500">
-                                    Are you sure you want to delete this Expense?
-                                </p>
-
+                                <p className="text-gray-500">Are you sure you want to delete this Expense?</p>
                                 <div className="flex gap-4 pt-2">
-                                    <button onClick={() => setOpenDeleteModel(false)}
-                                        type="button"
-                                        className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                                    >
+                                    <button onClick={() => setOpenDeleteModel(false)} type="button" className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
                                         Cancel
                                     </button>
-                                    <button
-                                        type="button"
-                                        className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                                    >
+                                    <button onClick={() => {
+                                        handleDeleteExpense(expenseToDelete); // Call delete function with the expense ID
+                                        setOpenDeleteModel(false); // Close the modal
+                                    }} type="button" className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
                                         Delete
                                     </button>
                                 </div>

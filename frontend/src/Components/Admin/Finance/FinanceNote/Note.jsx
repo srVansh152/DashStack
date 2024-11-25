@@ -1,81 +1,112 @@
 import React, { useEffect, useState } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, MoreVertical } from 'lucide-react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
+import { addNote, getNotes, updateNote, deleteNote } from '../../../../utils/api';
 
 
 
 
 function Note() {
- 
+
   const [openModal, setOpenModal] = useState(false);
   const [openEditModel, setOpenEditModel] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
-  const [titlee, setTitlee] = useState('Rent or Mortgage');
-  const [descriptionn, setDescriptionn] = useState('The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.');
-  const [datee, setDatee] = useState('2024-05-12');
+  const [notes, setNotes] = useState([]);
+  const [noteId, setNoteId] = useState(null);
+  const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic, e.g., saving or sending the data
-    console.log({ title, description, date });
+
+  const FatchNotes = async () => {
+    try {
+      const response = await getNotes()
+      console.log(response)
+      if (response.success) {
+        setNotes(response.data);
+      } else {
+        throw new Error('Failed to fetch notes');
+      }
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    }
   };
 
-  const handleEditSubmit = (e) => {
+  useEffect(() => {
+    FatchNotes();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here, e.g., sending data to a server
-    console.log({ titlee, descriptionn, datee });
+
+    const noteData = {
+      title,
+      description,
+      date
+    };
+
+    try {
+      const response = await addNote(noteData)
+
+      if (!response.success) {
+        throw new Error('Network response was not ok');
+      }
+      setOpenModal(false)
+      FatchNotes();
+
+      const result = response
+      navigate("/admin/note")
+
+      console.log('Note created successfully:', result);
+    } catch (error) {
+      console.error('Error creating note:', error);
+    }
   };
 
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const noteData = { title: title, description: description, date: date }; // Prepare the data
+      const response = await updateNote(noteId, noteData); // Call the updateNote function with the note ID and data
+      if (response.success) {
+        FatchNotes()
+        console.log("Note updated successfully:", response.data);
+        setOpenEditModel(false);
+      } else {
+        console.error("Failed to update note:", response.message);
+      }
+    } catch (error) {
+      console.error("Error in handleEditSubmit:", error);
+    }
+  };
+
+  const handleDelete = async (noteId) => {
+    try {
+      const response = await deleteNote(noteId);
+      if (response.success) {
+        console.log("Note deleted successfully:", response.message);
+        FatchNotes();
+      } else {
+        console.error("Failed to delete note:", response.message);
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
 
   const handleAddModel = () => {
     setOpenModal(true);
   };
-  const handleEditModel = () => {
+  const handleEditModel = (note) => {
+    console.log(note._id)
+    setTitle(note.title);
+    setDescription(note.description);
+    setDate(note.date);
+    setNoteId(note._id);
     setOpenEditModel(true);
   };
-
-
-
-
-
-
-
-  const facilities = [
-    {
-      title: "Parking Facilities",
-
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Community Center",
-
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Swimming Pool",
-
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Parks and Green Spaces",
-
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Wi-Fi and Connectivity",
-
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Pet-Friendly Facilities:",
-
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    }
-  ]
 
 
 
@@ -83,7 +114,7 @@ function Note() {
     <div>
       <Aside />
       <div className="main">
-       <Navbar/>
+        <Navbar />
         {/* Summary Cards */}
         <div className="container p-2">
 
@@ -96,10 +127,10 @@ function Note() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {facilities.map((facility, index) => (
+              {notes.map((note, index) => (
                 <div key={index} className="bg-white rounded-lg overflow-hidden">
                   <div className="bg-[#4F6BF6] text-white p-4 flex justify-between items-center">
-                    <h2 className="font-medium">{facility.title}</h2>
+                    <h2 className="font-medium">{note.title}</h2>
                     <div className="flex items-center gap-2">
                       {/* New Dropdown Button */}
                       <div className="relative group">
@@ -108,13 +139,10 @@ function Note() {
                         </button>
                         <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 transform scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100">
                           <div className="py-1">
-                            <button onClick={handleEditModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <button onClick={() => handleEditModel(note)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                               Edit
                             </button>
-                            <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                              View
-                            </button>
-                            <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <button onClick={() => handleDelete(note._id)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                               Delete
                             </button>
                           </div>
@@ -124,11 +152,11 @@ function Note() {
                   </div>
                   <div className="p-4">
                     <div className="mb-2">
-                      <p className="text-sm font-medium">{facility.date}</p>
+                      <p className="text-sm font-medium">{note.date}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Description</p>
-                      <p className="text-sm">{facility.description}</p>
+                      <p className="text-sm">{note.description}</p>
                     </div>
                   </div>
                 </div>
@@ -226,7 +254,7 @@ function Note() {
       )}
 
       {openEditModel && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div className="p-6 space-y-6">
               <h2 className="text-xl font-semibold text-gray-900">Edit Note</h2>
@@ -238,8 +266,8 @@ function Note() {
                   </label>
                   <input
                     type="text"
-                    value={titlee}
-                    onChange={(e) => setTitlee(e.target.value)}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     required
                   />
@@ -250,8 +278,8 @@ function Note() {
                     Description<span className="text-red-500">*</span>
                   </label>
                   <textarea
-                    value={descriptionn}
-                    onChange={(e) => setDescriptionn(e.target.value)}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                     required
@@ -265,8 +293,8 @@ function Note() {
                   <div className="relative">
                     <input
                       type="date"
-                      value={datee}
-                      onChange={(e) => setDatee(e.target.value)}
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                       required
                     />
