@@ -88,7 +88,7 @@ function OtherIncome() {
       <div className="main">
         <Navbar />
         {/* Summary Cards */}
-        <div className="container mx-auto p-6">
+        <div className="container-fulid mx-auto p-6">
           <div className="flex justify-between items-center mb-4">
             <div className="flex">
               <Link to="/admin/financial" className="px-4 py-2 text-gray-600 font-medium">Maintenance</Link>

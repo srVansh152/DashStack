@@ -419,7 +419,9 @@ export const listComplaints = async () => {
 // Add a new visitor log
 export const createVisitorLog = async (visitorLogData) => {
   try {
+    
     const response = await api.post('/visitor-logs/create', visitorLogData);
+
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error('Create visitor log error:', error);

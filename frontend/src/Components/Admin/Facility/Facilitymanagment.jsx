@@ -121,7 +121,7 @@ function Facilitymanagment() {
       <div className="main">
         <Navbar />
         {/* Summary Cards */}
-        <div className="container p-2">
+        <div className="container-fulid p-2">
 
           <div className="p-6 bg-gray-50 min-h-screen overflow-hidden">
             <div className="flex justify-between items-center mb-6">
