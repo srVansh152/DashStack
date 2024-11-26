@@ -360,3 +360,86 @@ export const getFacilities = async () => {
     return { success: false, message: error.response?.data?.message || 'Failed to fetch facilities.' };
   }
 };
+
+// Create a complaint
+export const createComplaint = async (complaintData) => {
+  try {
+    const response = await api.post('/complaints/createComplaint', complaintData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Create complaint error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create complaint." };
+  }
+};
+
+// Update a complaint
+export const updateComplaint = async (id, updateData) => {
+  try {
+    const response = await api.put(`/complaints/update/${id}`, updateData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Update complaint error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update complaint." };
+  }
+};
+
+// View a specific complaint by ID
+export const viewComplaint = async (id) => {
+  try {
+    const response = await api.get(`/complaints/view/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("View complaint error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to view complaint." };
+  }
+};
+
+// Delete a complaint
+export const deleteComplaint = async (id) => {
+  try {
+    const response = await api.delete(`/complaints/delete/${id}`);
+    return { success: true, message: response.data.message };
+  } catch (error) {
+    console.error("Delete complaint error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete complaint." };
+  }
+};
+
+// List all complaints for the admin's society
+export const listComplaints = async () => {
+  try {
+    const response = await api.get('/complaints/list');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("List complaints error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to list complaints." };
+  }
+};
+
+// Add a new visitor log
+export const createVisitorLog = async (visitorLogData) => {
+  try {
+    const response = await api.post('/visitor-logs/create', visitorLogData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Create visitor log error:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to create visitor log.',
+    };
+  }
+};
+
+// Get all visitor logs for the society
+export const getVisitorLogs = async () => {
+  try {
+    const response = await api.get('/visitor-logs/list');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Get visitor logs error:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to fetch visitor logs.',
+    };
+  }
+};
