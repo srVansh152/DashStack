@@ -5,7 +5,6 @@ exports.addProtocol = async (req, res) => {
   try {
     const { title, description, date, time} = req.body;
 
-    console.log(req.user.society._id);
     if (!title || !description || !date || !time) {
       return res.status(400).json({ message: 'All fields are required' });
     }
