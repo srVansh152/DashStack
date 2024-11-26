@@ -3,9 +3,9 @@ const SecurityProtocol = require('../models/SecurityProtocol');
 // Create a new security protocol
 exports.addProtocol = async (req, res) => {
   try {
-    const { title, description, date, time,society,admin} = req.body;
+    const { title, description, date, time} = req.body;
 
-    // Validate required fields
+    console.log(req.user.society._id);
     if (!title || !description || !date || !time) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -15,8 +15,8 @@ exports.addProtocol = async (req, res) => {
       description,
       date,
       time,
-      societyId: societyId,
-      adminId: adminId
+      societyId: req.user.society._id,
+      adminId: req.user._id
     });
 
     await protocol.save();
