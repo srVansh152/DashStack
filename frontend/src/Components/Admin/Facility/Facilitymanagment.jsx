@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon,  MoreVertical } from 'lucide-react'
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, MoreVertical } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../Common/Navbar/Navbar';
+import { addFacility, getFacilities, updateFacility } from '../../../utils/api';
 
 
 
@@ -10,7 +11,7 @@ import Navbar from '../../Common/Navbar/Navbar';
 
 
 function Facilitymanagment() {
- 
+
   const [openModel, setOpenModel] = useState(false);
   const [openEditModel, setOpenEditModel] = useState(false);
   const [facilityName, setFacilityName] = useState('');
@@ -21,65 +22,104 @@ function Facilitymanagment() {
   const [details, setDetails] = useState("The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.");
   const [scheduleDate, setScheduleDate] = useState("2024-02-25");
   const [reminderDays, setReminderDays] = useState("4");
+  const [facilities, setFacilities] = useState([]);
+  const [facilityId, setfacilityId] = useState("")
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here, such as saving data
+
+
+  const fetchFacilities = async () => {
+    try {
+      const response = await getFacilities();
+      console.log(response);
+      
+      if (response.success) {
+        setFacilities(response.data);
+      } else {
+        throw new Error('Failed to fetch facilities');
+      }
+    } catch (error) {
+      console.error('Error fetching facilities:', error);
+    }
   };
 
-  const handleEditSubmit = (e) => {
-    e.preventDefault();
-    // Form submission logic here
+  useEffect(() => {
+    fetchFacilities();
+  }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const facilityData = {
+      facilityName: facilityName,
+      description: description,
+      scheduleServiceDate: serviceDate,
+      remindBeforeDays: remindBefore,
+    };
+    console.log(facilityData);
+
+    try {
+      const response = await addFacility(facilityData)
+      console.log(response);
+
+      if (!response.success) {
+        throw new Error('Network response was not ok');
+      }
+
+      console.log('Facility created successfully:', response);
+      // Optionally, reset the form or update the state
+      setOpenModel(false);
+      fetchFacilities()
+    } catch (error) {
+      console.error('Error creating facility:', error);
+    }
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const updatedFacilityData = {
+      facilityName: facility,
+      description: details,
+      scheduleServiceDate: scheduleDate,
+      remindBeforeDays: reminderDays,
+    };
+    console.log(updatedFacilityData);
+   
+    try {
+      console.log(facilityId)
+      const response = await updateFacility(facilityId, updatedFacilityData);
+      console.log(response);
+
+      if (!response.success) {
+        throw new Error('Network response was not ok');
+      }
+
+      console.log('Facility updated successfully:', response);
+      setOpenEditModel(false);
+      fetchFacilities();
+    } catch (error) {
+      console.error('Error updating facility:', error);
+    }
   };
 
   const handleAddIncome = () => {
     setOpenModel(true);
   };
-  const handleEdirIncome = () => {
+  
+  const handleEdirIncome = (facilityData) => {
+    setfacilityId(facilityData._id);
+    setFacility(facilityData.facilityName);
+    setDetails(facilityData.description);
+    setScheduleDate(facilityData.scheduleServiceDate);
+    setReminderDays(facilityData.remindBeforeDays);
     setOpenEditModel(true);
   };
 
-  const facilities = [
-    {
-      title: "Parking Facilities",
-      date: "01/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Community Center",
-      date: "01/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Swimming Pool",
-      date: "01/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Parks and Green Spaces",
-      date: "01/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Wi-Fi and Connectivity",
-      date: "01/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      title: "Pet-Friendly Facilities:",
-      date: "01/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    }
-  ]
 
- 
 
   return (
     <div>
       <Aside />
       <div className="main">
-    <Navbar/>
+        <Navbar />
         {/* Summary Cards */}
         <div className="container p-2">
 
@@ -95,7 +135,7 @@ function Facilitymanagment() {
               {facilities.map((facility, index) => (
                 <div key={index} className="bg-white rounded-lg overflow-hidden">
                   <div className="bg-[#4F6BF6] text-white p-4 flex justify-between items-center">
-                    <h2 className="font-medium">{facility.title}</h2>
+                    <h2 className="font-medium">{facility.facilityName}</h2>
                     <div className="flex items-center gap-2">
                       {/* Dropdown Menu for Edit, View, Delete */}
                       <div className="relative group">
@@ -104,7 +144,7 @@ function Facilitymanagment() {
                         </button>
                         <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 transform scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100">
                           <div className="py-1">
-                            <button onClick={handleEdirIncome} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <button onClick={() => handleEdirIncome(facility)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                               Edit
                             </button>
 
@@ -117,7 +157,7 @@ function Facilitymanagment() {
                   <div className="p-4">
                     <div className="mb-4">
                       <p className="text-sm text-gray-600">Upcoming Schedule Service Date</p>
-                      <p className="text-sm font-medium">{facility.date}</p>
+                      <p className="text-sm font-medium">{facility.scheduleServiceDate}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Description</p>

@@ -320,3 +320,43 @@ export const deleteNote = async (id) => {
     return { success: false, message: error.response?.data?.message || "Failed to delete note." };
   }
 };
+
+// Facility 
+
+// Add Facility
+export const addFacility = async (facilityData) => {
+  try {
+    const token = localStorage.getItem('token');
+    console.log(facilityData)
+    const response = await api.post('/facilities/facility', facilityData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Add facility error:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to add facility.' };
+  }
+};
+
+// Update Facility
+export const updateFacility = async (facilityId, facilityData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.put(`/facilities/facility/${facilityId}`, facilityData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Update facility error:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to update facility.' };
+  }
+};
+
+// Get Facilities
+export const getFacilities = async () => {
+  try {
+    const response = await api.get('/facilities/facility');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Get facilities error:', error);
+    return { success: false, message: error.response?.data?.message || 'Failed to fetch facilities.' };
+  }
+};
