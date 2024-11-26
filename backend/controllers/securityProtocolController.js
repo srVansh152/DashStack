@@ -78,7 +78,13 @@ exports.deleteProtocol = async (req, res) => {
 // List all protocols
 exports.getProtocols = async (req, res) => {
   try {
-    const protocols = await SecurityProtocol.find().sort({ createdAt: -1 });
+    
+    const protocols = await SecurityProtocol.find({ societyId: req.user.society._id })
+      .sort({ createdAt: -1 });
+
+    if (!protocols.length) {
+      return res.status(404).json({ message: 'No protocols found for this society' });
+    }
 
     res.status(200).json({ protocols });
   } catch (error) {
