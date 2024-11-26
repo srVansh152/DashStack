@@ -6,7 +6,7 @@ exports.createEmergencyAlert = async (req, res) => {
     const { alertType, description } = req.body;
 
     // Get societyId from req.user
-    const societyId = req.user.society;
+    const societyId = req.user.society._id;
 
     if (!alertType || !description) {
       return res.status(400).json({ message: 'Both alert type and description are required.' });

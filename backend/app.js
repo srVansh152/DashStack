@@ -1,3 +1,4 @@
+require('./tasks/penaltyUpdater');
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
@@ -47,7 +48,7 @@ app.use('/api/financial', require('./routes/financialRoutes'));
 app.use('/api/other-income', require('./routes/otherIncomeRoutes'));
 
 // payments routes 
-app.use('/api/payments', require('./routes/paymentRoutes'));
+// app.use('/api/payments', require('./routes/paymentRoutes'));
 
 // visitors log routes 
 app.use('/api/visitor-logs', require('./routes/visitorLogRoutes'));

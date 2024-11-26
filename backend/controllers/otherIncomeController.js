@@ -91,16 +91,20 @@ exports.deleteExpiredOtherIncome = async (req, res) => {
 // Mark resident as paid for a specific Other Income
 exports.markResidentPaid = async (req, res) => {
   try {
-    const { residentId, amount } = req.body;
+    const { amount, paymentMethod  } = req.body;
     const otherIncome = await OtherIncome.findById(req.params.id);
 
     if (!otherIncome) {
       return res.status(404).json({ message: 'Other Income record not found' });
     }
 
+    if (amount <= otherIncome.amount) {
+      return res.status(400).send({message:"Amount is less then required "})
+    }
+
     // Check if the resident has already paid for this Other Income record
     const existingPayment = await Payment.findOne({
-      residentId,
+      residentId:req.user._id,
       incomeId: otherIncome._id,
       paymentType: 'OtherIncome'
     });
@@ -109,16 +113,22 @@ exports.markResidentPaid = async (req, res) => {
       return res.status(400).json({ message: 'Resident has already paid for this income record.' });
     }
 
+    // Validate payment method
+    if (!['cash', 'online'].includes(paymentMethod)) {
+      return res.status(400).json({ message: 'Invalid payment method. Must be "cash" or "online".' });
+    }
+
     // Create a new payment record
     const payment = new Payment({
-      residentId,
+      residentId:req.user._id,
       amount,
       paymentType: 'OtherIncome',
       incomeId: otherIncome._id,
       societyId: otherIncome.societyId,
       adminId: req.user._id,
       hasPaid: true,
-      paymentDate: new Date()
+      paymentDate: new Date(),
+      paymentMethod
     });
 
     await payment.save();

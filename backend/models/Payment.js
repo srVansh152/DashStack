@@ -14,7 +14,9 @@ const paymentSchema = new mongoose.Schema({
   adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   hasPaid: { type: Boolean, default: false },
   penaltyAmount: { type: Number, default: 0, min: 0 },
-  paymentDate: { type: Date }
+  paymentDate: { type: Date },
+  paymentMethod: { type: String, enum: ['cash', 'online'], required: true } 
+
 });
 
 module.exports = mongoose.model('Payment', paymentSchema);

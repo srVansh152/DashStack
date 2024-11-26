@@ -8,7 +8,7 @@ exports.createComplaint = async (req, res) => {
 
     const complaint = new Complaint({
       complainer: req.user._id,
-      society: req.user.society,
+      society: req.user.society._id,
       complaintName,
       description,
       wing,
@@ -73,7 +73,7 @@ exports.deleteComplaint = async (req, res) => {
 exports.listComplaintsBySocietyAndAdmin = async (req, res) => {
   try {
     const complaints = await Complaint.find({
-      society: req.user.society,
+      society: req.user.society._id,
       complainer: req.user._id
     });
 
