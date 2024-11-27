@@ -390,7 +390,7 @@ export const viewComplaint = async (id) => {
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("View complaint error:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to view complaint." };
+    return { success: false, message: error.response?.data?.message || "Failed to view complaint hello." };
   }
 };
 
