@@ -68,6 +68,9 @@ app.use('/api/facilities', require("./routes/facilityRoutes"));
 // Complaints routes
 app.use('/api/complaints', require("./routes/complaintRoutes"));
 
+// Requests routes
+app.use('/api/requests', require('./routes/requestRoutes'));
+
 // security protocol routes
 app.use('/api/security-protocols', require("./routes/securityProtocolRoutes"));
 
