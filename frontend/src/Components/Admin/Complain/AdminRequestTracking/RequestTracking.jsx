@@ -87,10 +87,29 @@ function RequestTracking() {
     try {
       await updateRequest(complaintIdToEdit, updatedComplaintData); // Call the API to update the complaint
       fetchComplaints(); // Refresh the complaints list
+      resetForm(); // Reset form fields after successful edit
       setOpenEditModal(false); // Close the edit modal
     } catch (error) {
       console.error('Error updating complaint:', error);
     }
+  }
+
+  // New function to reset form fields
+  const resetForm = () => {
+    setRequestor("");
+    setSociety("");
+    setRequestName("");
+    setDescription("");
+    setWing("");
+    setUnitNumber("");
+    setPriority("");
+    setStatus("");
+    setComplaintIdToEdit(null);
+  }
+
+  const handleCancelEdit = () => {
+    resetForm(); // Reset form fields when canceling
+    setOpenEditModal(false); // Close the edit modal
   }
 
   const handleCreateIncome = () => {
@@ -587,7 +606,7 @@ function RequestTracking() {
                 </div>
 
                 <div className="flex gap-4 pt-4">
-                  <button onClick={() => setOpenEditModal(false)}
+                  <button onClick={handleCancelEdit}
                     type="button"
                     className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                   >

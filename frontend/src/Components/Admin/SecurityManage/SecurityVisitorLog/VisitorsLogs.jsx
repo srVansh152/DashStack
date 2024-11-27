@@ -77,7 +77,7 @@ function VisitorsLogs() {
                         <span className="font-medium">{visitor.visitorName}</span>
                       </div>
                       <div>{visitor.phoneNumber}</div>
-                      <div>{visitor.date}</div>
+                      <div>{new Date(visitor.date).toLocaleDateString()}</div>
                       <div>{visitor.unit}</div>
                       <div>{visitor.time}</div>
                     </div>
