@@ -1,115 +1,165 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bell, PencilIcon, Eye, MoreVertical, Plus, Trash } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
+import axios from 'axios';
+import { createRequest, listRequests, viewRequest, deleteRequest, updateRequest } from '../../../../utils/api';
 
-
-const complaints = [
-  {
-    id: '1001',
-    requester: {
-      name: 'Evelyn Harper',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    requestName: 'Unethical Behavior',
-    description: 'Regular waste collection services.',
-    date: '10/02/2024',
-    unitNumber: 'A',
-    unitId: '1001',
-    priority: 'Medium',
-    status: 'Pending',
-  },
-  {
-    id: '1002',
-    requester: {
-      name: 'Guy Hawkins',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    requestName: 'Preventive Measures',
-    description: 'Event and recreational activities.',
-    date: '11/02/2024',
-    unitNumber: 'B',
-    unitId: '1002',
-    priority: 'Low',
-    status: 'Solve',
-  },
-  {
-    id: '1003',
-    requester: {
-      name: 'Robert Fox',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    requestName: 'Unethical Behavior',
-    description: 'Regular waste collection services.',
-    date: '12/02/2024',
-    unitNumber: 'C',
-    unitId: '1003',
-    priority: 'High',
-    status: 'Open',
-  },
-  {
-    id: '1004',
-    requester: {
-      name: 'Jacob Jones',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    requestName: 'Preventive Measures',
-    description: 'Back the fluctuations in spending.',
-    date: '13/02/2024',
-    unitNumber: 'D',
-    unitId: '1004',
-    priority: 'Medium',
-    status: 'Pending',
-  },
-]
 
 function RequestTracking() {
-  const [requesterName, setRequesterName] = useState("");
+  const [requestor, setRequestor] = useState("");
+  const [society, setSociety] = useState("");
   const [requestName, setRequestName] = useState("");
-  const [requestDate, setRequestDate] = useState("");
+  const [description, setDescription] = useState("");
   const [wing, setWing] = useState("");
-  const [unit, setUnit] = useState("");
+  const [unitNumber, setUnitNumber] = useState("");
   const [priority, setPriority] = useState("");
   const [status, setStatus] = useState("");
-  const [userFullName, setUserFullName] = useState("Evelyn Harper");
-  const [issueTitle, setIssueTitle] = useState("Unethical Behavior");
-  const [submissionDate, setSubmissionDate] = useState("2024-02-25");
-  const [departmentWing, setDepartmentWing] = useState("A");
-  const [unitNumber, setUnitNumber] = useState("1001");
-  const [urgencyLevel, setUrgencyLevel] = useState("medium");
-  const [currentStatus, setCurrentStatus] = useState("open");
- 
   const [openModal, setOpenModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
   const [openViewModel, setOpenViewModal] = useState(false)
   const [openDeleteModel, setOpenDeleteModel] = useState(false)
+  const [complaints, setComplaints] = useState([]);
+  const [complaintIdToDelete, setComplaintIdToDelete] = useState(null);
+  const [complaintIdToEdit, setComplaintIdToEdit] = useState(null);
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [viewLoading, setViewLoading] = useState(false);
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const fetchComplaints = async () => {
+    setLoading(true);
+    try {
+      const response = await listRequests();
+      console.log(response.data.requests);
+
+      setComplaints(response.data.requests);
+    } catch (error) {
+      console.error('Error fetching complaints:', error);
+    } finally {
+      setLoading(false);
+    }
   };
-  const handleEditSubmit = (e) => {
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const complaintData = {
+      requestor,
+      society,
+      requestName,
+      description,
+      wing,
+      unitNumber,
+      priority,
+      status,
+    };
+
+
+    try {
+      const response = await createRequest(complaintData)
+      console.log(response);
+      fetchComplaints()
+      setOpenModal(false); // Close the modal after successful submission
+
+    } catch (error) {
+      console.error('Error saving complaint:', error);
+    }
   };
 
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const updatedComplaintData = {
+      requestor,
+      society,
+      requestName,
+      description,
+      wing,
+      unitNumber,
+      priority,
+      status,
+    };
 
- 
+    try {
+      await updateRequest(complaintIdToEdit, updatedComplaintData); // Call the API to update the complaint
+      fetchComplaints(); // Refresh the complaints list
+      resetForm(); // Reset form fields after successful edit
+      setOpenEditModal(false); // Close the edit modal
+    } catch (error) {
+      console.error('Error updating complaint:', error);
+    }
+  }
+
+  // New function to reset form fields
+  const resetForm = () => {
+    setRequestor("");
+    setSociety("");
+    setRequestName("");
+    setDescription("");
+    setWing("");
+    setUnitNumber("");
+    setPriority("");
+    setStatus("");
+    setComplaintIdToEdit(null);
+  }
+
+  const handleCancelEdit = () => {
+    resetForm(); // Reset form fields when canceling
+    setOpenEditModal(false); // Close the edit modal
+  }
 
   const handleCreateIncome = () => {
     setOpenModal(true)
   }
-  const handleEditIncome = () => {
-    setOpenEditModal(true)
-  }
-  const handleViewIncome = () => {
-    setOpenViewModal(true)
-  }
-  const handleDeleteIncome = () => {
-    setOpenDeleteModel(true)
+  const handleEditIncome = (complaintId) => {
+    const complaintToEdit = complaints.find(complaint => complaint._id === complaintId);
+    setRequestor(complaintToEdit.requestor); // Populate requestor
+    setSociety(complaintToEdit.society); // Populate society
+    setRequestName(complaintToEdit.requestName); // Populate requestName
+    setDescription(complaintToEdit.description); // Populate description
+    setWing(complaintToEdit.wing); // Populate wing
+    setUnitNumber(complaintToEdit.unitNumber); // Populate unitNumber
+    setPriority(complaintToEdit.priority); // Populate priority
+    setStatus(complaintToEdit.status); // Populate status
+    setComplaintIdToEdit(complaintId)
+    setOpenEditModal(true); // Open the edit modal
   }
 
- 
+  const handleViewIncome = async (complaintId) => {
+    setOpenViewModal(true);
+    setViewLoading(true);
+    console.log(complaintId);
+
+    try {
+      const response = await viewRequest(complaintId);
+      setSelectedComplaint(response.data.request);
+    } catch (error) {
+      console.error('Error fetching complaint details:', error);
+    } finally {
+      setViewLoading(false);
+    }
+  }
+
+  const handleDeleteIncome = async (complaintId) => {
+    setOpenDeleteModel(true);
+    console.log(complaintId);
+
+    setComplaintIdToDelete(complaintId);
+  }
+
+  const confirmDelete = async () => {
+    try {
+      await deleteRequest(complaintIdToDelete);
+      fetchComplaints();
+      setOpenDeleteModel(false);
+    } catch (error) {
+      console.error('Error deleting complaint:', error);
+    }
+  }
 
   const getPriorityStyles = (priority) => {
     switch (priority.toLowerCase()) {
@@ -141,9 +191,9 @@ function RequestTracking() {
     <>
       <Aside />
       <div className="main">
-        <Navbar/>
-      <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 m-2">
-          <div className="container  px-6 py-8">
+        <Navbar />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 m-2">
+          <div className="container-fluid  px-6 py-8">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-semibold text-gray-900">Request Tracking</h1>
               <button onClick={handleCreateIncome} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
@@ -188,10 +238,10 @@ function RequestTracking() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <img className="h-10 w-10 rounded-full" src={complaint.requester.avatar} alt="" />
+                            <img className="h-10 w-10 rounded-full" src={''} alt="" />
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{complaint.requester.name}</div>
+                            <div className="text-sm font-medium text-gray-900">{complaint.requestName}</div>
                           </div>
                         </div>
                       </td>
@@ -202,7 +252,7 @@ function RequestTracking() {
                         <div className="text-sm text-gray-500 max-w-xs truncate">{complaint.description}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{complaint.date}</div>
+                        <div className="text-sm text-gray-900">{new Date(complaint.createdAt).toLocaleDateString()}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{complaint.unitNumber}</div>
@@ -219,15 +269,15 @@ function RequestTracking() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onClick={handleEditIncome} className="text-green-600 hover:text-green-900 mr-2">
+                        <button onClick={() => handleEditIncome(complaint._id)} className="text-green-600 hover:text-green-900 mr-2">
                           <PencilIcon className="h-5 w-5" />
-                          <span className="sr-only">Approve</span>
+                          <span className="sr-only">Edit</span>
                         </button>
-                        <button onClick={handleViewIncome} className="text-blue-600 hover:text-blue-900 mr-2">
+                        <button onClick={() => handleViewIncome(complaint._id)} className="text-blue-600 hover:text-blue-900 mr-2">
                           <Eye className="h-5 w-5" />
                           <span className="sr-only">View</span>
                         </button>
-                        <button onClick={handleDeleteIncome} className="text-red-600 hover:text-red-900">
+                        <button onClick={() => handleDeleteIncome(complaint._id)} className="text-red-600 hover:text-red-900">
                           <Trash className="h-5 w-5" />
                           <span className="sr-only">Delete</span>
                         </button>
@@ -244,479 +294,431 @@ function RequestTracking() {
       {openModal && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Create Request</h2>
-          
-          
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Requester Name<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={requesterName}
-          onChange={(e) => setRequesterName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
+            <div className="p-6 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900">Create Request</h2>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Request Name<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={requestName}
-          onChange={(e) => setRequestName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Request Date<span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-          <input
-            type="date"
-            value={requestDate}
-            onChange={(e) => setRequestDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg
-              className="w-5 h-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <input type="hidden" value={requestor} onChange={(e) => setRequestor(e.target.value)} />
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
-            Wing<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={wing}
-            onChange={(e) => setWing(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
+                <input type="hidden" value={society} onChange={(e) => setSociety(e.target.value)} />
 
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
-            Unit<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
-      </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Request Name<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={requestName}
+                    onChange={(e) => setRequestName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Priority<span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="high"
-              checked={priority === "high"}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">High</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="medium"
-              checked={priority === "medium"}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Medium</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="low"
-              checked={priority === "low"}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Low</span>
-          </label>
-        </div>
-      </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Description<span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Status<span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="open"
-              checked={status === "open"}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Open</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="pending"
-              checked={status === "pending"}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Pending</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="solve"
-              checked={status === "solve"}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Solve</span>
-          </label>
-        </div>
-      </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium">
+                      Wing<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={wing}
+                      onChange={(e) => setWing(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      required
+                    />
+                  </div>
 
-      <div className="flex gap-4 pt-4">
-        <button
-          type="button"
-          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          onClick={() => setOpenModal(false)}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-        >
-          Create
-        </button>
-      </div>
-    </form>
-  
-        </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium">
+                      Unit Number<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={unitNumber}
+                      onChange={(e) => setUnitNumber(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Priority<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="priority"
+                        value="High"
+                        checked={priority === "High"}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">High</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="priority"
+                        value="Medium"
+                        checked={priority === "Medium"}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Medium</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="priority"
+                        value="Low"
+                        checked={priority === "Low"}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Low</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Status<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Open"
+                        checked={status === "Open"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Open</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Pending"
+                        checked={status === "Pending"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Pending</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Solve"
+                        checked={status === "Solve"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Solve</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    onClick={() => setOpenModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  >
+                    Create
+                  </button>
+                </div>
+              </form>
+
+            </div>
           </div>
         </div>
       )}
 
-{openEditModal && (
+      {openEditModal && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Edit Request</h2>
-          
-          <form className="space-y-4" onSubmit={handleEditSubmit}>
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Requester Name<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={userFullName}
-          onChange={(e) => setUserFullName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
+            <div className="p-6 space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900">Edit Request</h2>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Request Name<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={issueTitle}
-          onChange={(e) => setIssueTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
+              <form className="space-y-4" onSubmit={handleEditSubmit}>
+                <input type="hidden" value={requestor} onChange={(e) => setRequestor(e.target.value)} />
+                <input type="hidden" value={society} onChange={(e) => setSociety(e.target.value)} />
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Request Date<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="date"
-          value={submissionDate}
-          onChange={(e) => setSubmissionDate(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Request Name<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={requestName}
+                    onChange={(e) => setRequestName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
-            Wing<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={departmentWing}
-            onChange={(e) => setDepartmentWing(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Description<span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                    required
+                  />
+                </div>
 
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
-            Unit<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={unitNumber}
-            onChange={(e) => setUnitNumber(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
-      </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium">
+                      Wing<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={wing}
+                      onChange={(e) => setWing(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      required
+                    />
+                  </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Priority<span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="high"
-              checked={urgencyLevel === "high"}
-              onChange={() => setUrgencyLevel("high")}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">High</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="medium"
-              checked={urgencyLevel === "medium"}
-              onChange={() => setUrgencyLevel("medium")}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Medium</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="low"
-              checked={urgencyLevel === "low"}
-              onChange={() => setUrgencyLevel("low")}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Low</span>
-          </label>
-        </div>
-      </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium">
+                      Unit Number<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={unitNumber}
+                      onChange={(e) => setUnitNumber(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                      required
+                    />
+                  </div>
+                </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Status<span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="open"
-              checked={currentStatus === "open"}
-              onChange={() => setCurrentStatus("open")}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Open</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="pending"
-              checked={currentStatus === "pending"}
-              onChange={() => setCurrentStatus("pending")}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Pending</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="solve"
-              checked={currentStatus === "solve"}
-              onChange={() => setCurrentStatus("solve")}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Solve</span>
-          </label>
-        </div>
-      </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Priority<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="priority"
+                        value="High"
+                        checked={priority === "High"}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">High</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="priority"
+                        value="Medium"
+                        checked={priority === "Medium"}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Medium</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="priority"
+                        value="Low"
+                        checked={priority === "Low"}
+                        onChange={(e) => setPriority(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Low</span>
+                    </label>
+                  </div>
+                </div>
 
-      <div className="flex gap-4 pt-4">
-        <button onClick={()=>setOpenEditModal(false)}
-          type="button"
-          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-        >
-          Save
-        </button>
-      </div>
-    </form>
-        </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium">
+                    Status<span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Open"
+                        checked={status === "Open"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Open</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Pending"
+                        checked={status === "Pending"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Pending</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Solve"
+                        checked={status === "Solve"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <span className="ml-2 text-sm">Solve</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button onClick={handleCancelEdit}
+                    type="button"
+                    className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
 
-{openViewModel && (
+      {openViewModel && selectedComplaint && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="relative p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">View Complaint</h2>
-            <button onClick={()=> setOpenViewModal(false)} className="text-gray-400 hover:text-gray-500">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <span className="sr-only">Close</span>
-            </button>
-          </div>
-
-          <div className="flex items-center space-x-3 mb-6">
-            <img
-              src="/placeholder.svg?height=48&width=48"
-              alt="Evelyn Harper"
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <h3 className="font-medium text-gray-900">Evelyn Harper</h3>
-              <p className="text-sm text-gray-500">Aug 5, 2024</p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-500">Request Name</label>
-              <p className="text-gray-900">Unethical Behavior</p>
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-500">Description</label>
-              <p className="text-gray-900">
-                Offering, giving, receiving, or soliciting of value to influence the actions of an.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm text-gray-500">Wing</label>
-                <p className="text-gray-900">A</p>
+            <div className="relative p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">View Complaint</h2>
+                <button onClick={() => { setOpenViewModal(false) }} className="text-gray-400 hover:text-gray-500">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="sr-only">Close</span>
+                </button>
               </div>
-              
+
               <div>
-                <label className="block text-sm text-gray-500">Unit</label>
-                <p className="text-gray-900">1002</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm text-gray-500">Priority</label>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Medium
-                </span>
-              </div>
-              
-              <div>
-                <label className="block text-sm text-gray-500">Status</label>
-                <span className="text-blue-600">Open</span>
+                {viewLoading ? (
+                  <div className="loader">Loading...</div>
+                ) : (
+                  <>
+                    <div className="flex items-center space-x-3 mb-6">
+                      <img
+                        src="/placeholder.svg?height=48&width=48"
+                        alt="Evelyn Harper"
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <h3 className="font-medium text-gray-900">{selectedComplaint.requestName}</h3>
+                        <p className="text-sm text-gray-500">{new Date(selectedComplaint.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-gray-500">Request Name</label>
+                        <p className="text-gray-900">{selectedComplaint.requestName}</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-gray-500">Description</label>
+                        <p className="text-gray-900">{selectedComplaint.description}</p>
+                      </div>
+
+                      <div className="grid grid-cols-4 gap-4">
+                        <div>
+                          <label className="block text-sm text-gray-500">Wing</label>
+                          <p className="text-gray-900">{selectedComplaint.wing}</p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm text-gray-500">Unit</label>
+                          <p className="text-gray-900">{selectedComplaint.unitNumber}</p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm text-gray-500">Priority</label>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {selectedComplaint.priority}
+                          </span>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm text-gray-500">Status</label>
+                          <span className="text-blue-600">{selectedComplaint.status}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-          </div>
-        </div>
           </div>
         </div>
       )}
 
-{openDeleteModel && (
+      {openDeleteModel && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Delete Request?</h2>
-          
-          <p className="text-gray-500">
-            Are you sure you want to delete this Request?
-          </p>
-          
-          <div className="flex gap-4 pt-2">
-            <button onClick={()=>setOpenDeleteModel(false)}
-              type="button"
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+            <div className="p-6 space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900">Delete Request?</h2>
+              <p className="text-gray-500">Are you
+                sure you want to delete this Request?</p>
+              <div className="flex gap-4 pt-2">
+                <button onClick={() => setOpenDeleteModel(false)} type="button" className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                  Cancel
+                </button>
+                <button onClick={confirmDelete} type="button" className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
-    
-     
-
-    
-
-    
-    
-     </>
+    </>
   )
 }
 
