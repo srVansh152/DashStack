@@ -3,6 +3,7 @@ import { Bell, PencilIcon, Eye, MoreVertical, Plus, Trash } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
+import { createComplaint } from '../../../../utils/api';
 
 
 const complaints = [
@@ -81,19 +82,47 @@ function CreateComplain() {
   const [openViewModel, setOpenViewModal] = useState(false)
   const [openDeleteModel, setOpenDeleteModel] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Form submission logic here
-   
+    
+    const complaintData = {
+        requesterName,
+        requestName,
+        requestDate,
+        wing,
+        unit,
+        priority,
+        status,
+        reporterName,
+        reportTitle,
+        details,
+        section,
+        unitNumber,
+        urgency,
+        currentStatus,
+        society: '67447408e974dc68d80e7b54',
+    };
+
+    console.log(complaintData);
+    try {
+        const response = await createComplaint(complaintData);
+        console.log(response);
+        
+        if (!response.success) {
+            throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        console.log('Complaint saved successfully:', result);
+        // Optionally, reset the form or close the modal here
+    } catch (error) {
+        console.error('Error saving complaint:', error);
+    }
   };
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
   };
   
-
-
-
   const handleAddModel = () => {
     setOpenModal(true)
   }
