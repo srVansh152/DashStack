@@ -1,90 +1,98 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Bell, Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
+import { getVisitorLogs } from '../../../../utils/api';
 
 
-const visitors = [
-  { id: 1, name: "Evelyn Harper", phone: "97852 12369", date: "10/01/2024", unit: "1001", time: "3:45 PM" },
-  { id: 2, name: "Wade Warren", phone: "97852 25893", date: "11/01/2024", unit: "1002", time: "2:45 AM" },
-  { id: 3, name: "Guy Hawkins", phone: "97589 95563", date: "12/01/2024", unit: "1003", time: "3:00 PM" },
-  { id: 4, name: "Robert Fox", phone: "97444 95323", date: "13/01/2024", unit: "1004", time: "5:30AM" },
-  { id: 5, name: "Jacob Jones", phone: "97123 12583", date: "14/01/2024", unit: "2001", time: "12:45 PM" },
-  { id: 6, name: "Ronald Richards", phone: "97259 12363", date: "15/01/2024", unit: "2002", time: "3:45 PM" },
-  { id: 7, name: "Annette Black", phone: "97569 77763", date: "16/01/2024", unit: "2003", time: "6:00 AM" },
-  { id: 8, name: "Jerome Bell", phone: "97123 25883", date: "17/01/2024", unit: "2004", time: "3:45 PM" },
-  { id: 9, name: "Theresa Webb", phone: "97259 36973", date: "18/01/2024", unit: "3001", time: "7:00 PM" },
-  { id: 10, name: "Kathryn Murphy", phone: "97577 66963", date: "19/01/2024", unit: "3002", time: "6:00 AM" },
-  { id: 11, name: "Eleanor Pena", phone: "97259 69963", date: "20/01/2024", unit: "3003", time: "7:00 PM" }
-];
+
+
 
 function VisitorsLogs() {
+  
+  
+  
+
+  const [error, setError] = useState(null); // State to manage error messages
+  const [successMessage, setSuccessMessage] = useState(null); // State to manage success message
+  const [visitors, setVisitors] = useState([]); // State to store the fetched visitor logs
+
+
+  const fetchVisitorLogs = async () => {
+    const response = await getVisitorLogs();
+    if (response.success) {
+      setVisitors(response.data.visitorLogs); // Assuming 'visitors' is the key that holds the visitor list
+    } else {
+      setError(response.message);
+    }
+  };
+  // Fetch visitor logs on component mount
+  useEffect(() => {
+    fetchVisitorLogs();
+  }, []);
+
+
+
+ 
  
 
   return (
-    <div>
+    <div className="flex">
       <Aside />
       <div className="main">
-     <Navbar/>
+        {/* Navigation */}
+        <Navbar />
 
-        <div className="container-fulid p-2">
-          <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
-            <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-2xl font-semibold text-gray-900">Visitor Logs</h1>
-              
+        {/* Main Content */}
+        <div>
+          <div className="p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-xl font-semibold">Visitor Logs</h1>
+            
             </div>
 
-            <div className="overflow-x-auto rounded-lg border bg-white">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Visitor Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Phone Number
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Unit Number
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Time
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {visitors.map((visitor) => (
-                    <tr key={visitor.id} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-sm text-gray-600">
-                              {visitor.name.split(' ').map(n => n[0]).join('')}
-                            </span>
-                          </div>
-                          <span className="ml-2 text-sm font-medium text-gray-900">{visitor.name}</span>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{visitor.phone}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{visitor.date}</td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {visitor.unit}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{visitor.time}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="bg-white rounded-lg shadow">
+              <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-gray-500">
+                <div>Visitor Name</div>
+                <div>Phone Number</div>
+                <div>Date</div>
+                <div>Unit Number</div>
+                <div>Time</div>
+              </div>
+
+              <div className="divide-y">
+                {visitors.length > 0 ? (
+                  visitors.map((visitor, index) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-5 gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={visitor.avatar || "/placeholder.svg?height=32&width=32"}
+                          alt=""
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <span className="font-medium">{visitor.visitorName}</span>
+                      </div>
+                      <div>{visitor.phoneNumber}</div>
+                      <div>{visitor.date}</div>
+                      <div>{visitor.unit}</div>
+                      <div>{visitor.time}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-5 text-center py-4 text-gray-500">No visitor logs available</div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal for adding new visitor */}
+     
     </div>
   ) 
 }

@@ -178,7 +178,7 @@ function Deletemodel() {
                                     )}
                                 </div>
 
-                                <Link to='/editprofile'>
+                                <Link to='/admin/editprofile'>
 
                                     <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
                                         <img
@@ -289,7 +289,7 @@ function Deletemodel() {
           </p>
         </div>
         <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4 rounded-b-lg">
-        <Link to='/residence'>
+        <Link to='/admin/residence'>
           <button
             onClick={handleDeleteDetails}
             className="px-4 border py-2 rounded text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
