@@ -83,7 +83,7 @@ const handleViewModel = () => {
       <div className="main">
        <Navbar/>
 
-        <div className="container p-2">
+        <div className="container-fulid p-2">
           <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Security Protocols</h1>

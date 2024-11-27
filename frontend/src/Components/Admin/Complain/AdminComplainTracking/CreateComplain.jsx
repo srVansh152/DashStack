@@ -68,25 +68,33 @@ function CreateComplain() {
   const [unitNumber, setUnitNumber] = useState("1001");
   const [urgency, setUrgency] = useState("medium");
   const [currentStatus, setCurrentStatus] = useState("open");
-  const [requesterName, setRequesterName] = useState('');
-  const [requestName, setRequestName] = useState('');
-  const [requestDate, setRequestDate] = useState('');
-  const [wing, setWing] = useState('');
-  const [unit, setUnit] = useState('');
-  const [priority, setPriority] = useState('');
-  const [status, setStatus] = useState('');
- 
   const [openModal, setOpenModal] = useState(false)
   const [openEditModel, setOpenEditModal] = useState(false)
   const [openViewModel, setOpenViewModal] = useState(false)
   const [openDeleteModel, setOpenDeleteModel] = useState(false)
+  const [formData, setFormData] = useState({
+    complainerName: "",
+    complaintName: "",
+    description: "",
+    wing: "",
+    unit: "",
+    priority: "",
+    status: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic here
-   
+    console.log("Form Data:", formData);
   };
-
+ 
   const handleEditSubmit = (e) => {
     e.preventDefault();
   };
@@ -140,7 +148,7 @@ function CreateComplain() {
       <Aside />
       <div className="main">
         <Navbar/>
-        <div className="container p-2">
+        <div className="container-fulid p-2">
           <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Create Complaint</h1>
@@ -242,170 +250,132 @@ function CreateComplain() {
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
           <div className="p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Create Complaint  </h2>
-          
-          
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Requester Name<span className="text-red-500">*</span>
+          <h2 className="text-xl font-semibold mb-6">Create Complaint</h2>
+        
+          <form className="space-y-4" onSubmit={handleSubmit}>
+      <div>
+        <label className="block text-sm text-gray-600 mb-1">
+          Complainer Name<span className="text-red-500">*</span>
         </label>
         <input
           type="text"
-          value={requesterName}
-          onChange={(e) => setRequesterName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
+          name="complainerName"
+          value={formData.complainerName}
+          onChange={handleChange}
+          placeholder="Enter Name"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Request Name<span className="text-red-500">*</span>
+      <div>
+        <label className="block text-sm text-gray-600 mb-1">
+          Complaint Name<span className="text-red-500">*</span>
         </label>
         <input
           type="text"
-          value={requestName}
-          onChange={(e) => setRequestName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
+          name="complaintName"
+          value={formData.complaintName}
+          onChange={handleChange}
+          placeholder="Enter Name"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Request Date<span className="text-red-500">*</span>
+      <div>
+        <label className="block text-sm text-gray-600 mb-1">
+          Description<span className="text-red-500">*</span>
         </label>
-        <input
-          type="date"
-          value={requestDate}
-          onChange={(e) => setRequestDate(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Enter Description"
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">
             Wing<span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            value={wing}
-            onChange={(e) => setWing(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
+            name="wing"
+            value={formData.wing}
+            onChange={handleChange}
+            placeholder="Enter Wing"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
           />
         </div>
-
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">
             Unit<span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
+            name="unit"
+            value={formData.unit}
+            onChange={handleChange}
+            placeholder="Enter Unit"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
           />
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
+      <div>
+        <label className="block text-sm text-gray-600 mb-2">
           Priority<span className="text-red-500">*</span>
         </label>
         <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="high"
-              checked={priority === 'high'}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">High</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="medium"
-              checked={priority === 'medium'}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Medium</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="priority"
-              value="low"
-              checked={priority === 'low'}
-              onChange={(e) => setPriority(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Low</span>
-          </label>
+          {["High", "Medium", "Low"].map((level) => (
+            <label key={level} className="flex items-center">
+              <input
+                type="radio"
+                name="priority"
+                value={level}
+                onChange={handleChange}
+                className="w-4 h-4 text-gray-600"
+                checked={formData.priority === level}
+              />
+              <span className="ml-2 text-sm text-gray-600">{level}</span>
+            </label>
+          ))}
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
+      <div>
+        <label className="block text-sm text-gray-600 mb-2">
           Status<span className="text-red-500">*</span>
         </label>
         <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="open"
-              checked={status === 'open'}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Open</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="pending"
-              checked={status === 'pending'}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Pending</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="solve"
-              checked={status === 'solve'}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Solve</span>
-          </label>
+          {["Open", "Pending", "Solve"].map((status) => (
+            <label key={status} className="flex items-center">
+              <input
+                type="radio"
+                name="status"
+                value={status}
+                onChange={handleChange}
+                className="w-4 h-4 text-gray-600"
+                checked={formData.status === status}
+              />
+              <span className="ml-2 text-sm text-gray-600">{status}</span>
+            </label>
+          ))}
         </div>
       </div>
 
-      <div className="flex gap-4 pt-4">
-        <button
+      <div className="flex gap-4 mt-6">
+        <button onClick={()=>setOpenModal(false)}
           type="button"
-          onClick={() => setOpenModal(false)}
-          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-gray-200"
         >
           Create
         </button>
@@ -486,182 +456,159 @@ function CreateComplain() {
 
 
 
-      {openEditModel && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Edit Complaint</h2>
-          
-          <form className="space-y-4" onSubmit={handleEditSubmit}>
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Reporter Name<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={reporterName}
-          onChange={(e) => setReporterName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Report Title<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={reportTitle}
-          onChange={(e) => setReportTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Details<span className="text-red-500">*</span>
-        </label>
-        <textarea
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          required
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
-            Section<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={section}
-            onChange={(e) => setSection(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="block text-sm font-medium">
-            Unit Number<span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={unitNumber}
-            onChange={(e) => setUnitNumber(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Urgency<span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
+{openEditModel && (
+  <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+    <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+      <div className="p-6 space-y-6">
+        <h2 className="text-xl font-semibold text-gray-900">Edit Complaint</h2>
+        <form className="space-y-4" onSubmit={handleEditSubmit}>
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium">
+              Complainer Name<span className="text-red-500">*</span>
+            </label>
             <input
-              type="radio"
-              name="urgency"
-              value="high"
-              checked={urgency === "high"}
-              onChange={(e) => setUrgency(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+              type="text"
+              value={reporterName}
+              onChange={(e) => {
+                setReporterName(e.target.value);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              required
             />
-            <span className="ml-2 text-sm">High</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="urgency"
-              value="medium"
-              checked={urgency === "medium"}
-              onChange={(e) => setUrgency(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Medium</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="urgency"
-              value="low"
-              checked={urgency === "low"}
-              onChange={(e) => setUrgency(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Low</span>
-          </label>
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium">
-          Status<span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="open"
-              checked={currentStatus === "open"}
-              onChange={(e) => setCurrentStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Open</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="pending"
-              checked={currentStatus === "pending"}
-              onChange={(e) => setCurrentStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Pending</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="status"
-              value="resolved"
-              checked={currentStatus === "resolved"}
-              onChange={(e) => setCurrentStatus(e.target.value)}
-              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-            />
-            <span className="ml-2 text-sm">Resolved</span>
-          </label>
-        </div>
-      </div>
-
-      <div className="flex gap-4 pt-4">
-        <button
-          onClick={()=>setOpenEditModal(false)}
-          type="button"
-          className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-        >
-          Save
-        </button>
-      </div>
-    </form>
-        </div>
           </div>
-        </div>
-      )}
+
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium">
+              Complaint Name<span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={reportTitle}
+              onChange={(e) => {
+                setReportTitle(e.target.value);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              required
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium">
+              Description*<span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={details}
+              onChange={(e) => {
+                setDetails(e.target.value);
+              }}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Wing<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={section}
+                onChange={(e) => {
+                  setSection(e.target.value);
+                 
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium">
+                Unit<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={unitNumber}
+                onChange={(e) => {
+                  setUnitNumber(e.target.value);
+                 
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium">
+              Urgency<span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4">
+              {["high", "medium", "low"].map((level) => (
+                <label key={level} className="flex items-center">
+                  <input
+                    type="radio"
+                    name="urgency"
+                    value={level}
+                    checked={urgency === level}
+                    onChange={(e) => {
+                      setUrgency(e.target.value);
+                     
+                    }}
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">{level.charAt(0).toUpperCase() + level.slice(1)}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium">
+              Status<span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4">
+              {["open", "pending", "resolved"].map((status) => (
+                <label key={status} className="flex items-center">
+                  <input
+                    type="radio"
+                    name="status"
+                    value={status}
+                    checked={currentStatus === status}
+                    onChange={(e) => {
+                      setCurrentStatus(e.target.value);
+                      
+                    }}
+                    className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <span className="ml-2 text-sm">{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <button
+              onClick={() => setOpenEditModal(false)}
+              type="button"
+              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+)}
 
 {openDeleteModel && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
