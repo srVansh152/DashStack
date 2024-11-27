@@ -361,16 +361,16 @@ export const getFacilities = async () => {
   }
 };
 
-  // Create a complaint
-  export const createComplaint = async (complaintData) => {
-    try {
-      const response = await api.post('/complaints/createComplaint', complaintData);
-      return { success: true, message: response.data.message, data: response.data };
-    } catch (error) {
-      console.error("Create complaint error:", error);
-      return { success: false, message: error.response?.data?.message || "Failed to create complaint." };
-    }
-  };
+// Create a complaint
+export const createComplaint = async (complaintData) => {
+  try {
+    const response = await api.post('/complaints/createComplaint', complaintData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Create complaint error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create complaint." };
+  }
+};
 
 // Update a complaint
 export const updateComplaint = async (id, updateData) => {
@@ -405,16 +405,72 @@ export const deleteComplaint = async (id) => {
   }
 };
 
-  // List all complaints for the admin's society
-  export const listComplaints = async () => {
-    try {
-      const response = await api.get('/complaints/list');
-      return { success: true, message: response.data.message, data: response.data };
-    } catch (error) {
-      console.error("List complaints error:", error);
-      return { success: false, message: error.response?.data?.message || "Failed to list complaints." };
-    }
-  };
+// List all complaints for the admin's society
+export const listComplaints = async () => {
+  try {
+    const response = await api.get('/complaints/list');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("List complaints error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to list complaints." };
+  }
+};
+
+// Create a new request
+export const createRequest = async (requestData) => {
+  try {
+    const response = await api.post('/requests/createRequest', requestData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error creating request:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create request." };
+  }
+};
+
+// Update an existing request
+export const updateRequest = async (id, updatedData) => {
+  try {
+    const response = await api.put(`/requests/update/${id}`, updatedData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error updating request:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update request." };
+  }
+};
+
+// View a specific request
+export const viewRequest = async (id) => {
+  try {
+    const response = await api.get(`/requests/view/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error viewing request:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to view request." };
+  }
+};
+
+// Delete a specific request
+export const deleteRequest = async (id) => {
+  try {
+    const response = await api.delete(`/requests/delete/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error deleting request:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete request." };
+  }
+};
+
+// List requests by society and admin
+export const listRequests = async () => {
+  try {
+    const response = await api.get('/requests/list');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error fetching request list:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch request list." };
+  }
+};
+
 
 // Add a new visitor log
 export const createVisitorLog = async (visitorLogData) => {
@@ -422,15 +478,15 @@ export const createVisitorLog = async (visitorLogData) => {
 
     const response = await api.post('/visitor-logs/create', visitorLogData);
 
-      return { success: true, message: response.data.message, data: response.data };
-    } catch (error) {
-      console.error('Create visitor log error:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to create visitor log.',
-      };
-    }
-  };
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Create visitor log error:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to create visitor log.',
+    };
+  }
+};
 
 // Get all visitor logs for the society
 export const getVisitorLogs = async () => {
