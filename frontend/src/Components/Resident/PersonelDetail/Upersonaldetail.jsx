@@ -55,8 +55,8 @@ export default function Upersonaldetail() {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Email Address</p>
-                                            <p className="font-medium">ArleneMcCoy25@gmail.com</p>
-                                        </div>
+                                            <p className="font-medium break-words">ArleneMcCoy25@gmail.com</p>
+                                            </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Gender</p>
                                             <p className="font-medium">Male</p>
@@ -354,7 +354,7 @@ export default function Upersonaldetail() {
                                     </div>
                                     <div className="space-y-1">
                                         <h3 className="text-sm font-medium text-muted-foreground">Owner Address</h3>
-                                        <p className="text-sm text-foreground">C-101,Dhara Arcade , Mata Varacha Surat.</p>
+                                        <p className="text-sm text-foreground break-words">C-101,Dhara Arcade , Mata Varacha Surat.</p>
                                     </div>
                                 </div>
                             </div>
@@ -376,7 +376,7 @@ export default function Upersonaldetail() {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Email Address</p>
-                                            <p className="font-medium">ArleneMcCoy25@gmail.com</p>
+                                            <p className="font-medium break-words">ArleneMcCoy25@gmail.com</p>
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Gender</p>

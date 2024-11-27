@@ -7,6 +7,67 @@ import axios from 'axios';
 import { createRequest, listRequests, viewRequest, deleteRequest, updateRequest } from '../../../../utils/api';
 
 
+
+
+const complaints = [
+  {
+    id: '1001',
+    requester: {
+      name: 'Evelyn Harper',
+      avatar: '/placeholder.svg?height=32&width=32',
+    },
+    requestName: 'Unethical Behavior',
+    description: 'Regular waste collection services.',
+    date: '10/02/2024',
+    unitNumber: 'A',
+    unitId: '1001',
+    priority: 'Medium',
+    status: 'Pending',
+  },
+  {
+    id: '1002',
+    requester: {
+      name: 'Guy Hawkins',
+      avatar: '/placeholder.svg?height=32&width=32',
+    },
+    requestName: 'Preventive Measures',
+    description: 'Event and recreational activities.',
+    date: '11/02/2024',
+    unitNumber: 'B',
+    unitId: '1002',
+    priority: 'Low',
+    status: 'Solve',
+  },
+  {
+    id: '1003',
+    requester: {
+      name: 'Robert Fox',
+      avatar: '/placeholder.svg?height=32&width=32',
+    },
+    requestName: 'Unethical Behavior',
+    description: 'Regular waste collection services.',
+    date: '12/02/2024',
+    unitNumber: 'C',
+    unitId: '1003',
+    priority: 'High',
+    status: 'Open',
+  },
+  {
+    id: '1004',
+    requester: {
+      name: 'Jacob Jones',
+      avatar: '/placeholder.svg?height=32&width=32',
+    },
+    requestName: 'Preventive Measures',
+    description: 'Back the fluctuations in spending.',
+    date: '13/02/2024',
+    unitNumber: 'D',
+    unitId: '1004',
+    priority: 'Medium',
+    status: 'Pending',
+  },
+]
+
 function RequestTracking() {
   const [requestor, setRequestor] = useState("");
   const [society, setSociety] = useState("");
@@ -172,6 +233,7 @@ function RequestTracking() {
     <>
       <Aside />
       <div className="main">
+
         <Navbar />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 m-2">
           <div className="container-fluid  px-6 py-8">
@@ -270,6 +332,108 @@ function RequestTracking() {
             </div>
           </div>
         </main>
+=======
+        <Navbar/>
+        <main className="flex-1  bg-gray-100 py-3 m-2">
+  <div className="container-fluid px-4">
+    <div className="flex mt-3 justify-between items-center mb-6">
+      <h1 className="text-3xl font-semibold text-gray-900">Request Tracking</h1>
+      <button onClick={handleCreateIncome} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+        <Plus className="inline-block w-5 h-5 mr-2" />
+        Create Request
+      </button>
+    </div>
+
+    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 ">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Requester Name
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Request Name
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                Description
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Request Date
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Unit Number
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Priority
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200 ">
+            {complaints.map((complaint) => (
+              <tr key={complaint.id} className='hover:bg-gray-50 transition-colors duration-150'>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <img className="h-10 w-10 rounded-full" src={complaint.requester.avatar} alt="" />
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-md font-medium text-gray-900">{complaint.requester.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-md text-gray-900">{complaint.requestName}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                  <div className="text-md text-gray-500 max-w-xs truncate">{complaint.description}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-md text-gray-900">{complaint.date}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-md text-gray-900">{complaint.unitNumber}</div>
+                  <div className="text-md text-gray-500">{complaint.unitId}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getPriorityStyles(complaint.priority)}`}>
+                    {complaint.priority}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyles(complaint.status)}`}>
+                    {complaint.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button onClick={handleEditIncome} className="text-green-600 hover:text-green-900 mr-2">
+                    <PencilIcon className="h-5 w-5" />
+                    <span className="sr-only">Approve</span>
+                  </button>
+                  <button onClick={handleViewIncome} className="text-blue-600 hover:text-blue-900 mr-2">
+                    <Eye className="h-5 w-5" />
+                    <span className="sr-only">View</span>
+                  </button>
+                  <button onClick={handleDeleteIncome} className="text-red-600 hover:text-red-900">
+                    <Trash className="h-5 w-5" />
+                    <span className="sr-only">Delete</span>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div> 
+    </div>
+  </div>
+</main>
+
       </div>
 
       {openModal && (

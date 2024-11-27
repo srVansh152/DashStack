@@ -155,18 +155,21 @@ const complaints = [
                 </div>
               </div>
               <div className="p-4">
-                <div className="mb-2">
-                  <span className="font-semibold">Request Date:</span> {complaint.requestDate}
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="font-semibold">Request Date:</span>
+                  <span className="text-gray-700">{complaint.requestDate}</span>
                 </div>
-                <div className="mb-2">
+
+                <div className="mb-2 flex items-center justify-between">
                   <span className="font-semibold">Status:</span>
                   <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
                     {complaint.status}
                   </span>
                 </div>
-                <div>
+
+                <div className="mt-2 flex justify-between">
                   <span className="font-semibold">Description:</span>
-                  <p className="mt-1 text-gray-600">{complaint.description}</p>
+                  <span className=" text-gray-600 break-words	">{complaint.description}</span>
                 </div>
               </div>
             </div>
