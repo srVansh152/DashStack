@@ -1,65 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bell, PencilIcon, Eye, MoreVertical, Plus, Trash } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
-import { createComplaint } from '../../../../utils/api';
-
-
-const complaints = [
-  {
-    id: '1001',
-    complainer: {
-      name: 'Evelyn Harper',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    type: 'Unethical Behavior',
-    description: 'Providing false information or deliberately.',
-    unitNumber: 'A',
-    unitId: '1001',
-    priority: 'Medium',
-    status: 'Pending',
-  },
-  {
-    id: '1002',
-    complainer: {
-      name: 'Esther Howard',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    type: 'Preventive Measures',
-    description: 'Regular waste collection services.',
-    unitNumber: 'B',
-    unitId: '1002',
-    priority: 'Low',
-    status: 'Open',
-  },
-  {
-    id: '1003',
-    complainer: {
-      name: 'Jenny Wilson',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    type: 'Unethical Behavior',
-    description: 'Designated garages for residents and guests.',
-    unitNumber: 'C',
-    unitId: '1003',
-    priority: 'High',
-    status: 'Solve',
-  },
-  {
-    id: '1004',
-    complainer: {
-      name: 'Guy Hawkins',
-      avatar: '/placeholder.svg?height=32&width=32',
-    },
-    type: 'Preventive Measures',
-    description: 'The celebration of Ganesh Chaturthi involves.',
-    unitNumber: 'D',
-    unitId: '1004',
-    priority: 'Medium',
-    status: 'Pending',
-  },
-]
+import { createComplaint, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../../utils/api';
 
 function CreateComplain() {
   const [reporterName, setReporterName] = useState("Evelyn Harper");
@@ -74,14 +17,36 @@ function CreateComplain() {
   const [openViewModel, setOpenViewModal] = useState(false)
   const [openDeleteModel, setOpenDeleteModel] = useState(false)
   const [formData, setFormData] = useState({
-    complainerName: "",
+    complainer: "",
+    society: "",
     complaintName: "",
     description: "",
     wing: "",
-    unit: "",
+    unitNumber: "",
     priority: "",
-    status: "",
+    status: "Pending",
   });
+  const [fetchedComplaints, setFetchedComplaints] = useState([]);
+  const [complaintIdToDelete, setComplaintIdToDelete] = useState(null);
+  const [complaintIdToEdit, setcomplaintIdToEdit] = useState(null);
+  const [viewComplaintDetails, setViewComplaintDetails] = useState(null);
+
+
+  const fetchComplaints = async () => {
+    try {
+      const response = await listComplaints(); // Replace with your API endpoint
+
+      console.log(response.data.complaints);
+      
+      setFetchedComplaints(response.data.complaints); // Assuming the API returns an array of complaints
+    } catch (error) {
+      console.error('Error fetching complaints:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,26 +58,68 @@ function CreateComplain() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Form submission logic here
-   
+    try {
+        const response = await createComplaint(formData);
+        console.log('Complaint created successfully:', response);
+        fetchComplaints()
+        setOpenModal(false);
+        setFormData({
+            complainer: "",
+            society: "",
+            complaintName: "",
+            description: "",
+            wing: "",
+            unitNumber: "",
+            priority: "",
+            status: "Pending",
+        });
+    } catch (error) {
+        console.error('Error creating complaint:', error);
+    }
   };
  
-  const handleEditSubmit = (e) => {
+  const handleEditSubmit = async (e) => {
     e.preventDefault();
-  };
+    try {
+        const updatedComplaint = {
+            complainer: reporterName,
+            complaintName: reportTitle,
+            description: details,
+            wing: section,
+            unitNumber: unitNumber,
+            urgency: urgency,
+            status: currentStatus,
+        };
+        const response = await updateComplaint(complaintIdToEdit, updatedComplaint); // Call the update API
+        console.log('Complaint updated successfully:', response);
+        setOpenEditModal(false);
+        fetchComplaints(); // Refresh the complaints list
+    } catch (error) {
+        console.error('Error updating complaint:', error);
+    }
+};
   
   const handleAddModel = () => {
     setOpenModal(true)
   }
-  const handleEditModel = () => {
-    setOpenEditModal(true)
+  const handleEditModel = (complaint) => {
+    setcomplaintIdToEdit(complaint._id)
+    setReporterName(complaint.complainer);
+    setReportTitle(complaint.complaintName);
+    setDetails(complaint.description);
+    setSection(complaint.wing);
+    setUnitNumber(complaint.unitNumber);
+    setUrgency(complaint.urgency);
+    setCurrentStatus(complaint.status);
+    setOpenEditModal(true);
   }
-  const handleViewModel = () => {
-    setOpenViewModal(true)
+  const handleViewModel = (complaint) => {
+    handleViewComplaint(complaint); // Call the view function with the complaint ID
   }
-  const handleDeleteModel = () => {
-    setOpenDeleteModel(true)
-  }
+  const handleDeleteModel = (complaintId) => {
+    setOpenDeleteModel(true);
+    setComplaintIdToDelete(complaintId);
+  };
 
 
 
@@ -141,6 +148,29 @@ function CreateComplain() {
         return 'bg-gray-100 text-gray-800'
     }
   }
+
+  const handleDeleteComplaint = async (complaintId) => {
+    try {
+      console.log(complaintId);
+      
+      await deleteComplaint(complaintId); // Call the delete API
+      console.log('Complaint deleted successfully');
+      fetchComplaints(); // Refresh the complaints list
+    } catch (error) {
+      console.error('Error deleting complaint:', error);
+    }
+  };
+
+  const handleViewComplaint = async (complaintId) => {
+    try {
+        const response = await viewComplaint(complaintId); // Call the view API
+        console.log('Complaint details fetched successfully:', response);
+        setViewComplaintDetails(response.data.complaint); // Store the fetched details in state
+        setOpenViewModal(true); // Open the view modal
+    } catch (error) {
+        console.error('Error fetching complaint details:', error);
+    }
+  };
 
   return (
     <div>
@@ -185,19 +215,19 @@ function CreateComplain() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {complaints.map((complaint) => (
+                  {fetchedComplaints.map((complaint) => (
                     <tr key={complaint.id} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <img
                             className="h-8 w-8 rounded-full object-cover"
                             src={complaint.complainer.avatar}
-                            alt={complaint.complainer.name}
+                            alt={complaint.complaintName}
                           />
-                          <span className="ml-2 text-sm font-medium text-gray-900">{complaint.complainer.name}</span>
+                          <span className="ml-2 text-sm font-medium text-gray-900">{complaint.complaintName}</span>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{complaint.type}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{complaint.complaintName}</td>
                       <td className="max-w-xs truncate px-6 py-4 text-sm text-gray-500">{complaint.description}</td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-1">
@@ -225,13 +255,13 @@ function CreateComplain() {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right">
                         <div className="flex justify-end space-x-2">
-                          <button onClick={handleEditModel} className="rounded p-1 text-green-600 hover:bg-green-50">
+                          <button onClick={() => handleEditModel(complaint)} className="rounded p-1 text-green-600 hover:bg-green-50">
                             <PencilIcon className="h-4 w-4" />
                           </button>
-                          <button onClick={handleViewModel}  className="rounded p-1 text-blue-600 hover:bg-blue-50">
+                          <button onClick={()=>handleViewModel(complaint._id)}  className="rounded p-1 text-blue-600 hover:bg-blue-50">
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button onClick={handleDeleteModel} className="rounded p-1 text-red-600 hover:bg-red-50">
+                          <button onClick={() => handleDeleteModel(complaint._id)} className="rounded p-1 text-red-600 hover:bg-red-50">
                             <Trash className="h-4 w-4" />
                           </button>
                         </div>
@@ -258,8 +288,8 @@ function CreateComplain() {
         </label>
         <input
           type="text"
-          name="complainerName"
-          value={formData.complainerName}
+          name="complainer"
+          value={formData.complainer}
           onChange={handleChange}
           placeholder="Enter Name"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
@@ -314,8 +344,8 @@ function CreateComplain() {
           </label>
           <input
             type="text"
-            name="unit"
-            value={formData.unit}
+            name="unitNumber"
+            value={formData.unitNumber}
             onChange={handleChange}
             placeholder="Enter Unit"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
@@ -399,55 +429,43 @@ function CreateComplain() {
             </button>
           </div>
 
-          <div className="flex items-center space-x-3 mb-6">
-            <img
-              src="/placeholder.svg?height=48&width=48"
-              alt="Evelyn Harper"
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <h3 className="font-medium text-gray-900">Evelyn Harper</h3>
-              <p className="text-sm text-gray-500">Aug 5, 2024</p>
-            </div>
-          </div>
+          {viewComplaintDetails && (
+            <div className="space-y-4">
+                <div>
+                    <label className="block text-sm text-gray-500">Request Name</label>
+                    <p className="text-gray-900">{viewComplaintDetails.complaintName}</p>
+                </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-gray-500">Request Name</label>
-              <p className="text-gray-900">Unethical Behavior</p>
-            </div>
+                <div>
+                    <label className="block text-sm text-gray-500">Description</label>
+                    <p className="text-gray-900">{viewComplaintDetails.description}</p>
+                </div>
 
-            <div>
-              <label className="block text-sm text-gray-500">Description</label>
-              <p className="text-gray-900">
-                Offering, giving, receiving, or soliciting of value to influence the actions of an.
-              </p>
-            </div>
+                <div className="grid grid-cols-4 gap-4">
+                    <div>
+                        <label className="block text-sm text-gray-500">Wing</label>
+                        <p className="text-gray-900">{viewComplaintDetails.wing}</p>
+                    </div>
 
-            <div className="grid grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm text-gray-500">Wing</label>
-                <p className="text-gray-900">A</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm text-gray-500">Unit</label>
-                <p className="text-gray-900">1002</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm text-gray-500">Priority</label>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Medium
-                </span>
-              </div>
-              
-              <div>
-                <label className="block text-sm text-gray-500">Status</label>
-                <span className="text-blue-600">Open</span>
-              </div>
+                    <div>
+                        <label className="block text-sm text-gray-500">Unit</label>
+                        <p className="text-gray-900">{viewComplaintDetails.unitNumber}</p>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-500">Priority</label>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {viewComplaintDetails.priority}
+                        </span>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm text-gray-500">Status</label>
+                        <span className="text-blue-600">{viewComplaintDetails.status}</span>
+                    </div>
+                </div>
             </div>
-          </div>
+          )}
         </div>
           </div>
         </div>
@@ -610,33 +628,30 @@ function CreateComplain() {
 )}
 
 {openDeleteModel && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Delete Complain?</h2>
-          
-          <p className="text-gray-500">
-            Are you sure you want to delete this Complain?
-          </p>
-          
-          <div className="flex gap-4 pt-2">
-            <button onClick={()=>setOpenDeleteModel(false)}
-              type="button"
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-            >
-              Delete
-            </button>
-          </div>
+  <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+    <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+      <div className="p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Delete Complaint?</h2>
+        <p className="text-gray-500">Are you sure you want to delete this Complaint?</p>
+        <div className="flex gap-4 pt-2">
+          <button onClick={() => setOpenDeleteModel(false)} type="button" className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              handleDeleteComplaint(complaintIdToDelete); // Call delete function with the stored ID
+              setOpenDeleteModel(false); // Close the modal
+            }}
+            type="button"
+            className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          >
+            Delete
+          </button>
         </div>
-          </div>
-        </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }
