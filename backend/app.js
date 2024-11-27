@@ -1,3 +1,4 @@
+require('./tasks/penaltyUpdater');
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
@@ -28,26 +29,10 @@ app.get('/protected', protect, (req, res) => {
 });
 
 
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
-
-// // Replace with a local image file for testing
-// const imagePath = 'C:\\Users\\01\\Pictures\\Screenshots\\Screenshot 2024-11-04 211030.png';
-
-
-// cloudinary.uploader.upload(imagePath, {
-//   folder: 'resident', // Specify the folder name here
-// }).then((result) => {
-//   console.log('Upload Successful:', result);
-// }).catch((error) => {
-//   console.error('Upload Error:', error);
-// });
-
-// Auth and society routes
+// Auth routes
 app.use('/api/auth', require('./routes/auth'));
+
+// society routes 
 app.use('/api/society', require('./routes/society'));
 
 // Important numbers routes
@@ -57,33 +42,45 @@ app.use('/api/important-numbers', require('./routes/importantNumber'));
 app.use('/api/residents', require('./routes/resident'));
 
 // Middleware to protect routes
-// app.use('/api/financial', require('./routes/financialRoutes'));
+app.use('/api/financial', require('./routes/financialRoutes'));
+
+//other income routes 
+app.use('/api/other-income', require('./routes/otherIncomeRoutes'));
+
+// payments routes 
+// app.use('/api/payments', require('./routes/paymentRoutes'));
+
+// visitors log routes 
+app.use('/api/visitor-logs', require('./routes/visitorLogRoutes'));
+
+// security guards routes 
+app.use('/api/security-guards', require('./routes/securityGuardRoutes'));
 
 // Expense routes
 app.use('/api/expenses', require('./routes/expenseRoutes'));
 
-// note
+// note routes 
 app.use('/api/notes', require('./routes/noteRoutes'));
 
-// facilities
+// facilities routes
 app.use('/api/facilities', require("./routes/facilityRoutes"));
 
-// Complaints route
+// Complaints routes
 app.use('/api/complaints', require("./routes/complaintRoutes"));
 
-// visitor logs
-app.use('/api/visitor-logs', require("./routes/visitorLogRoutes"));
+// Requests routes
+app.use('/api/requests', require('./routes/requestRoutes'));
 
-// security protocol
+// security protocol routes
 app.use('/api/security-protocols', require("./routes/securityProtocolRoutes"));
 
-// announcement
+// announcement routes
 app.use('/api/announcements', require("./routes/announcementRoutes"));
 
-//emergency
+//emergency routes
 app.use('/api/emergency-alerts', require("./routes/emergencyRoutes"));
 
-// Health check route
+// Health check routes
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });

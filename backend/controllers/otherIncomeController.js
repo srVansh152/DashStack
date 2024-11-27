@@ -91,24 +91,50 @@ exports.deleteExpiredOtherIncome = async (req, res) => {
 // Mark resident as paid for a specific Other Income
 exports.markResidentPaid = async (req, res) => {
   try {
-    const { residentId, amount } = req.body;
+    const { amount, paymentMethod  } = req.body;
     const otherIncome = await OtherIncome.findById(req.params.id);
 
     if (!otherIncome) {
       return res.status(404).json({ message: 'Other Income record not found' });
     }
 
+    if (amount <= otherIncome.amount) {
+      return res.status(400).send({message:"Amount is less then required "})
+    }
+
+    // Check if the resident has already paid for this Other Income record
+    const existingPayment = await Payment.findOne({
+      residentId:req.user._id,
+      incomeId: otherIncome._id,
+      paymentType: 'OtherIncome'
+    });
+
+    if (existingPayment) {
+      return res.status(400).json({ message: 'Resident has already paid for this income record.' });
+    }
+
+    // Validate payment method
+    if (!['cash', 'online'].includes(paymentMethod)) {
+      return res.status(400).json({ message: 'Invalid payment method. Must be "cash" or "online".' });
+    }
+
+    // Create a new payment record
     const payment = new Payment({
-      residentId,
+      residentId:req.user._id,
       amount,
-      paymentType: 'OtherIncome',  // Specify the type as OtherIncome
-      incomeId: otherIncome._id,    // Link to the OtherIncome document
+      paymentType: 'OtherIncome',
+      incomeId: otherIncome._id,
       societyId: otherIncome.societyId,
-      adminId: req.user._id
+      adminId: req.user._id,
+      hasPaid: true,
+      paymentDate: new Date(),
+      paymentMethod
     });
 
     await payment.save();
-    otherIncome.paidByResidents.push(payment._id);  // Track the payment in OtherIncome
+
+    // Add payment reference to the OtherIncome record
+    otherIncome.paidByResidents.push(payment._id);
     await otherIncome.save();
 
     res.json({ message: 'Payment recorded successfully', payment });

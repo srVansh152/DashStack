@@ -13,4 +13,6 @@ router.get('/financial-income', protect, financialIncomeController.getFinancialI
 // Get payment status for each resident in a specific Financial Income record
 router.get('/financial-income/:id', protect, financialIncomeController.getFinancialIncomeById);
 
+router.patch('/financial-income/:id/mark-paid', protect, financialIncomeController.markResidentPaid);
+
 module.exports = router;

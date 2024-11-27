@@ -3,9 +3,8 @@ const SecurityProtocol = require('../models/SecurityProtocol');
 // Create a new security protocol
 exports.addProtocol = async (req, res) => {
   try {
-    const { title, description, date, time,society,admin} = req.body;
+    const { title, description, date, time} = req.body;
 
-    // Validate required fields
     if (!title || !description || !date || !time) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -15,8 +14,8 @@ exports.addProtocol = async (req, res) => {
       description,
       date,
       time,
-      societyId: societyId,
-      adminId: adminId
+      societyId: req.user.society._id,
+      adminId: req.user._id
     });
 
     await protocol.save();
@@ -79,7 +78,13 @@ exports.deleteProtocol = async (req, res) => {
 // List all protocols
 exports.getProtocols = async (req, res) => {
   try {
-    const protocols = await SecurityProtocol.find().sort({ createdAt: -1 });
+    
+    const protocols = await SecurityProtocol.find({ societyId: req.user.society._id })
+      .sort({ createdAt: -1 });
+
+    if (!protocols.length) {
+      return res.status(404).json({ message: 'No protocols found for this society' });
+    }
 
     res.status(200).json({ protocols });
   } catch (error) {

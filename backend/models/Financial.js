@@ -11,7 +11,14 @@ const financialIncomeSchema = new mongoose.Schema({
     residentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Resident' },
     hasPaid: { type: Boolean, default: false },
     penaltyAmount: { type: Number, default: 0 }
-  }]
+  }],
+  penaltyRules: { 
+    type: {
+      penaltyAmount: { type: Number, default: 0 }, 
+      penaltyAfterDays: { type: Number, default: 0 } 
+    },
+    required: true
+  }
 });
 
 module.exports = mongoose.model('FinancialIncome', financialIncomeSchema);

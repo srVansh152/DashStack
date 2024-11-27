@@ -361,19 +361,16 @@ export const getFacilities = async () => {
   }
 };
 
-// Create a complaint
-export const createComplaint = async (complaintData) => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await api.post('/complaints/createComplaint', complaintData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("Create complaint error:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to create complaint." };
-  }
-};
+  // Create a complaint
+  export const createComplaint = async (complaintData) => {
+    try {
+      const response = await api.post('/complaints/createComplaint', complaintData);
+      return { success: true, message: response.data.message, data: response.data };
+    } catch (error) {
+      console.error("Create complaint error:", error);
+      return { success: false, message: error.response?.data?.message || "Failed to create complaint." };
+    }
+  };
 
 // Update a complaint
 export const updateComplaint = async (id, updateData) => {
@@ -408,16 +405,16 @@ export const deleteComplaint = async (id) => {
   }
 };
 
-// List all complaints for the admin's society
-export const listComplaints = async () => {
-  try {
-    const response = await api.get('/complaints/list');
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("List complaints error:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to list complaints." };
-  }
-};
+  // List all complaints for the admin's society
+  export const listComplaints = async () => {
+    try {
+      const response = await api.get('/complaints/list');
+      return { success: true, message: response.data.message, data: response.data };
+    } catch (error) {
+      console.error("List complaints error:", error);
+      return { success: false, message: error.response?.data?.message || "Failed to list complaints." };
+    }
+  };
 
 // Add a new visitor log
 export const createVisitorLog = async (visitorLogData) => {
@@ -425,84 +422,15 @@ export const createVisitorLog = async (visitorLogData) => {
 
     const response = await api.post('/visitor-logs/create', visitorLogData);
 
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error('Create visitor log error:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || 'Failed to create visitor log.',
-    };
-  }
-};
-
-// Create a new request
-export const createRequest = async (requestData) => {
-  try {
-    const token = localStorage.getItem('token');
-    console.log(requestData);
-    
-    const response = await api.post('/requests/createRequest', requestData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("Error creating request:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to create request." };
-  }
-};
-
-// Update an existing request
-export const updateRequest = async (id, updatedData) => {
-  try {
-    const token = localStorage.getItem('token');
-    console.log(id);
-    
-    
-    const response = await api.put(`/requests/update/${id}`, updatedData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("Error updating request:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to update request." };
-  }
-};
-
-// View a specific request
-export const viewRequest = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await api.get(`/requests/view/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("Error viewing request:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to view request." };
-  }
-};
-
-// Delete a specific request
-export const deleteRequest = async (id) => {
-  try {
-    const response = await api.delete(`/requests/delete/${id}`);
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("Error deleting request:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to delete request." };
-  }
-};
-
-// List requests by society and admin
-export const listRequests = async () => {
-  try {
-    const response = await api.get('/requests/list');
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error("Error fetching request list:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to fetch request list." };
-  }
-};
+      return { success: true, message: response.data.message, data: response.data };
+    } catch (error) {
+      console.error('Create visitor log error:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to create visitor log.',
+      };
+    }
+  };
 
 // Get all visitor logs for the society
 export const getVisitorLogs = async () => {
@@ -515,5 +443,60 @@ export const getVisitorLogs = async () => {
       success: false,
       message: error.response?.data?.message || 'Failed to fetch visitor logs.',
     };
+  }
+};
+
+// Add a new security protocol
+export const addSecurityProtocol = async (protocolData) => {
+  try {
+    const response = await api.post('/security-protocols/security-protocol', protocolData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error adding security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to add security protocol." };
+  }
+};
+
+// Update an existing security protocol
+export const updateSecurityProtocol = async (id, updatedData) => {
+  try {
+    const response = await api.put(`/security-protocols/security-protocol/${id}`, updatedData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error updating security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update security protocol." };
+  }
+};
+
+// View a specific security protocol
+export const viewSecurityProtocol = async (id) => {
+  try {
+    const response = await api.get(`/security-protocols/security-protocol/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error viewing security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to view security protocol." };
+  }
+};
+
+// Delete a specific security protocol
+export const deleteSecurityProtocol = async (id) => {
+  try {
+    const response = await api.delete(`/security-protocols/security-protocol/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error deleting security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete security protocol." };
+  }
+};
+
+// Fetch all security protocols
+export const getSecurityProtocols = async () => {
+  try {
+    const response = await api.get('/security-protocols/security-protocols');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error fetching security protocols:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch security protocols." };
   }
 };
