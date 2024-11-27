@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const Resident = require('../models/Resident');
 const { generateToken } = require('../utils/token');
-const cloudinary = require('../config/cloudinaryConfig'); 
+const cloudinary = require('../config/cloudinaryConfig');
 
 
 // Email sending utility function
@@ -125,18 +125,17 @@ exports.login = async (req, res) => {
 
 // Forgot Password - Send OTP required to reset password
 exports.forgotPassword = async (req, res) => {
-  const { emailOrPhone } = req.body;
-
+  const { email } = req.body;
   try {
     // Find user by email or phone in both User and Resident models
     let user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      email: email
     });
 
     if (!user) {
       // If user not found in User model, check in Resident model
       user = await Resident.findOne({
-        $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+        email: email
       });
     }
 
@@ -158,32 +157,39 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-
+//verify otp 
 exports.verifyOtp = async (req, res) => {
-  const { emailOrPhone, otp } = req.body;
+  const { email, otp } = req.body;
 
   try {
-    // Find the user by email/phone and OTP, ensure OTP is valid and not expired
+    // Log the incoming OTP
+    console.log(email);
+    console.log('Incoming OTP:', otp);
+
+    // Search for user in both User and Resident models
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
-      resetOtp: otp,
-      otpExpires: { $gt: Date.now() }, // Check OTP expiration
+      email: email,
+      resetOtp: otp.toString(), // Ensure consistent type
+      otpExpires: { $gt: Date.now() }, // Check expiration
     }) || await Resident.findOne({
-      email: emailOrPhone,
-      resetOtp: otp,
+      email: email,
+      resetOtp: otp.toString(), // Ensure consistent type
       otpExpires: { $gt: Date.now() },
     });
+
+    // Log the retrieved user
+    console.log('User found for OTP verification:', user);
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
     }
 
-    // OTP is valid, allow user to proceed with password reset
     res.json({ message: 'OTP verified successfully. Proceed to reset password.' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to verify OTP', error: error.message });
   }
 };
+
 
 // Reset Password - Verify OTP before this step
 exports.resetPassword = async (req, res) => {
@@ -192,7 +198,7 @@ exports.resetPassword = async (req, res) => {
   try {
     // Find the user by email/phone and OTP, ensure OTP is valid and not expired
     const user = await User.findOne({
-      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      email: emailOrPhone,
       resetOtp: otp,
       otpExpires: { $gt: Date.now() },
     }) || await Resident.findOne({
@@ -220,7 +226,7 @@ exports.resetPassword = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     console.log(req.user); // Debugging: Check if req.user is populated
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id).select('-password').populate('society');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

@@ -56,7 +56,7 @@ export default function Upersonaldetail() {
                                         <div>
                                             <p className="text-sm text-gray-500">Email Address</p>
                                             <p className="font-medium break-words">ArleneMcCoy25@gmail.com</p>
-                                            </div>
+                                        </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Gender</p>
                                             <p className="font-medium">Male</p>

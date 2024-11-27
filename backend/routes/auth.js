@@ -15,7 +15,7 @@ const router = express.Router();
 router.post('/register', upload.single('userPhoto'), register);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
-router.get('/verify-otp', verifyOtp); // Verify OTP before reset
+router.post('/verify-otp', verifyOtp); 
 router.post('/reset-password', resetPassword);
 
 // Routes for individual user profile management

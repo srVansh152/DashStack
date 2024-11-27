@@ -364,10 +364,7 @@ export const getFacilities = async () => {
 // Create a complaint
 export const createComplaint = async (complaintData) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await api.post('/complaints/createComplaint', complaintData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.post('/complaints/createComplaint', complaintData);
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Create complaint error:", error);
@@ -427,31 +424,10 @@ export const listComplaints = async () => {
   }
 };
 
-// Add a new visitor log
-export const createVisitorLog = async (visitorLogData) => {
-  try {
-
-    const response = await api.post('/visitor-logs/create', visitorLogData);
-
-    return { success: true, message: response.data.message, data: response.data };
-  } catch (error) {
-    console.error('Create visitor log error:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || 'Failed to create visitor log.',
-    };
-  }
-};
-
 // Create a new request
 export const createRequest = async (requestData) => {
   try {
-    const token = localStorage.getItem('token');
-    console.log(requestData);
-    
-    const response = await api.post('/requests/createRequest', requestData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.post('/requests/createRequest', requestData);
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error creating request:", error);
@@ -462,13 +438,7 @@ export const createRequest = async (requestData) => {
 // Update an existing request
 export const updateRequest = async (id, updatedData) => {
   try {
-    const token = localStorage.getItem('token');
-    console.log(id);
-    
-    
-    const response = await api.put(`/requests/update/${id}`, updatedData, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.put(`/requests/update/${id}`, updatedData);
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error updating request:", error);
@@ -479,10 +449,7 @@ export const updateRequest = async (id, updatedData) => {
 // View a specific request
 export const viewRequest = async (id) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await api.get(`/requests/view/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await api.get(`/requests/view/${id}`);
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error viewing request:", error);
@@ -512,6 +479,23 @@ export const listRequests = async () => {
   }
 };
 
+
+// Add a new visitor log
+export const createVisitorLog = async (visitorLogData) => {
+  try {
+
+    const response = await api.post('/visitor-logs/create', visitorLogData);
+
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error('Create visitor log error:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to create visitor log.',
+    };
+  }
+};
+
 // Get all visitor logs for the society
 export const getVisitorLogs = async () => {
   try {
@@ -523,5 +507,60 @@ export const getVisitorLogs = async () => {
       success: false,
       message: error.response?.data?.message || 'Failed to fetch visitor logs.',
     };
+  }
+};
+
+// Add a new security protocol
+export const addSecurityProtocol = async (protocolData) => {
+  try {
+    const response = await api.post('/security-protocols/security-protocol', protocolData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error adding security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to add security protocol." };
+  }
+};
+
+// Update an existing security protocol
+export const updateSecurityProtocol = async (id, updatedData) => {
+  try {
+    const response = await api.put(`/security-protocols/security-protocol/${id}`, updatedData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error updating security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update security protocol." };
+  }
+};
+
+// View a specific security protocol
+export const viewSecurityProtocol = async (id) => {
+  try {
+    const response = await api.get(`/security-protocols/security-protocol/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error viewing security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to view security protocol." };
+  }
+};
+
+// Delete a specific security protocol
+export const deleteSecurityProtocol = async (id) => {
+  try {
+    const response = await api.delete(`/security-protocols/security-protocol/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error deleting security protocol:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete security protocol." };
+  }
+};
+
+// Fetch all security protocols
+export const getSecurityProtocols = async () => {
+  try {
+    const response = await api.get('/security-protocols/security-protocols');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Error fetching security protocols:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch security protocols." };
   }
 };
