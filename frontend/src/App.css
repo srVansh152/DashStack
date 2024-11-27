@@ -1,0 +1,12 @@
+.main{
+    width: 83%;
+    margin-left: 17%;
+}
+
+/* Media query for small screens */
+@media (max-width: 768px) {
+    .main {
+        width: 100%;
+        margin-left: 0;
+    }
+}
