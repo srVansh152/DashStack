@@ -8,14 +8,14 @@ import Navbar from '../../Common/Navbar/Navbar';
 export default function Upersonaldetail() {
     const [activeTab, setActiveTab] = useState('owner')
     const [isOpen, setIsOpen] = useState(false);
-   
+
 
     return (
         <>
             <div className="flex">
                 <UAside className="flex-shrink-0 sticky top-0" />
                 <div className="mainn flex-1 min-h-screen bg-gray-50 p-4">
-                  <Navbar/>
+                    <Navbar />
                     {/* Tabs */}
                     <div className="flex mb-4 mt-5">
                         <button
@@ -55,7 +55,7 @@ export default function Upersonaldetail() {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Email Address</p>
-                                            <p className="font-medium">ArleneMcCoy25@gmail.com</p>
+                                            <p className="font-medium break-words">ArleneMcCoy25@gmail.com</p>
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Gender</p>
@@ -354,7 +354,7 @@ export default function Upersonaldetail() {
                                     </div>
                                     <div className="space-y-1">
                                         <h3 className="text-sm font-medium text-muted-foreground">Owner Address</h3>
-                                        <p className="text-sm text-foreground">C-101,Dhara Arcade , Mata Varacha Surat.</p>
+                                        <p className="text-sm text-foreground break-words">C-101,Dhara Arcade , Mata Varacha Surat.</p>
                                     </div>
                                 </div>
                             </div>
@@ -376,7 +376,7 @@ export default function Upersonaldetail() {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Email Address</p>
-                                            <p className="font-medium">ArleneMcCoy25@gmail.com</p>
+                                            <p className="font-medium break-words">ArleneMcCoy25@gmail.com</p>
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Gender</p>
