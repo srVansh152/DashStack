@@ -152,7 +152,7 @@ const ComplaintSubmission = () => {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
+                      className="h-5 w-6 bg-white rounded"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -172,16 +172,16 @@ const ComplaintSubmission = () => {
                 </div>
               </div>
               <div className="p-4">
-                <div className="mb-2">
+                <div className="mb-3 flex justify-between">
                   <span className="font-semibold">Request Date:</span> {new Date(complaint.createdAt).toLocaleDateString()}
                 </div>
-                <div className="mb-2">
+                <div className="mb-3 flex justify-between">
                   <span className="font-semibold">Status:</span>
                   <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
                     {complaint.status}
                   </span>
                 </div>
-                <div>
+                <div className='flex justify-between'>
                   <span className="font-semibold">Description:</span>
                   <p className="mt-1 text-gray-600">{complaint.description}</p>
                 </div>
