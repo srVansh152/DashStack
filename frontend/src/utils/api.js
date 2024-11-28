@@ -369,7 +369,7 @@ export const createComplaint = async (complaintData) => {
   try {
     console.log(complaintData)
     const response = await api.post('/complaints/createComplaint', complaintData);
-    console.log("asdadads",response)
+    console.log("asdadads", response)
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Create complaint error:", error);
@@ -404,7 +404,7 @@ export const deleteComplaint = async (id) => {
   try {
     const token = localStorage.getItem("token");
     console.log(id);
-    
+
     const response = await api.delete(`/complaints/delete/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -438,7 +438,7 @@ export const createRequest = async (requestData) => {
       headers: { Authorization: `Bearer ${token}` }
     });
     console.log(response);
-    
+
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error creating request:", error);
@@ -576,6 +576,65 @@ export const getSecurityProtocols = async () => {
   } catch (error) {
     console.error("Error fetching security protocols:", error);
     return { success: false, message: error.response?.data?.message || "Failed to fetch security protocols." };
+  }
+};
+
+// Add Security Guard
+export const addSecurityGuard = async (formData) => {
+  try {
+    const response = await api.post('/security-guards/add', formData, {
+      isMultipart: true, // This ensures the correct headers for multipart requests
+    });
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Add security guard error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to add security guard." };
+  }
+};
+
+// Update Security Guard
+export const updateSecurityGuard = async (id, formData) => {
+  try {
+    const response = await api.put(`/security-guards/update/${id}`, formData, {
+      isMultipart: true, // This ensures the correct headers for multipart requests
+    });
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Update security guard error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update security guard." };
+  }
+};
+
+// View Security Guard by ID
+export const viewSecurityGuard = async (id) => {
+  try {
+    const response = await api.get(`/security-guards/view/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("View security guard error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch security guard details." };
+  }
+};
+
+// Delete Security Guard
+export const deleteSecurityGuard = async (id) => {
+  try {
+    const response = await api.delete(`/security-guards/delete/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Delete security guard error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete security guard." };
+  }
+};
+
+// List All Security Guards
+export const listSecurityGuards = async () => {
+  try {
+    const response = await api.get('/security-guards/list');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("List security guards error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch security guards." };
   }
 };
 
