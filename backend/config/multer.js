@@ -26,6 +26,12 @@ const storage = new CloudinaryStorage({
       case 'userPhoto':
         folderName = 'user/userPhoto';
         break;
+      case 'profilePhoto': // For security guard profile photos
+        folderName = 'securityGuard/profilephoto';
+        break;
+      case 'aadhaarCardImage': // For security guard Aadhaar card images
+        folderName = 'securityGuard/aadhaarCardImages';
+        break;
       default:
         folderName = 'misc';
     }
