@@ -7,7 +7,7 @@ import Navbar from '../../Common/Navbar/Navbar';
 
 
 const UMaintenace = () => {
-  
+
   const [openModel, setOpenModel] = useState(false);
 
   const handleAddModel = () => {
@@ -19,7 +19,7 @@ const UMaintenace = () => {
     <div className='flex h-screen bg-gray-50'>
       <UAside />
       <div className="flex-1 overflow-auto">
-       <Navbar/>
+        <Navbar />
         <main className="p-6">
           {/* Breadcrumb */}
 
@@ -43,21 +43,22 @@ const UMaintenace = () => {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-medium">Pending Maintenance</h2>
-             <Link to="/user/Uview">
-             <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
-                View Invoice
-              </button>
-             </Link>
+              <Link to="/user/Uview">
+                <button className="px-4 py-2 bg-orange-600 text-white rounded-lg">
+                  View Invoice
+                </button>
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2, 3].map((item) => (
-                <div key={item} className="bg-white rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="bg-blue-500  text-white px-4 py-2 rounded">Maintenance</div>
-                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
+                <div key={item} className="bg-white rounded-lg">
+                  <div className="font-semibold flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-t-lg">
+                    <div className="text-white py-2 rounded">Maintenance</div>
+                    <div className="bg-white bg-opacity-50 text-white px-5 py-2 rounded-full">Pending</div>
+
                   </div>
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-2 mb-4 p-4">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Bill Date</span>
                       <span>1/01/2024</span>
@@ -74,15 +75,21 @@ const UMaintenace = () => {
                       <span className="text-gray-500">Maintenance Penalty Amount</span>
                       <span>250.00</span>
                     </div>
-                    <div className="flex justify-between font-medium">
+                    <div className="flex justify-between font-medium mb-3">
                       <span>Grand Total</span>
                       <span className="text-green-600">₹ 1,250</span>
                     </div>
+
+                    {/* Pay Now button with margin-top applied */}
+                    <button
+                      onClick={handleAddModel}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white pt-3 rounded-lg transition-colors py-2 mt-4"
+                    >
+                      Pay Now
+                    </button>
                   </div>
-                  <button onClick={handleAddModel} className="w-full py-2 bg-orange-600 text-white rounded-lg">
-                    Pay Now
-                  </button>
                 </div>
+
               ))}
             </div>
           </div>
@@ -93,11 +100,11 @@ const UMaintenace = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2].map((item) => (
                 <div key={item} className="bg-white rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="bg-blue-500 text-white px-4 py-2 rounded">Maintenance</div>
-                    <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded">Pending</div>
+                  <div className="font-semibold flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-t-lg">
+                    <div className=" text-white  rounded">Maintenance</div>
+                    <div className="bg-white bg-opacity-50 text-white px-5 py-2 rounded-full">Pending</div>
                   </div>
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-2 mb-4 p-3">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Date</span>
                       <span>1/01/2024</span>
@@ -121,75 +128,75 @@ const UMaintenace = () => {
         </main>
       </div>
       {openModel && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div className="p-6">
-          <h2 className="text-lg font-medium mb-4">Payment Method</h2>
-          
-          <div className="space-y-3">
-            {/* Master Card */}
-            <label className="flex items-center justify-between p-3 rounded-lg border-2 hover:border-orange-500 bg-orange-50/50">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded ">
-                  <img src="/image/master.png" alt="" />
-                </div>
-                <span className="font-medium">Master Card</span>
+              <h2 className="text-lg font-medium mb-4">Payment Method</h2>
+
+              <div className="space-y-3">
+                {/* Master Card */}
+                <label className="flex items-center justify-between p-3 rounded-lg border-2 hover:border-orange-500 bg-orange-50/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded ">
+                      <img src="/image/master.png" alt="" />
+                    </div>
+                    <span className="font-medium">Master Card</span>
+                  </div>
+                  <input
+                    type="radio"
+                    name="payment"
+                    defaultChecked
+                    className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                  />
+                </label>
+
+                {/* Visa Card */}
+                <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded">
+                      <img src="/image/visa.png" alt="" />
+
+                    </div>
+                    <span className="text-gray-500">Visa Card</span>
+                  </div>
+                  <input
+                    type="radio"
+                    name="payment"
+                    className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                  />
+                </label>
+
+                {/* Cash Payment */}
+                <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded">
+                      <img src="/image/Frame.png" alt="" />
+
+                    </div>
+                    <span className="text-gray-500">Cash Payment</span>
+                  </div>
+                  <input
+                    type="radio"
+                    name="payment"
+                    className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                  />
+                </label>
               </div>
-              <input 
-                type="radio" 
-                name="payment" 
-                defaultChecked
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-              />
-            </label>
+            </div>
 
-            {/* Visa Card */}
-            <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded">
-                <img src="/image/visa.png" alt="" />
-
-                </div>
-                <span className="text-gray-500">Visa Card</span>
-              </div>
-              <input 
-                type="radio" 
-                name="payment"
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-              />
-            </label>
-
-            {/* Cash Payment */}
-            <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded">
-                <img src="/image/Frame.png" alt="" />
-
-                </div>
-                <span className="text-gray-500">Cash Payment</span>
-              </div>
-              <input 
-                type="radio" 
-                name="payment"
-                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
-              />
-            </label>
-          </div>
-        </div>
-
-        <div className="p-4 flex gap-3">
-          <button onClick={()=> setOpenModel(false)} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50">
-            Cancel
-          </button>
-          <Link to="/user/Ucard">
-          <button className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
-            Pay Now
-          </button>
-          </Link>
-        </div>
+            <div className="p-4 flex gap-3">
+              <button onClick={() => setOpenModel(false)} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50">
+                Cancel
+              </button>
+              <Link to="/user/Ucard">
+                <button className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                  Pay Now
+                </button>
+              </Link>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   )
 }
