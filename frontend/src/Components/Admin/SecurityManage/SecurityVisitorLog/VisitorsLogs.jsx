@@ -90,6 +90,9 @@ function VisitorsLogs() {
           </div>
         </div>
       </div>
+
+      {/* Modal for adding new visitor */}
+     
     </div>
   ) 
 }

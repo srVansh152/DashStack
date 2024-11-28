@@ -56,8 +56,7 @@ export default function ExpenseTracker() {
             if (!token) {
                 throw new Error('No token found. Please log in again.'); // Check if token exists
             }
-            console.log(selectedExpense._id)
-            const response = await updateExpense(selectedExpense._id, formData, token); // Call the update function
+            const response = await updateExpense(formData.id, formData, token); // Use formData.id for the update
             console.log('Response from updateExpense:', response); // Log the response
 
             if (!response.success) {
@@ -78,9 +77,8 @@ export default function ExpenseTracker() {
     };
 
     const handleEditModel = (expense) => {
-        
         setFormData({
-            id:expense._id,
+            id: expense._id,
             title: expense.title,
             description: expense.description,
             date: expense.date,

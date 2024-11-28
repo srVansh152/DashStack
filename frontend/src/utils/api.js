@@ -390,14 +390,19 @@ export const viewComplaint = async (id) => {
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("View complaint error:", error);
-    return { success: false, message: error.response?.data?.message || "Failed to view complaint." };
+    return { success: false, message: error.response?.data?.message || "Failed to view complaint hello." };
   }
 };
 
 // Delete a complaint
 export const deleteComplaint = async (id) => {
   try {
-    const response = await api.delete(`/complaints/delete/${id}`);
+    const token = localStorage.getItem("token");
+    console.log(id);
+    
+    const response = await api.delete(`/complaints/delete/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     return { success: true, message: response.data.message };
   } catch (error) {
     console.error("Delete complaint error:", error);
@@ -408,7 +413,10 @@ export const deleteComplaint = async (id) => {
 // List all complaints for the admin's society
 export const listComplaints = async () => {
   try {
-    const response = await api.get('/complaints/list');
+    const token = localStorage.getItem("token");
+    const response = await api.get('/complaints/list', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("List complaints error:", error);
