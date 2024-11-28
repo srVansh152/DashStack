@@ -31,7 +31,7 @@ const RequestSubmission = () => {
     try {
       const response = await listRequests();
       console.log(response.data.requests);
-      
+
       if (response.success) {
         setComplaintList(response.data.requests);
 
@@ -108,7 +108,7 @@ const RequestSubmission = () => {
 
   const handleDeleteRequest = async (requestId) => {
     console.log(requestId);
-    
+
     try {
       const response = await deleteRequest(requestId);
 
@@ -178,7 +178,7 @@ const RequestSubmission = () => {
                 </div>
                 <div className="p-4">
                   <div className="mb-2">
-                  <span className="font-semibold">Request Date:</span> {new Date(complaint.createdAt).toLocaleDateString()}
+                    <span className="font-semibold">Request Date:</span> {new Date(complaint.createdAt).toLocaleDateString()}
                   </div>
                   <div className="mb-2">
                     <span className="font-semibold">Status:</span>
@@ -307,6 +307,7 @@ const RequestSubmission = () => {
                             name="status"
                             value={status}
                             checked={formData.status === status}
+                            disabled={status === "Solve"}
                             onChange={handleChange}
                             className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-2 focus:ring-gray-200"
                           />

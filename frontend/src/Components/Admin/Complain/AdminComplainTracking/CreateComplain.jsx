@@ -388,6 +388,7 @@ function CreateComplain() {
                 onChange={handleChange}
                 className="w-4 h-4 text-gray-600"
                 checked={formData.status === status}
+                disabled={status === "Solve"}
               />
               <span className="ml-2 text-sm text-gray-600">{status}</span>
             </label>

@@ -430,6 +430,7 @@ function RequestTracking() {
                         name="status"
                         value="Solve"
                         checked={status === "Solve"}
+                        disabled={status === "Solve"}
                         onChange={(e) => setStatus(e.target.value)}
                         className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
                       />
