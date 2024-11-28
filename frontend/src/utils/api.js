@@ -623,3 +623,4 @@ export const listSecurityGuards = async () => {
     return { success: false, message: error.response?.data?.message || "Failed to fetch security guards." };
   }
 };
+
