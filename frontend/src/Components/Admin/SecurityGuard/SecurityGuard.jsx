@@ -3,7 +3,7 @@ import { Bell, PencilIcon, Eye, MoreVertical, Plus, Trash, Pencil, Trash2, Camer
 import { Link } from 'react-router-dom'
 import Aside from '../../Common/SideBar/AdminSideBar/Aside'
 import Navbar from '../../Common/Navbar/Navbar'
-import { addSecurityGuard, listSecurityGuards, updateSecurityGuard, } from '../../../utils/api'
+import { addSecurityGuard, listSecurityGuards, updateSecurityGuard, viewSecurityGuard, deleteSecurityGuard } from '../../../utils/api'
 
 const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
@@ -42,19 +42,12 @@ function SecurityGuard() {
     aadhaarCardName: '',
     aadhaarCardPreview: null
   });
-  const securityData = {
-    name: 'Brooklyn Simmons',
-    date: 'Feb 10, 2024',
-    shift: 'Day',
-    shiftTime: '2:45 PM',
-    gender: 'Female',
-    image: '/placeholder.svg?height=100&width=100'
-  }
-
+  
   const [photoPreview, setPhotoPreview] = useState(null);
   const [guards, setGuards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedGuard, setSelectedGuard] = useState(null);
+  const [selectedGuardForView, setSelectedGuardForView] = useState(null);
 
   useEffect(() => {
     fetchGuards();
@@ -81,10 +74,22 @@ function SecurityGuard() {
   const handleAddModel = () => {
     setOpenModel(true);
   };
-  const handleViewModel = () => {
-    setOpenViewModel(true);
+  const handleViewModel = async (guard) => {
+    try {
+      const response = await viewSecurityGuard(guard._id);
+      if (response.success) {
+        setSelectedGuardForView(response.data);
+        setOpenViewModel(true);
+      } else {
+        alert(response.message || 'Failed to fetch guard details');
+      }
+    } catch (error) {
+      console.error('Error viewing guard:', error);
+      alert('Failed to fetch guard details');
+    }
   };
-  const handleDeleteModel = () => {
+  const handleDeleteModel = (guard) => {
+    setSelectedGuard(guard);
     setOpenDeleteModel(true);
   };
   const handleEditModel = (guard) => {
@@ -325,7 +330,27 @@ function SecurityGuard() {
     });
   };
 
+  const handleDelete = async () => {
+    if (!selectedGuard?._id) {
+      alert('No guard selected for deletion');
+      return;
+    }
 
+    try {
+      const response = await deleteSecurityGuard(selectedGuard._id);
+      if (response.success) {
+        setOpenDeleteModel(false);
+        await fetchGuards(); // Refresh the list
+        setSelectedGuard(null);
+        alert('Security Guard deleted successfully');
+      } else {
+        alert(response.message || 'Failed to delete security guard');
+      }
+    } catch (error) {
+      console.error('Error deleting guard:', error);
+      alert('Failed to delete security guard');
+    }
+  };
 
   return (
     <>
@@ -397,10 +422,10 @@ function SecurityGuard() {
                           <button onClick={() => handleEditModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
                             <Pencil className="w-6 h-5 text-green-500" />
                           </button>
-                          <button onClick={handleViewModel} className="p-1 rounded-full hover:bg-gray-100">
+                          <button onClick={() => handleViewModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
                             <Eye className="w-6 h-5 text-blue-500" />
                           </button>
-                          <button onClick={handleDeleteModel} className="p-1 rounded-full hover:bg-gray-100">
+                          <button onClick={() => handleDeleteModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
                             <Trash2 className="w-6 h-5 text-red-500" />
                           </button>
                         </div>
@@ -643,7 +668,10 @@ function SecurityGuard() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg font-semibold">View Security Guard Details</h2>
-                  <button onClick={() => setOpenViewModel(false)} className="p-1 hover:bg-gray-100 rounded-full">
+                  <button onClick={() => {
+                    setOpenViewModel(false);
+                    setSelectedGuardForView(null);
+                  }} className="p-1 hover:bg-gray-100 rounded-full">
                     <X className="h-5 w-5" />
                   </button>
                 </div>
@@ -652,13 +680,13 @@ function SecurityGuard() {
                 <div className="flex flex-col items-center mb-6">
                   <div className="w-20 h-20 rounded-full overflow-hidden mb-3">
                     <img
-                      src={securityData.image}
-                      alt={securityData.name}
+                      src={selectedGuardForView?.profilePhoto}
+                      alt={selectedGuardForView?.fullName}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="text-lg font-medium">{securityData.name}</h3>
-                  <p className="text-sm text-gray-500">{securityData.date}</p>
+                  <h3 className="text-lg font-medium">{selectedGuardForView?.fullName}</h3>
+                  <p className="text-sm text-gray-500">{formatDate(selectedGuardForView?.shiftDate)}</p>
                 </div>
 
                 {/* Info Grid */}
@@ -669,14 +697,14 @@ function SecurityGuard() {
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
-                      <span className="text-sm">Day</span>
+                      <span className="text-sm">{selectedGuardForView?.shift}</span>
                     </div>
                     <span className="text-xs text-gray-600">Select Shift</span>
                   </div>
 
                   {/* Shift Time */}
                   <div className="flex flex-col items-center p-3 rounded-lg bg-gray-50">
-                    <span className="text-sm font-medium mb-1">{securityData.shiftTime}</span>
+                    <span className="text-sm font-medium mb-1">{selectedGuardForView?.shiftTime}</span>
                     <span className="text-xs text-gray-600">Shift Time</span>
                   </div>
 
@@ -686,7 +714,7 @@ function SecurityGuard() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span className="text-sm">Female</span>
+                      <span className="text-sm">{selectedGuardForView?.gender}</span>
                     </div>
                     <span className="text-xs text-gray-600">Gender</span>
                   </div>
@@ -702,17 +730,22 @@ function SecurityGuard() {
                 <h2 className="text-xl font-semibold text-gray-900">Delete Security?</h2>
 
                 <p className="text-gray-500">
-                  Are you sure you want to delete this Security?
+                  Are you sure you want to delete this Security Guard?
                 </p>
 
                 <div className="flex gap-4 pt-2">
-                  <button onClick={() => setOpenDeleteModel(false)}
+                  <button 
+                    onClick={() => {
+                      setOpenDeleteModel(false);
+                      setSelectedGuard(null);
+                    }}
                     type="button"
                     className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                   >
                     Cancel
                   </button>
                   <button
+                    onClick={handleDelete}
                     type="button"
                     className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                   >
