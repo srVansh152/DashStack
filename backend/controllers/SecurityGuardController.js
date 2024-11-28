@@ -9,10 +9,20 @@ exports.addSecurityGuard = async (req, res) => {
     if (!req.user || !req.user.society || !req.user._id) {
       return res.status(400).json({ message: 'societyId and adminId are required fields.' });
     }
+    
 
-    // Upload profile photo and Aadhaar card image to Cloudinary
-    const profilePhoto = req.files.profilePhoto ? (await cloudinary.uploader.upload(req.files.profilePhoto.path)).url : null;
-    const aadhaarCardImage = req.files.aadhaarCardImage ? (await cloudinary.uploader.upload(req.files.aadhaarCardImage.path)).url : null;
+    const files = req.files || {};
+    
+    // Handle profile photo
+    // files.photo?.[0]?.path || req.body.
+    let profilePhoto = files.profilePhoto?.[0]?.path || req.body.profilePhoto
+    let aadhaarCardImage = files.aadhaarCardImage?.[0]?.path || req.body.aadhaarCardImage
+
+    // Check required fields
+    if (!profilePhoto || !aadhaarCardImage) {
+      return res.status(400).json({ message: "Profile photo and Aadhaar card image are required." });
+    }
+
 
     const newSecurityGuard = new SecurityGuard({
       fullName,
@@ -40,28 +50,46 @@ exports.updateSecurityGuard = async (req, res) => {
     const { id } = req.params;
     const { fullName, phoneNumber, shift, shiftDate, shiftTime, gender } = req.body;
 
-    // Find and update the security guard details
-    const updatedData = { fullName, phoneNumber, shift, shiftDate, shiftTime, gender };
-
-    // Update profile photo and Aadhaar card image if provided
-    if (req.files.profilePhoto) {
-      updatedData.profilePhoto = (await cloudinary.uploader.upload(req.files.profilePhoto.path)).url;
-    }
-    if (req.files.aadhaarCardImage) {
-      updatedData.aadhaarCardImage = (await cloudinary.uploader.upload(req.files.aadhaarCardImage.path)).url;
-    }
-
-    const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, updatedData, { new: true });
-
-    if (!updatedSecurityGuard) {
+    // Ensure the security guard exists before updating
+    const securityGuard = await SecurityGuard.findById(id);
+    if (!securityGuard) {
       return res.status(404).json({ message: 'Security Guard not found' });
     }
 
-    res.json({ message: 'Security Guard updated successfully', securityGuard: updatedSecurityGuard });
+    // Prepare updated data
+    const updatedData = { fullName, phoneNumber, shift, shiftDate, shiftTime, gender };
+
+    // Check and update profile photo from req.files or req.body
+    if (req.files?.profilePhoto?.[0]?.path) {
+      updatedData.profilePhoto = (await cloudinary.uploader.upload(req.files.profilePhoto[0].path)).secure_url;
+      console.log(updatedData.profilePhoto);
+    } else if (req.body.profilePhoto) {
+      updatedData.profilePhoto = req.body.profilePhoto; // Assuming URL is passed directly
+    }
+
+    // Check and update Aadhaar card image from req.files or req.body
+    if (req.files?.aadhaarCardImage?.[0]?.path) {
+      updatedData.aadhaarCardImage = (await cloudinary.uploader.upload(req.files.aadhaarCardImage[0].path)).secure_url;
+    } else if (req.body.aadhaarCardImage) {
+      updatedData.aadhaarCardImage = req.body.aadhaarCardImage; // Assuming URL is passed directly
+    }
+
+    // Update the security guard details
+    const updatedSecurityGuard = await SecurityGuard.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+
+    res.json({
+      message: 'Security Guard updated successfully',
+      securityGuard: updatedSecurityGuard,
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating security guard', error: error.message });
+    console.error('Error updating security guard:', error);
+    res.status(500).json({
+      message: 'Error updating security guard',
+      error: error.message,
+    });
   }
 };
+
 
 // View a security guard's details
 exports.viewSecurityGuard = async (req, res) => {
