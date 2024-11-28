@@ -216,7 +216,7 @@ function CreateComplain() {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {fetchedComplaints.map((complaint) => (
-                    <tr key={complaint.id} className="hover:bg-gray-50">
+                    <tr key={complaint._id} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <img

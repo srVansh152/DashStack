@@ -123,7 +123,10 @@ export const updateProfile = async (token, updateData) => {
 // Create a new society function not header
 export const createSociety = async (societyData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/society/create`, societyData);
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_BASE_URL}/society/create`, societyData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error creating society:", error);
@@ -364,7 +367,9 @@ export const getFacilities = async () => {
 // Create a complaint
 export const createComplaint = async (complaintData) => {
   try {
+    console.log(complaintData)
     const response = await api.post('/complaints/createComplaint', complaintData);
+    console.log("asdadads",response)
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Create complaint error:", error);
@@ -427,7 +432,13 @@ export const listComplaints = async () => {
 // Create a new request
 export const createRequest = async (requestData) => {
   try {
-    const response = await api.post('/requests/createRequest', requestData);
+    console.log(requestData)
+    const token = localStorage.getItem('token');
+    const response = await api.post('/requests/createRequest', requestData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    console.log(response);
+    
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error creating request:", error);
@@ -471,7 +482,10 @@ export const deleteRequest = async (id) => {
 // List requests by society and admin
 export const listRequests = async () => {
   try {
-    const response = await api.get('/requests/list');
+    const token = localStorage.getItem("token");
+    const response = await api.get('/requests/list', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Error fetching request list:", error);
@@ -562,5 +576,62 @@ export const getSecurityProtocols = async () => {
   } catch (error) {
     console.error("Error fetching security protocols:", error);
     return { success: false, message: error.response?.data?.message || "Failed to fetch security protocols." };
+  }
+};
+
+// Announcement API functions
+
+// Create an announcement
+export const createAnnouncement = async (announcementData) => {
+  try {
+    const response = await api.post('/announcements', announcementData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Create announcement error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create announcement." };
+  }
+};
+
+// Get all announcements
+export const getAnnouncements = async () => {
+  try {
+    const response = await api.get('/announcements');
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Get announcements error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch announcements." };
+  }
+};
+
+// Get a single announcement by ID
+export const getAnnouncement = async (id) => {
+  try {
+    const response = await api.get(`/announcements/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Get announcement error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch the announcement." };
+  }
+};
+
+// Update an announcement
+export const updateAnnouncement = async (id, updatedData) => {
+  try {
+    const response = await api.put(`/announcements/${id}`, updatedData);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Update announcement error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update announcement." };
+  }
+};
+
+// Delete an announcement
+export const deleteAnnouncement = async (id) => {
+  try {
+    const response = await api.delete(`/announcements/${id}`);
+    return { success: true, message: response.data.message, data: response.data };
+  } catch (error) {
+    console.error("Delete announcement error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete announcement." };
   }
 };
