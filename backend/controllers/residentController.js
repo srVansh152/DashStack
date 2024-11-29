@@ -221,11 +221,48 @@ exports.getResidents = async (req, res) => {
 exports.getResidentDetails = async (req, res) => {
     try {
         const residentId = req.params.id;
-        const resident = await Resident.findById(residentId).populate('payments'); // Assuming you want payment details
-
+        
+        // Get resident details with populated payments
+        const resident = await Resident.findById(residentId);
+        
         if (!resident) return res.status(404).json({ message: "Resident not found" });
 
-        res.status(200).json(resident);
+        // Get all payments for this resident with populated income details
+        const payments = await Payment.find({ residentId })
+            .populate('incomeId')
+            .sort({ date: -1 }); // Sort by date, most recent first
+
+        // Calculate payment statistics
+        const paymentStats = {
+            totalDue: 0,
+            totalPaid: 0,
+            totalPending: 0,
+            pendingPayments: [],
+            completedPayments: []
+        };
+
+        payments.forEach(payment => {
+            const totalAmount = payment.amount + payment.penaltyAmount;
+            
+            if (payment.hasPaid) {
+                paymentStats.totalPaid += totalAmount;
+                paymentStats.completedPayments.push(payment);
+            } else {
+                paymentStats.totalPending += totalAmount;
+                paymentStats.pendingPayments.push(payment);
+            }
+        });
+
+        paymentStats.totalDue = paymentStats.totalPaid + paymentStats.totalPending;
+
+        res.status(200).json({
+            resident,
+            paymentStats,
+            payments: {
+                pending: paymentStats.pendingPayments,
+                completed: paymentStats.completedPayments
+            }
+        });
     } catch (error) {
         console.error('Error fetching resident details:', error);
         res.status(400).json({ message: error.message });
