@@ -642,8 +642,11 @@ export const listSecurityGuards = async () => {
 
 // Create an announcement
 export const createAnnouncement = async (announcementData) => {
+  console.log(announcementData);
+  
   try {
-    const response = await api.post('/announcements', announcementData);
+    const token = localStorage.getItem('token');
+    const response = await api.post('/announcements/create', announcementData);
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Create announcement error:", error);
@@ -654,7 +657,10 @@ export const createAnnouncement = async (announcementData) => {
 // Get all announcements
 export const getAnnouncements = async () => {
   try {
-    const response = await api.get('/announcements');
+    const token = localStorage.getItem('token');
+    const response = await api.get('/announcements/get', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
     return { success: true, message: response.data.message, data: response.data };
   } catch (error) {
     console.error("Get announcements error:", error);
@@ -663,7 +669,7 @@ export const getAnnouncements = async () => {
 };
 
 // Get a single announcement by ID
-export const getAnnouncement = async (id) => {
+export const getAnnouncementDetail = async (id) => {
   try {
     const response = await api.get(`/announcements/${id}`);
     return { success: true, message: response.data.message, data: response.data };
