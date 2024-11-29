@@ -694,3 +694,62 @@ export const deleteAnnouncement = async (id) => {
     return { success: false, message: error.response?.data?.message || "Failed to delete announcement." };
   }
 };
+
+// Resident Management Functions
+
+// Create a new resident
+export const createResident = async (residentData) => {
+  try {
+    const response = await api.post('/residents', residentData, {
+      isMultipart: true, // Ensures correct headers for file uploads
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Create resident error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create resident." };
+  }
+};
+
+// Update an existing resident
+export const updateResident = async (id, updateData) => {
+  try {
+    const response = await api.put(`/residents/${id}`, updateData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Update resident error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update resident." };
+  }
+};
+
+// Delete a resident
+export const deleteResident = async (id) => {
+  try {
+    const response = await api.delete(`/residents/${id}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Delete resident error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to delete resident." };
+  }
+};
+
+// Get all residents
+export const getResidents = async () => {
+  try {
+    const response = await api.get('/residents');
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Get residents error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch residents." };
+  }
+};
+
+// Get resident details
+export const getResidentDetails = async (id) => {
+  try {
+    const response = await api.get(`/residents/${id}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Get resident details error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch resident details." };
+  }
+};

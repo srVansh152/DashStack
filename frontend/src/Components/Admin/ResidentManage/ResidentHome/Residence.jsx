@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { ArrowLeft, FileText, FileImage, Activity, DollarSign, Package, Users,  Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, MoreHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
+import { getResidents, getResidentDetails } from '../../../../utils/api';
+import { toast } from 'react-hot-toast';
 
 
 
@@ -17,6 +19,48 @@ function Residence() {
 
   const [status, setStatus] = useState('occupied');
   const [agreement, setAgreement] = useState(false);
+  const [residents, setResidents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [residentDetails, setResidentDetails] = useState(null);
+  const [selectedResidentId, setSelectedResidentId] = useState(null);
+
+  useEffect(() => {
+    fetchResidents();
+  }, []);
+
+  const fetchResidents = async () => {
+    setLoading(true);
+    const response = await getResidents();
+    if (response.success) {
+      const transformedData = response.data.map(resident => ({
+        _id: resident._id,
+        name: resident.fullName,
+        avatar: resident.photo,
+        unitNumber: resident.unitNumber,
+        unitStatus: resident.owner ? 'Occupied' : 'Vacant',
+        residentStatus: resident.owner ? 'Owner' : 'Tenant',
+        phoneNumber: resident.phoneNumber,
+        member: resident.members?.length || 0,
+        vehicle: resident.vehicles?.length || 0,
+        email: resident.email,
+        wing: resident.wing,
+        age: resident.age,
+        gender: resident.gender,
+        documents: {
+          aadhaarFront: resident.aadhaarFront,
+          aadhaarBack: resident.aadhaarBack,
+          addressProof: resident.addressProof,
+          rentAgreement: resident.rentAgreement
+        },
+        members: resident.members || []
+      }));
+      setResidents(transformedData);
+    } else {
+      setError(response.message);
+    }
+    setLoading(false);
+  };
 
   const handleAddDetails = () => {
     setOpenModel(true);
@@ -25,24 +69,36 @@ function Residence() {
     setOpenDeleteModel(true);
   };
 
-  const handleProfileDetails = () => {
+  const handleProfileDetails = (resident) => {
+    setSelectedResidentId(resident._id);
     setOpenProfilModel(true);
   };
 
-  const residents = [
-    { id: 1, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1001', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 1, vehicle: 2 },
-    { id: 2, name: '-', avatar: '', unitNumber: '1002', unitStatus: 'Vacant', residentStatus: '-', phoneNumber: '--', member: '-', vehicle: '-' },
-    { id: 3, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1003', unitStatus: 'Occupied', residentStatus: 'Owner', phoneNumber: '97587 85828', member: 1, vehicle: 4 },
-    { id: 4, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
-    { id: 5, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
-    { id: 6, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
-    { id: 7, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
-    { id: 8, name: 'Evelyn Harper', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '1004', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 4, vehicle: 2 },
-    { id: 9, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
-    { id: 10, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
-    { id: 11, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
-    { id: 12, name: 'Robert Fox', avatar: '/placeholder.svg?height=40&width=40', unitNumber: '2002', unitStatus: 'Occupied', residentStatus: 'Tenant', phoneNumber: '97587 85828', member: 3, vehicle: 2 },
-  ]
+  const handleCloseProfileModal = () => {
+    setOpenProfilModel(false);
+    setSelectedResidentId(null);
+    setResidentDetails(null);
+  };
+
+  const fetchResidentDetails = async (id) => {
+    try {
+      const response = await getResidentDetails(id);
+      if (response.success) {
+        setResidentDetails(response.data);
+      } else {
+        toast.error(response.message || "Failed to fetch resident details");
+      }
+    } catch (error) {
+      console.error("Error fetching resident details:", error);
+      toast.error("Failed to fetch resident details");
+    }
+  };
+
+  useEffect(() => {
+    if (openProfileModel && selectedResidentId) {
+      fetchResidentDetails(selectedResidentId);
+    }
+  }, [openProfileModel, selectedResidentId]);
 
   
   return (
@@ -64,64 +120,78 @@ function Residence() {
               </button>
             </div>
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
-              <div className="overflow-x-auto"> {/* Allows horizontal scrolling if needed */}
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Number</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Status</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resident Status</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {residents.map((resident) => (
-                      <tr key={resident.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              {resident.avatar ? (
-                                <img className="h-10 w-10 rounded-full" src={"public/image/profile.png"} alt="" />
-                              ) : (
-                                <div className="h-10 w-10 rounded-full bg-gray-300"></div>
-                              )}
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{resident.name}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{resident.unitNumber}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${resident.unitStatus === 'Occupied' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'}`}>
-                            {resident.unitStatus}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${resident.residentStatus === 'Tenant' ? 'bg-pink-100 text-pink-800' : resident.residentStatus === 'Owner' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                            {resident.residentStatus}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.phoneNumber}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.member}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.vehicle}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button onClick={handleDeleteDetails} className="text-green-600 hover:text-green-900 mr-2">
-                            <Edit className="h-5 w-5" />
-                          </button>
-                          <button onClick={handleProfileDetails} className="text-gray-600 hover:text-gray-900">
-                            <MoreHorizontal className="h-5 w-5" />
-                          </button>
-                        </td>
+              {loading ? (
+                <div className="p-4 text-center text-gray-600">Loading residents...</div>
+              ) : error ? (
+                <div className="p-4 text-center text-red-600">{error}</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Number</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Status</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resident Status</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {residents.map((resident) => (
+                        <tr key={resident._id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10">
+                                {resident.avatar ? (
+                                  <img 
+                                    className="h-10 w-10 rounded-full" 
+                                    src={resident.avatar} 
+                                    alt={resident.name} 
+                                  />
+                                ) : (
+                                  <div className="h-10 w-10 rounded-full bg-gray-300"></div>
+                                )}
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {resident.name || '-'}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {resident.unitNumber}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${resident.unitStatus === 'Occupied' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'}`}>
+                              {resident.unitStatus}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${resident.residentStatus === 'Tenant' ? 'bg-pink-100 text-pink-800' : resident.residentStatus === 'Owner' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
+                              {resident.residentStatus}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.phoneNumber}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.member}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.vehicle}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onClick={() => handleDeleteDetails(resident)} className="text-green-600 hover:text-green-900 mr-2">
+                              <Edit className="h-5 w-5" />
+                            </button>
+                            <button onClick={() => handleProfileDetails(resident)} className="text-gray-600 hover:text-gray-900">
+                              <MoreHorizontal className="h-5 w-5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -206,7 +276,10 @@ function Residence() {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
               <div className="p-6">
                 <div className="px-4 py-3 border-b border-gray-200 flex items-center">
-                  <button onClick={() => setOpenProfilModel(false)} className="mr-2 text-gray-600 hover:text-gray-800">
+                  <button 
+                    onClick={handleCloseProfileModal} 
+                    className="mr-2 text-gray-600 hover:text-gray-800"
+                  >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                   <h1 className="text-lg font-semibold text-gray-800">View Owner Details</h1>
@@ -214,17 +287,23 @@ function Residence() {
 
                 <div className="px-4 py-6">
                   <div className="flex flex-col items-center mb-6">
-                    <img src="/public/image/profile.png" alt="Roger Lubin" className="w-20 h-20 rounded-full mb-2" />
-                    <h2 className="text-xl font-semibold text-gray-800">Roger Lubin</h2>
-                    <p className="text-sm text-gray-600">RogerLubin@gmail.com</p>
+                    <img 
+                      src={residentDetails?.profileImage || "/public/image/profile.png"} 
+                      alt={residentDetails?.firstName} 
+                      className="w-20 h-20 rounded-full mb-2" 
+                    />
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {residentDetails?.firstName} {residentDetails?.lastName}
+                    </h2>
+                    <p className="text-sm text-gray-600">{residentDetails?.email}</p>
                   </div>
 
                   <div className="space-y-3 mb-6">
                     {[
-                      { label: 'Wing', value: 'A' },
-                      { label: 'Unit', value: '101' },
-                      { label: 'Age', value: '20' },
-                      { label: 'Gender', value: 'Male' },
+                      { label: 'Wing', value: residentDetails?.wing },
+                      { label: 'Unit', value: residentDetails?.flatNumber },
+                      { label: 'Age', value: residentDetails?.age },
+                      { label: 'Gender', value: residentDetails?.gender },
                     ].map((item, index) => (
                       <div key={index} className="flex justify-between">
                         <span className="text-sm text-gray-600">{item.label}</span>
@@ -236,15 +315,16 @@ function Residence() {
                   <div className="mb-6">
                     <h3 className="text-sm font-semibold text-gray-800 mb-2">Document</h3>
                     {[
-                      { name: 'Adhaarcard Front Side.JPG', size: '3.5 MB', icon: FileImage },
-                      { name: 'Address Proof Front Side.PDF', size: '3.5 MB', icon: FileText },
-                    ].map((doc, index) => (
+                      { name: 'Aadhaar Card Front Side', file: residentDetails?.documents?.aadharCardFront, icon: FileImage },
+                      { name: 'Aadhaar Card Back Side', file: residentDetails?.documents?.aadharCardBack, icon: FileImage },
+                      { name: 'Address Proof', file: residentDetails?.documents?.addressProof, icon: FileText },
+                      { name: 'Rent Agreement', file: residentDetails?.documents?.rentAgreement, icon: FileText },
+                    ].filter(doc => doc.file).map((doc, index) => (
                       <div key={index} className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
                         <div className="flex items-center">
                           <doc.icon className="h-5 w-5 text-blue-500 mr-2" />
                           <div>
                             <p className="text-sm font-medium text-gray-800">{doc.name}</p>
-                            <p className="text-xs text-gray-500">{doc.size}</p>
                           </div>
                         </div>
                         <button className="text-gray-400 hover:text-gray-600">
@@ -254,24 +334,32 @@ function Residence() {
                     ))}
                   </div>
 
-                  <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="text-sm font-semibold text-blue-800">Member Counting</h3>
-                      <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">02</span>
-                    </div>
-                    {[
-                      { label: 'First Name', value: 'Roger Lubin' },
-                      { label: 'Phone No', value: '9123455555' },
-                      { label: 'Age', value: '20' },
-                      { label: 'Gender', value: 'Male' },
-                      { label: 'Relation', value: 'Brother' },
-                    ].map((item, index) => (
-                      <div key={index} className="flex justify-between py-1">
-                        <span className="text-sm text-gray-600">{item.label}</span>
-                        <span className="text-sm font-medium text-gray-800">{item.value}</span>
+                  {residentDetails?.familyMembers?.length > 0 && (
+                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                      <div className="flex justify-between items-center mb-2">
+                        <h3 className="text-sm font-semibold text-blue-800">Member Counting</h3>
+                        <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
+                          {residentDetails.familyMembers.length}
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                      {residentDetails.familyMembers.map((member, index) => (
+                        <div key={index} className="space-y-2">
+                          {[
+                            { label: 'First Name', value: member.firstName },
+                            { label: 'Phone No', value: member.phoneNumber },
+                            { label: 'Age', value: member.age },
+                            { label: 'Gender', value: member.gender },
+                            { label: 'Relation', value: member.relationWithOwner },
+                          ].map((item, idx) => (
+                            <div key={idx} className="flex justify-between py-1">
+                              <span className="text-sm text-gray-600">{item.label}</span>
+                              <span className="text-sm font-medium text-gray-800">{item.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

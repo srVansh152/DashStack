@@ -397,7 +397,7 @@ function SecurityGuard() {
                       <td className="p-4">{guard.phoneNumber}</td>
                       <td className="p-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm ${guard.shift === "Day"
+                          className={`px-3 py-1 rounded-full text-sm ${guard.shift === "day"
                             ? "bg-orange-100 text-orange-500"
                             : "bg-gray-200 text-gray-700"
                             }`}
@@ -409,7 +409,7 @@ function SecurityGuard() {
                       <td className="p-4">{guard.shiftTime}</td>
                       <td className="p-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm ${guard.gender === "Male"
+                          className={`px-3 py-1 rounded-full text-sm ${guard.gender === "male"
                             ? "bg-blue-100 text-blue-500"
                             : "bg-pink-100 text-pink-500"
                             }`}
