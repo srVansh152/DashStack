@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown } from 'lucide-react';
+import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
 import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
+import { getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
+
 
 const DashboardLayout = () => {
 
     const [notificationsOpen, setNotificationsOpen] = useState(false);
-   
+
     const [openModel, setOpenModel] = useState(false);
-    const [openEditModel, setOpenEditModel] = useState(false);
+    const [openEditModel, setOpenEditModal] = useState(false);
     const [openEditComplaintsModel, setOpenEditComplaintsModel] = useState(false);
     const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [openViewModel, setOpenViewModel] = useState(false);
@@ -27,6 +29,78 @@ const DashboardLayout = () => {
     const [importantNumbers, setImportantNumbers] = useState([]); // State for important numbers
     const [deleteId, setDeleteId] = useState(null);
     const [editId, setEditId] = useState(null);
+    const [facilities, setFacilities] = useState([])
+    const [facility, setFacility] = useState("Parking Facilities");
+    const [fetchedComplaints, setFetchedComplaints] = useState([]);
+    const [complaintIdToDelete, setComplaintIdToDelete] = useState(null);
+    const [complaintIdToEdit, setcomplaintIdToEdit] = useState(null);
+    const [viewComplaintDetails, setViewComplaintDetails] = useState(null);
+    const [reporterName, setReporterName] = useState("Evelyn Harper")
+    const [reportTitle, setReportTitle] = useState("Unethical Behavior");
+    const [details, setDetails] = useState("The celebration of Ganesh Chaturthi involves the installation of clay idols in Resident.");
+    const [section, setSection] = useState("A");
+    const [unitNumber, setUnitNumber] = useState("1001");
+    const [urgency, setUrgency] = useState("medium");
+    const [currentStatus, setCurrentStatus] = useState("open");
+    const [timeframe, setTimeframe] = useState('Month');
+
+
+
+
+
+    const fetchComplaints = async () => {
+        try {
+            const response = await listComplaints(); // Replace with your API endpoint
+
+            console.log(response.data.complaints);
+
+            setFetchedComplaints(response.data.complaints); // Assuming the API returns an array of complaints
+        } catch (error) {
+            console.error('Error fetching complaints:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchComplaints();
+    }, []);
+
+
+
+
+
+    const fetchFacilities = async () => {
+        try {
+            const response = await getFacilities();
+            console.log(response);
+
+            if (response.success) {
+                setFacilities(response.data);
+            } else {
+                throw new Error("Failed to fetch facilities");
+            }
+        } catch (error) {
+            console.error("Error fetching facilities:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchFacilities();
+    }, []);
+
+    const handleViewComplaint = async (complaintId) => {
+        try {
+            const response = await viewComplaint(complaintId); // Call the view API
+            console.log('Complaint details fetched successfully:', response);
+            setViewComplaintDetails(response.data.complaint); // Store the fetched details in state
+            setOpenViewModel(true); // Open the view modal
+        } catch (error) {
+            console.error('Error fetching complaint details:', error);
+        }
+    };
+
+    const handleViewModel = (complaint) => {
+        handleViewComplaint(complaint); // Call the view function with the complaint ID
+    }
 
 
 
@@ -39,15 +113,59 @@ const DashboardLayout = () => {
         setPhoneNumber(importantNumber.phoneNumber); // Populate phone number field
         setWork(importantNumber.work); // Populate work field
         setEditId(importantNumber._id); // Store the ID of the important number being edited
-        setOpenEditModel(true); // Open the edit modal
+        setOpenEditModal(true); // Open the edit modal
     };
 
-    const handleDeleteDetails = () => {
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const updatedComplaint = {
+                complainer: reporterName,
+                complaintName: reportTitle,
+                description: details,
+                wing: section,
+                unitNumber: unitNumber,
+                urgency: urgency,
+                status: currentStatus,
+            };
+            const response = await updateComplaint(complaintIdToEdit, updatedComplaint); // Call the update API
+            console.log('Complaint updated successfully:', response);
+            setOpenEditModal(false);
+            fetchComplaints(); // Refresh the complaints list
+        } catch (error) {
+            console.error('Error updating complaint:', error);
+        }
+    };
+
+    const handleDeleteModel = (complaintId) => {
         setOpenDeleteModel(true);
+        setComplaintIdToDelete(complaintId);
     };
-    const handleViewDetails = () => {
-        setOpenViewModel(true);
+
+    const handleDeleteComplaint = async (complaintId) => {
+        try {
+            console.log(complaintId);
+
+            await deleteComplaint(complaintId); // Call the delete API
+            console.log('Complaint deleted successfully');
+            fetchComplaints(); // Refresh the complaints list
+        } catch (error) {
+            console.error('Error deleting complaint:', error);
+        }
     };
+
+    const handleEditModel = (complaint) => {
+        setcomplaintIdToEdit(complaint._id)
+        setReporterName(complaint.complainer);
+        setReportTitle(complaint.complaintName);
+        setDetails(complaint.description);
+        setSection(complaint.wing);
+        setUnitNumber(complaint.unitNumber);
+        setUrgency(complaint.urgency);
+        setCurrentStatus(complaint.status);
+        setOpenEditModal(true);
+    }
+
     const handleEditComplaintsDetails = () => {
         setOpenEditComplaintsModel(true);
     };
@@ -92,19 +210,22 @@ const DashboardLayout = () => {
     ];
 
     const chartData = [
-        { month: 'Jan', value: 10000 },
-        { month: 'Feb', value: 15000 },
-        { month: 'Mar', value: 25000 },
-        { month: 'Apr', value: 20000 },
-        { month: 'May', value: 30000 },
-        { month: 'Jun', value: 22000 },
-        { month: 'Jul', value: 28000 },
-        { month: 'Aug', value: 25000 },
-        { month: 'Sep', value: 35000 },
-        { month: 'Oct', value: 30000 },
-        { month: 'Nov', value: 40000 },
-        { month: 'Dec', value: 55000 }
+        { month: 'Jan', value: 400, type: 'month' },
+        { month: 'Feb', value: 300, type: 'month' },
+        { month: 'Mar', value: 500, type: 'month' },
+        { month: 'Apr', value: 450, type: 'month' },
+        { month: 'May', value: 30000, type: 'month' },
+        { month: 'Jun', value: 22000, type: 'month' },
+        { month: 'Jul', value: 28000, type: 'month' },
+        { month: 'Aug', value: 25000, type: 'month' },
+        { month: 'Sep', value: 35000, type: 'month' },
+        { month: 'Oct', value: 30000, type: 'month' },
+        { month: 'Nov', value: 40000, type: 'month' },
+        { month: 'Dec', value: 55000, type: 'month' },
+        { year: '2022', value: 1600, type: 'year' },
+        { year: '2023', value: 1900, type: 'year' },
     ];
+
 
     const maintenanceData = [
         { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" },
@@ -114,7 +235,44 @@ const DashboardLayout = () => {
         { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" }
     ];
 
-  
+    const getPriorityStyles = (priority) => {
+        switch (priority.toLowerCase()) {
+            case 'high':
+                return 'bg-red-500 text-white'
+            case 'medium':
+                return 'bg-blue-500 text-white'
+            case 'low':
+                return 'bg-green-500 text-white'
+            default:
+                return 'bg-gray-500 text-white'
+        }
+    }
+
+    const getStatusStyles = (status) => {
+        switch (status.toLowerCase()) {
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800'
+            case 'open':
+                return 'bg-blue-100 text-blue-800'
+            case 'solve':
+                return 'bg-green-100 text-green-800'
+            default:
+                return 'bg-gray-100 text-gray-800'
+        }
+    }
+
+    // Filter the chart data based on the selected timeframe
+    const filteredChartData =
+        timeframe === 'Month'
+            ? chartData.filter((data) => data.type === 'month')
+            : chartData.filter((data) => data.type === 'year');
+
+    // Handle dropdown change
+    const handleChange = (event) => {
+        setTimeframe(event.target.value);
+    };
+
+
 
     // Fetch important numbers from the API
     const loadImportantNumbers = async () => {
@@ -193,7 +351,7 @@ const DashboardLayout = () => {
 
             // Call the API to update the important number
             const response = await updateImportantNumber(editId, updatedData);
-             // Pass the edit ID and the updated data
+            // Pass the edit ID and the updated data
 
             if (response.success) {
                 // Log the updated important number
@@ -247,7 +405,7 @@ const DashboardLayout = () => {
             <div className="flex h-screen bg-gray-50">
 
                 <div className="flex-1 overflow-auto">
-                   <Navbar />
+                    <Navbar />
                     <main className="p-4 sm:p-6">
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -264,29 +422,32 @@ const DashboardLayout = () => {
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
                                         <h2 className="text-lg sm:text-xl font-semibold">Total Balance</h2>
                                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                            <select className="px-4 py-2 border rounded-md bg-white">
-                                                <option>Month</option>
-                                                <option>Year</option>
+                                            <select
+                                                className="px-4 py-2 border rounded-md bg-white"
+                                                onChange={handleChange}
+                                                value={timeframe}
+                                            >
+                                                <option value="Month">Month</option>
+                                                <option value="Year">Year</option>
                                             </select>
-                                            <div className="flex gap-3">
-                                                <label className="flex items-center gap-2">
-                                                    <input type="radio" name="timeframe" className="text-blue-500" />
-                                                    <span className="text-sm">Last week</span>
-                                                </label>
-                                                <label className="flex items-center gap-2">
-                                                    <input type="radio" name="timeframe" className="text-blue-500" defaultChecked />
-                                                    <span className="text-sm">Last month</span>
-                                                </label>
-                                            </div>
                                         </div>
                                     </div>
                                     <div className="h-48 sm:h-64">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={chartData}>
-                                                <XAxis dataKey="month" />
+                                            <LineChart
+                                                data={filteredChartData}
+                                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                                            >
+                                                <XAxis dataKey={timeframe === 'Month' ? 'month' : 'year'} />
                                                 <YAxis />
                                                 <Tooltip />
-                                                <Line type="monotone" dataKey="value" stroke="#4F46E5" strokeWidth={2} dot={{ fill: '#4F46E5', r: 4 }} />
+                                                <Line
+                                                    type="monotone"
+                                                    dataKey="value"
+                                                    stroke="#4F46E5"
+                                                    strokeWidth={2}
+                                                    dot={{ fill: '#4F46E5', r: 4 }}
+                                                />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -371,51 +532,90 @@ const DashboardLayout = () => {
                                         </select>
                                     </div>
                                     <div className="overflow-y-auto h-48 sm:h-60">
-                                        <table className="w-full">
-                                            <thead>
-                                                <tr className="text-left text-sm text-gray-500">
-                                                    <th className="pb-4">Complainer Name</th>
-                                                    <th className="pb-4">Date</th>
-                                                    <th className="pb-4">Priority</th>
-                                                    <th className="pb-4">Status</th>
-                                                    <th className="pb-4">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {complaints.map(({ name, date, priority, status }, index) => (
-                                                    <tr key={index} className="border-t hover:bg-gray-50 transition-colors group">
-                                                        <td className="py-4 flex items-center gap-2 text-sm">
-                                                            <img src="/api/placeholder/32/32" alt="" className="w-8 h-8 rounded-full group-hover:ring-2 ring-orange-500 transition-all" />
-                                                            {name}
-                                                        </td>
-                                                        <td className="py-4">{date}</td>
-                                                        <td className="py-4">
-                                                            <span className={`px-3 py-1 rounded-full text-xs ${getPriorityColor(priority)}`}>
-                                                                {priority}
-                                                            </span>
-                                                        </td>
-                                                        <td className="py-4">
-                                                            <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(status)}`}>
-                                                                {status}
-                                                            </span>
-                                                        </td>
-                                                        <td className="py-4">
-                                                            <div className="flex gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                                                                <button onClick={() => handleEditDetails()} className="p-1.5 text-green-500 hover:bg-green-50 rounded-full transition-colors">
-                                                                    <Edit className="w-4 h-4" />
-                                                                </button>
-                                                                <button onClick={() => handleViewDetails()} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-full transition-colors">
-                                                                    <Eye className="w-4 h-4" />
-                                                                </button>
-                                                                <button onClick={() => handleDeleteDetails()} className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors">
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            </div>
-                                                        </td>
+                                        <div className="overflow-x-auto rounded-lg border bg-white">
+                                            <table className="min-w-full divide-y divide-gray-200">
+                                                <thead className="bg-gray-50">
+                                                    <tr>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Complainer Name
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Complaint Name
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Description
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Unit Number
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Priority
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Status
+                                                        </th>
+                                                        <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                            Action
+                                                        </th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody className="divide-y divide-gray-200 bg-white">
+                                                    {fetchedComplaints.map((complaint) => (
+                                                        <tr key={complaint._id} className="hover:bg-gray-50">
+                                                            <td className="whitespace-nowrap px-6 py-4">
+                                                                <div className="flex items-center">
+                                                                    <img
+                                                                        className="h-8 w-8 rounded-full object-cover"
+                                                                        src={complaint.complainer.avatar}
+                                                                        alt={complaint.complaintName}
+                                                                    />
+                                                                    <span className="ml-2 text-sm font-medium text-gray-900">{complaint.complaintName}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{complaint.complaintName}</td>
+                                                            <td className="max-w-xs truncate px-6 py-4 text-sm text-gray-500">{complaint.description}</td>
+                                                            <td className="whitespace-nowrap px-6 py-4">
+                                                                <div className="flex items-center gap-1">
+                                                                    <span className="text-sm font-medium text-gray-900">{complaint.unitNumber}</span>
+                                                                    <span className="text-sm text-gray-500">{complaint.unitId}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="whitespace-nowrap px-6 py-4">
+                                                                <span
+                                                                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getPriorityStyles(
+                                                                        complaint.priority
+                                                                    )}`}
+                                                                >
+                                                                    {complaint.priority}
+                                                                </span>
+                                                            </td>
+                                                            <td className="whitespace-nowrap px-6 py-4">
+                                                                <span
+                                                                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusStyles(
+                                                                        complaint.status
+                                                                    )}`}
+                                                                >
+                                                                    {complaint.status}
+                                                                </span>
+                                                            </td>
+                                                            <td className="whitespace-nowrap px-6 py-4 text-right">
+                                                                <div className="flex justify-end space-x-2">
+                                                                    <button onClick={() => handleEditModel(complaint)} className="rounded p-1 text-green-600 hover:bg-green-50">
+                                                                        <PencilIcon className="h-4 w-4" />
+                                                                    </button>
+                                                                    <button onClick={() => handleViewModel(complaint._id)} className="rounded p-1 text-blue-600 hover:bg-blue-50">
+                                                                        <Eye className="h-4 w-4" />
+                                                                    </button>
+                                                                    <button onClick={() => handleDeleteModel(complaint._id)} className="rounded p-1 text-red-600 hover:bg-red-50">
+                                                                        <Trash className="h-4 w-4" />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -429,12 +629,15 @@ const DashboardLayout = () => {
                                         </button>
                                     </div>
                                     <div className="space-y-4 overflow-y-auto h-48 sm:h-60">
-                                        {activities.map(({ name, date, time }, index) => (
-                                            <div key={index} className="flex items-center gap-4 p-4 bg-white rounded-lg border">
+                                        {facilities.map((facility, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex items-center gap-4 p-4 bg-white rounded-lg border"
+                                            >
                                                 <div className="w-10 h-10 bg-gray-100 rounded-full" />
                                                 <div>
-                                                    <p className="font-medium">{name}</p>
-                                                    <p className="text-sm text-gray-500">{date} • {time}</p>
+                                                    <p className="font-medium">{facility.facilityName}</p>
+                                                    <p className="text-sm text-gray-500">{facility.scheduleServiceDate}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -584,127 +787,152 @@ const DashboardLayout = () => {
                         </div>
                     </div>
                 )}
-                {openEditComplaintsModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-                        <div className="fixed inset-0 flex items-center justify-center z-50">
-                            <div className="w-full max-w-sm mx-auto bg-white rounded-lg shadow-md p-6">
-                                <h1 className="text-xl font-bold mb-4">Edit Complaint</h1>
-                                <form onSubmit={handleEditComplaint}>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label htmlFor="complainerName" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Complainer Name<span className="text-red-500">*</span>
+
+                {openEditModel && (
+                    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+                        <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+                            <div className="p-6 space-y-6">
+                                <h2 className="text-xl font-semibold text-gray-900">Edit Complaint</h2>
+                                <form className="space-y-4" onSubmit={handleEditSubmit}>
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium">
+                                            Complainer Name<span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={reporterName}
+                                            onChange={(e) => {
+                                                setReporterName(e.target.value);
+                                            }}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium">
+                                            Complaint Name<span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={reportTitle}
+                                            onChange={(e) => {
+                                                setReportTitle(e.target.value);
+                                            }}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium">
+                                            Description*<span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={details}
+                                            onChange={(e) => {
+                                                setDetails(e.target.value);
+                                            }}
+                                            rows={3}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium">
+                                                Wing<span className="text-red-500">*</span>
                                             </label>
                                             <input
                                                 type="text"
-                                                id="complainerName"
-                                                name="complainerName"
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                value={complainerName}
-                                                onChange={(e) => setComplainerName(e.target.value)} // Update state on change
+                                                value={section}
+                                                onChange={(e) => {
+                                                    setSection(e.target.value);
+
+                                                }}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                                 required
                                             />
                                         </div>
-                                        <div>
-                                            <label htmlFor="complaintName" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Complaint Name<span className="text-red-500">*</span>
+
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium">
+                                                Unit<span className="text-red-500">*</span>
                                             </label>
                                             <input
                                                 type="text"
-                                                id="complaintName"
-                                                name="complaintName"
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                value={complaintName}
-                                                onChange={(e) => setComplaintName(e.target.value)} // Update state on change
+                                                value={unitNumber}
+                                                onChange={(e) => {
+                                                    setUnitNumber(e.target.value);
+
+                                                }}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                                 required
                                             />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Description<span className="text-red-500">*</span>
-                                            </label>
-                                            <textarea
-                                                id="description"
-                                                name="description"
-                                                rows={3}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                value={description}
-                                                onChange={(e) => setDescription(e.target.value)} // Update state on change
-                                                required
-                                            ></textarea>
-                                        </div>
-                                        <div className="flex gap-4">
-                                            <div className="flex-1">
-                                                <label htmlFor="wing" className="block text-sm font-medium text-gray-700 mb-1">
-                                                    Wing<span className="text-red-500">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="wing"
-                                                    name="wing"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    value={wing}
-                                                    onChange={(e) => setWing(e.target.value)} // Update state on change
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="flex-1">
-                                                <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-1">
-                                                    Unit<span className="text-red-500">*</span>
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="unit"
-                                                    name="unit"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    value={unit}
-                                                    onChange={(e) => setUnit(e.target.value)} // Update state on change
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span className="block text-sm font-medium text-gray-700 mb-1">Priority<span className="text-red-500">*</span></span>
-                                            <div className="flex gap-4 justify-between ">
-                                                {['High', 'Medium', 'Low'].map((priorityOption) => (
-                                                    <label key={priorityOption} className="flex items-center border focuse:ring-orange-500 p-3 rounded-md">
-                                                        <input
-                                                            type="radio"
-                                                            name="priority"
-                                                            value={priorityOption}
-                                                            className="mr-2 text-orange-500 focus:ring-orange-500"
-                                                            checked={priority === priorityOption} // Check if this is the selected priority
-                                                            onChange={() => setPriority(priorityOption)} // Update state on change
-                                                        />
-                                                        <span className="text-sm">{priorityOption}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span className="block text-sm font-medium text-gray-700 mb-1">Status<span className="text-red-500">*</span></span>
-                                            <div className="flex gap-4 justify-between">
-                                                {['Open', 'Pending', 'Solved'].map((statusOption) => (
-                                                    <label key={statusOption} className="flex items-center border rounded-md p-3">
-                                                        <input
-                                                            type="radio"
-                                                            name="status"
-                                                            value={statusOption}
-                                                            className="mr-2 text-orange-500 focus:ring-orange-500"
-                                                            checked={status === statusOption} // Check if this is the selected status
-                                                            onChange={() => setStatus(statusOption)} // Update state on change
-                                                        />
-                                                        <span className="text-sm">{statusOption}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
                                         </div>
                                     </div>
-                                    <div className="mt-6 flex justify-center gap-4">
-                                        <button type="button" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-[47%]" onClick={() => setOpenEditComplaintsModel(false)}>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium">
+                                            Urgency<span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="flex gap-4">
+                                            {["high", "medium", "low"].map((level) => (
+                                                <label key={level} className="flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        name="urgency"
+                                                        value={level}
+                                                        checked={urgency === level}
+                                                        onChange={(e) => {
+                                                            setUrgency(e.target.value);
+
+                                                        }}
+                                                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                    />
+                                                    <span className="ml-2 text-sm">{level.charAt(0).toUpperCase() + level.slice(1)}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-sm font-medium">
+                                            Status<span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="flex gap-4">
+                                            {["open", "pending", "resolved"].map((status) => (
+                                                <label key={status} className="flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        name="status"
+                                                        value={status}
+                                                        checked={currentStatus === status}
+                                                        onChange={(e) => {
+                                                            setCurrentStatus(e.target.value);
+
+                                                        }}
+                                                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                    />
+                                                    <span className="ml-2 text-sm">{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4 pt-4">
+                                        <button
+                                            onClick={() => setOpenEditModal(false)}
+                                            type="button"
+                                            className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                        >
                                             Cancel
                                         </button>
-                                        <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 w-[47%]">
+                                        <button
+                                            type="submit"
+                                            className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                                        >
                                             Save
                                         </button>
                                     </div>
@@ -714,90 +942,87 @@ const DashboardLayout = () => {
                     </div>
                 )}
                 {openDeleteModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-                        <div className="fixed inset-0 flex items-center justify-center z-50">
-                            <div className="bg-white rounded-lg shadow-lg max-w-sm w-full">
-                                <div className="p-6">
-                                    <h2 className="text-xl font-semibold mb-4">Delete Number?</h2>
-                                    <p className="text-gray-600 mb-6">Are you sure you want to delete this number?</p>
-                                    <div className="flex justify-center space-x-4">
-                                        <button
-                                            onClick={() => setOpenDeleteModel(false)}
-                                            className="px-4 py-2 rounded-md text-gray-600 border rounded-md hover:bg-gray-100 w-[47%]"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            onClick={handleDeleteImportantNumber}
-                                            className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 w-[47%]"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                {openViewModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-                        <div className="fixed inset-0 flex items-center justify-center z-50">
-                            <div className="w-full max-w-sm mx-auto bg-white rounded-lg shadow-md">
-                                <div className="flex items-center justify-between p-4 border-b">
-                                    <h1 className="text-xl font-bold">View Complain</h1>
-                                    <button className="text-gray-500 hover:text-gray-700" aria-label="Close" onClick={() => setOpenViewModel(false)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
+                    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+                        <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+                            <div className="p-6 space-y-4">
+                                <h2 className="text-xl font-semibold text-gray-900">Delete Complaint?</h2>
+                                <p className="text-gray-500">Are you sure you want to delete this Complaint?</p>
+                                <div className="flex gap-4 pt-2">
+                                    <button onClick={() => setOpenDeleteModel(false)} type="button" className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            handleDeleteComplaint(complaintIdToDelete); // Call delete function with the stored ID
+                                            setOpenDeleteModel(false); // Close the modal
+                                        }}
+                                        type="button"
+                                        className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                                    >
+                                        Delete
                                     </button>
                                 </div>
-                                <div className="p-4">
-                                    <div className="flex items-center space-x-4 mb-4">
-                                        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-                                            <span className="text-xl font-semibold text-gray-600">EH</span>
-                                        </div>
-                                        <div>
-                                            <h2 className="text-lg font-semibold">Evelyn Harper</h2>
-                                            <p className="text-sm text-gray-500">Aug 5, 2024</p>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-4 py-3">
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-500">Request Name</h3>
-                                            <p className="font-medium">Unethical Behavior</p>
-                                        </div>
-                                        <div >
-                                            <h3 className="text-sm font-medium text-gray-500">Description</h3>
-                                            <p className="text-sm">Offering, giving, receiving, or soliciting of value to influence the actions of an</p>
-                                        </div>
-                                        <div className="flex flex-wrap gap-4 text-sm justify-between">
-                                            <div className=''>
-                                                <span className="font-medium text-gray-500 block">Wing</span>
-                                                <span className="">A</span>
-                                            </div>
-                                            <div className=''>
-                                                <span className="font-medium text-gray-500 block">Unit</span>
-                                                <span className="">1002</span>
-                                            </div>
-                                            <div className="">
-                                                <span className="font-medium text-gray-500 block">Priority</span>
-                                                <span className="px-2  py-1 bg-blue-100 text-blue-800 rounded-full">Medium</span>
-                                            </div>
-                                            <div className=''>
-                                                <span className="font-medium text-gray-500 block">Status</span>
-                                                <span className="">Open</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-
-
-
                         </div>
                     </div>
                 )}
+
             </div>
+            {openViewModel && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
+                    <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+                        <div className="relative p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-semibold text-gray-900">View Complaint</h2>
+                                <button onClick={() => setOpenViewModel(false)} className="text-gray-400 hover:text-gray-500">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span className="sr-only">Close</span>
+                                </button>
+                            </div>
+
+                            {viewComplaintDetails && (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm text-gray-500">Request Name</label>
+                                        <p className="text-gray-900">{viewComplaintDetails.complaintName}</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm text-gray-500">Description</label>
+                                        <p className="text-gray-900">{viewComplaintDetails.description}</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-4 gap-4">
+                                        <div>
+                                            <label className="block text-sm text-gray-500">Wing</label>
+                                            <p className="text-gray-900">{viewComplaintDetails.wing}</p>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm text-gray-500">Unit</label>
+                                            <p className="text-gray-900">{viewComplaintDetails.unitNumber}</p>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm text-gray-500">Priority</label>
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {viewComplaintDetails.priority}
+                                            </span>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm text-gray-500">Status</label>
+                                            <span className="text-blue-600">{viewComplaintDetails.status}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     </>
     );
