@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const Resident = require('../models/Resident');
 const Society = require('../models/Society');
 const Payment = require('../models/Payment'); // Assuming you have a Payment model
+const cloudinary = require('cloudinary');
 
 // Nodemailer configuration
 const transporter = nodemailer.createTransport({
@@ -111,21 +112,63 @@ exports.updateResident = async (req, res) => {
     try {
         const residentId = req.params.id;
         const resident = await Resident.findById(residentId);
+        const files = req.files || {};
 
         if (!resident) return res.status(404).json({ message: "Resident not found" });
 
-        // Check if resident has vacated before updating
-        if (resident.status === 'vacated') return res.status(400).json({ message: "Resident has vacated. Update not allowed." });
+        // Initialize updates object with basic fields
+        const updates = { ...req.body };
 
-        // Update fields with new values from request body
-        Object.assign(resident, req.body);
+        // Handle file uploads to Cloudinary
+        const fileFields = ['photo', 'aadhaarFront', 'aadhaarBack', 'addressProof', 'rentAgreement'];
 
-        // Save updated resident details
-        await resident.save();
-        res.status(200).json({ message: 'Resident updated successfully', resident });
+        for (const field of fileFields) {
+            if (files[field]?.[0]) {
+                try {
+                    const uploadResponse = await cloudinary.uploader.upload(files[field][0].path);
+                    updates[field] = uploadResponse.secure_url;
+                } catch (uploadError) {
+                    return res.status(500).json({
+                        message: `Failed to upload ${field} to Cloudinary`,
+                        error: uploadError.message
+                    });
+                }
+            } else if (req.body[field]) {
+                // Keep existing file URL if no new file uploaded
+                updates[field] = req.body[field];
+            }
+        }
+
+        // Parse JSON strings for nested fields if provided
+        if (req.body.members) {
+            updates.members = typeof req.body.members === 'string' ?
+                JSON.parse(req.body.members) : req.body.members;
+        }
+
+        if (req.body.vehicles) {
+            updates.vehicles = typeof req.body.vehicles === 'string' ?
+                JSON.parse(req.body.vehicles) : req.body.vehicles;
+        }
+
+        if (req.body.ownerDetails) {
+            updates.ownerDetails = typeof req.body.ownerDetails === 'string' ?
+                JSON.parse(req.body.ownerDetails) : req.body.ownerDetails;
+        }
+
+        // Update resident with new values
+        const updatedResident = await Resident.findByIdAndUpdate(
+            residentId,
+            updates,
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            message: 'Resident updated successfully',
+            resident: updatedResident
+        });
     } catch (error) {
         console.error('Error updating resident:', error);
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: 'Failed to update resident', error: error.message });
     }
 };
 
@@ -137,26 +180,23 @@ exports.deleteResident = async (req, res) => {
 
         if (!resident) return res.status(404).json({ message: "Resident not found" });
 
-        if (resident.status === 'vacated') {
-            await resident.remove();
+        // Delete the resident directly using deleteOne() instead of remove()
+        await Resident.deleteOne({ _id: residentId });
 
-            // Adjust society unit count and remove resident ID from society record
-            await Society.findByIdAndUpdate(
-                resident.society,
-                {
-                    $inc: { units: -1 },
-                    $pull: { residents: resident._id }
-                },
-                { new: true }
-            );
+        // Adjust society unit count and remove resident ID from society record
+        await Society.findByIdAndUpdate(
+            resident.society,
+            {
+                $inc: { units: -1 },
+                $pull: { residents: resident._id }
+            },
+            { new: true }
+        );
 
-            return res.status(200).json({ message: "Resident deleted successfully" });
-        } else {
-            return res.status(400).json({ message: "Resident has not vacated. Deletion not allowed." });
-        }
+        return res.status(200).json({ message: "Resident deleted successfully" });
     } catch (error) {
         console.error('Error deleting resident:', error);
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 

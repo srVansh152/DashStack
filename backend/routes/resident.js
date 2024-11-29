@@ -24,14 +24,23 @@ router.post(
     }
   );
 
-router.put('/:id', protect, upload.none(), async (req, res) => {
-    try {
-
-        await residentController.updateResident(req, res);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+router.put('/:id', 
+    protect,
+    upload.fields([
+      { name: 'photo', maxCount: 1 },
+      { name: 'aadhaarFront', maxCount: 1 },
+      { name: 'aadhaarBack', maxCount: 1 },
+      { name: 'addressProof', maxCount: 1 },
+      { name: 'rentAgreement', maxCount: 1 },
+    ]),
+    async (req, res) => {
+        try {
+            await residentController.updateResident(req, res);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
     }
-});
+);
 
 router.delete('/:id', protect, async (req, res) => { // Protect the route
     try {
