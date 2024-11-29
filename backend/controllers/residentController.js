@@ -3,6 +3,8 @@ const Resident = require('../models/Resident');
 const Society = require('../models/Society');
 const Payment = require('../models/Payment'); // Assuming you have a Payment model
 const cloudinary = require('cloudinary');
+const FinancialIncome = require('../models/Financial');
+const OtherIncome = require('../models/OtherIncome');
 
 // Nodemailer configuration
 const transporter = nodemailer.createTransport({
@@ -222,17 +224,27 @@ exports.getResidentDetails = async (req, res) => {
     try {
         const residentId = req.params.id;
         
-        // Get resident details with populated payments
+        // Get resident details
         const resident = await Resident.findById(residentId);
-        
         if (!resident) return res.status(404).json({ message: "Resident not found" });
 
-        // Get all payments for this resident with populated income details
+        // Get all payments for this resident
         const payments = await Payment.find({ residentId })
             .populate('incomeId')
-            .sort({ date: -1 }); // Sort by date, most recent first
+            .sort({ paymentDate: -1 });
 
-        // Calculate payment statistics
+        // Get all financial incomes for the society
+        const financialIncomes = await FinancialIncome.find({ 
+            societyId: resident.society,
+            'residentStatus.residentId': residentId 
+        });
+
+        // Get all other incomes for the society
+        const otherIncomes = await OtherIncome.find({ 
+            societyId: resident.society 
+        });
+
+        // Initialize payment statistics
         const paymentStats = {
             totalDue: 0,
             totalPaid: 0,
@@ -241,19 +253,122 @@ exports.getResidentDetails = async (req, res) => {
             completedPayments: []
         };
 
+        // Create a map of payments by incomeId
+        const paymentsByIncomeId = new Map();
         payments.forEach(payment => {
-            const totalAmount = payment.amount + payment.penaltyAmount;
-            
-            if (payment.hasPaid) {
-                paymentStats.totalPaid += totalAmount;
-                paymentStats.completedPayments.push(payment);
-            } else {
-                paymentStats.totalPending += totalAmount;
-                paymentStats.pendingPayments.push(payment);
+            if (!paymentsByIncomeId.has(payment.incomeId._id.toString())) {
+                paymentsByIncomeId.set(payment.incomeId._id.toString(), []);
             }
+            paymentsByIncomeId.get(payment.incomeId._id.toString()).push(payment);
         });
 
+        // Process Financial Incomes
+        for (const income of financialIncomes) {
+            const incomePayments = paymentsByIncomeId.get(income._id.toString()) || [];
+            const totalPaidForIncome = incomePayments.reduce((sum, payment) => sum + payment.amount, 0);
+            const isPaidFully = totalPaidForIncome >= income.amount;
+
+            // Calculate penalty if not fully paid
+            let penaltyAmount = 0;
+            if (!isPaidFully) {
+                const currentDate = new Date();
+                const dueDate = new Date(income.dueDate);
+                const daysOverdue = Math.floor((currentDate - dueDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysOverdue > 0) {
+                    penaltyAmount = Math.floor(daysOverdue / income.penaltyRules.penaltyAfterDays) 
+                        * income.penaltyRules.penaltyAmount;
+                }
+            }
+
+            const remainingAmount = Math.max(0, income.amount - totalPaidForIncome);
+            const totalAmount = remainingAmount + penaltyAmount;
+
+            if (incomePayments.length > 0) {
+                // Add to completed payments
+                incomePayments.forEach(payment => {
+                    paymentStats.completedPayments.push({
+                        type: 'FinancialIncome',
+                        incomeId: income._id,
+                        title: income.title,
+                        amount: payment.amount,
+                        penaltyAmount: payment.penaltyAmount || 0,
+                        totalAmount: payment.amount + (payment.penaltyAmount || 0),
+                        dueDate: income.dueDate,
+                        hasPaid: true,
+                        paymentDate: payment.paymentDate,
+                        paymentMethod: payment.paymentMethod
+                    });
+                    paymentStats.totalPaid += payment.amount + (payment.penaltyAmount || 0);
+                });
+            }
+
+            if (remainingAmount > 0) {
+                // Add to pending payments
+                paymentStats.pendingPayments.push({
+                    type: 'FinancialIncome',
+                    incomeId: income._id,
+                    title: income.title,
+                    amount: remainingAmount,
+                    penaltyAmount,
+                    totalAmount,
+                    dueDate: income.dueDate,
+                    hasPaid: false
+                });
+                paymentStats.totalPending += totalAmount;
+            }
+        }
+
+        // Process Other Incomes
+        for (const income of otherIncomes) {
+            const incomePayments = paymentsByIncomeId.get(income._id.toString()) || [];
+            const totalPaidForIncome = incomePayments.reduce((sum, payment) => sum + payment.amount, 0);
+            const remainingAmount = Math.max(0, income.amount - totalPaidForIncome);
+
+            if (incomePayments.length > 0) {
+                // Add to completed payments
+                incomePayments.forEach(payment => {
+                    paymentStats.completedPayments.push({
+                        type: 'OtherIncome',
+                        incomeId: income._id,
+                        title: income.title,
+                        amount: payment.amount,
+                        penaltyAmount: 0,
+                        totalAmount: payment.amount,
+                        dueDate: income.dueDate,
+                        hasPaid: true,
+                        paymentDate: payment.paymentDate,
+                        paymentMethod: payment.paymentMethod
+                    });
+                    paymentStats.totalPaid += payment.amount;
+                });
+            }
+
+            if (remainingAmount > 0) {
+                // Add to pending payments
+                paymentStats.pendingPayments.push({
+                    type: 'OtherIncome',
+                    incomeId: income._id,
+                    title: income.title,
+                    amount: remainingAmount,
+                    penaltyAmount: 0,
+                    totalAmount: remainingAmount,
+                    dueDate: income.dueDate,
+                    hasPaid: false
+                });
+                paymentStats.totalPending += remainingAmount;
+            }
+        }
+
         paymentStats.totalDue = paymentStats.totalPaid + paymentStats.totalPending;
+
+        // Sort payments by date
+        paymentStats.completedPayments.sort((a, b) => 
+            new Date(b.paymentDate) - new Date(a.paymentDate)
+        );
+        paymentStats.pendingPayments.sort((a, b) => 
+            new Date(b.dueDate) - new Date(a.dueDate)
+        );
 
         res.status(200).json({
             resident,
