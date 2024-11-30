@@ -1,92 +1,153 @@
 import React, { useEffect, useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, Calendar, Clock, X } from 'lucide-react'
-import { Link } from 'react-router-dom';
-
-import { Info, MoreVertical } from "lucide-react"
+import {  Calendar, Clock, X  } from 'lucide-react'
+import { MoreVertical } from "lucide-react"
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../Common/Navbar/Navbar';
-
-
-
-
+import { createAnnouncement, getAnnouncements, deleteAnnouncement, updateAnnouncement, getAnnouncementDetail } from '../../../utils/api';
 
 function Announcment() {
   const [announcementTitle, setAnnouncementTitle] = useState("");
   const [description, setDescription] = useState("");
   const [announcementDate, setAnnouncementDate] = useState("");
   const [announcementTime, setAnnouncementTime] = useState("");
-  const [title, setTitle] = useState("Community Initiatives");
-  const [descriptionn, setDescriptionn] = useState("The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident.");
-  const [date, setDate] = useState("01/02/2024");
-  const [time, setTime] = useState("10:15 AM");
-
+  const [title, setTitle] = useState("");
+  const [descriptionn, setDescriptionn] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [openModel, setOpenModel] = useState(false);
   const [openEditModel, setOpenEditModel] = useState(false);
   const [openViewModel, setOpenViewModel] = useState(false);
   const [openDeleteModel, setOpenDeleteModel] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [announcementIdToDelete, setAnnouncementIdToDelete] = useState(null);
+  const [announcementIdToEdit, setAnnouncementIdToEdit] = useState(null);
+  const [announcementDetails, setAnnouncementDetails] = useState(null);
 
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here (e.g., saving the data)
-
+  const fetchAnnouncements = async () => {
+    setLoading(true);
+    try {
+      const response = await getAnnouncements()
+      console.log(response.data);
+      
+      if (response.success) {
+        setAnnouncements(response.data);
+      } else {
+        throw new Error('Failed to fetch announcements');
+      }
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEditSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic, e.g., saving or sending the data
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Prepare the data to be sent to the API
+    const announcementData = {
+      title: announcementTitle,
+      description: description,
+      date: announcementDate,
+      time: announcementTime,
+    };
+    console.log(announcementData);
+  
+    try {
+      // Make the API call to save the announcement
+      const response = await createAnnouncement(announcementData);
+
+      if (!response.success) {
+        throw new Error('Network response was not ok');
+      }
+
+      setOpenModel(false)
+      fetchAnnouncements()
+
+      console.log(response.data)
+
+    } catch (error) {
+      console.error('Error saving announcement:', error);
+    }
   };
 
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    // Prepare the data to be sent to the API
+    const editedAnnouncementData = {
+      title: title,
+      description: descriptionn,
+      date: date,
+      time: time,
+    };
+    console.log(editedAnnouncementData);
+  
+    try {
+      // Make the API call to update the announcement
+      const response = await updateAnnouncement(announcementIdToEdit, editedAnnouncementData); // Use the ID of the announcement being edited
 
+      if (!response.success) {
+        throw new Error('Network response was not ok');
+      }
 
+      setOpenEditModel(false);
+      fetchAnnouncements(); // Refresh the announcements list
+
+      console.log(response.data);
+
+    } catch (error) {
+      console.error('Error updating announcement:', error);
+    }
+  };
 
   const handleAddModel = () => {
     setOpenModel(true);
   };
-  const handleEditModel = () => {
+
+  const handleEditModel = (announcement) => {
+    setTitle(announcement.title);
+    setDescriptionn(announcement.description);
+    setDate(announcement.date);
+    setTime(announcement.time);
+    setAnnouncementIdToEdit(announcement._id); // Store the ID of the announcement being edited
     setOpenEditModel(true);
   };
-  const handleViewModel = () => {
-    setOpenViewModel(true);
-  };
-  const handleDeleteModel = () => {
-    setOpenDeleteModel(true);
-  };
 
-  const announcements = [
-    {
-      date: "01/02/2024",
-      time: "10:15 AM",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      date: "01/02/2024",
-      time: "10:15 AM",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      date: "01/02/2024",
-      time: "10:15 AM",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      date: "01/02/2024",
-      time: "10:15 AM",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      date: "01/02/2024",
-      time: "10:15 AM",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
-    },
-    {
-      date: "01/02/2024",
-      time: "10:15 AM",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in."
+  const handleViewModel = async (id) => {
+    try {
+      const response = await getAnnouncementDetail(id);
+      if (response.success) {
+        setAnnouncementDetails(response.data);
+        setOpenViewModel(true);
+      } else {
+        throw new Error('Failed to fetch announcement details');
+      }
+    } catch (error) {
+      console.error('Error fetching announcement details:', error);
     }
-  ]
+  };
+  const handleDeleteModel = (id) => {
+    setOpenDeleteModel(true);
+    setAnnouncementIdToDelete(id);
+  };
 
+  const handleDeleteAnnouncement = async (id) => {
+    console.log(`Deleting announcement with ID: ${id}`);
+    try {
+      const response = await deleteAnnouncement(id);
+      if (response.success) {
+        fetchAnnouncements();
+      } else {
+        throw new Error('Failed to delete announcement');
+      }
+    } catch (error) {
+      console.error('Error deleting announcement:', error);
+    }
+  };
 
   
 
@@ -107,54 +168,58 @@ function Announcment() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {announcements.map((announcement, index) => (
-                <div key={index} className="bg-white rounded-lg overflow-hidden">
-                  <div className="bg-[#4F6BF6] text-white p-4 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <h2 className="font-medium">Community Initiatives</h2>
+              {loading ? (
+                <div className="col-span-4 text-center p-4">Loading announcements...</div>
+              ) : (
+                announcements.map((announcement, index) => (
+                  <div key={index} className="bg-white rounded-lg overflow-hidden">
+                    <div className="bg-[#4F6BF6] text-white p-4 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-medium">{announcement.title}</h2>
 
-                    </div>
-                    {/* Attach dropdown to all cards */}
-                    <div className="relative group">
-                      <button className="text-white hover:bg-blue-600 p-1 rounded">
-                        <MoreVertical className="w-5 h-5" />
-                      </button>
-                      <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all duration-300 ease-in-out">
-                        <div className="py-1">
-                          <button onClick={handleEditModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            Edit
-                          </button>
-                          <button onClick={handleViewModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            View
-                          </button>
-                          <button onClick={handleDeleteModel} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            Delete
-                          </button>
+                      </div>
+                      {/* Attach dropdown to all cards */}
+                      <div className="relative group">
+                        <button className="text-white hover:bg-blue-600 p-1 rounded">
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                        <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all duration-300 ease-in-out">
+                          <div className="py-1">
+                            <button onClick={() => handleEditModel(announcement)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                              Edit
+                            </button>
+                            <button onClick={() => handleViewModel(announcement._id)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                              View
+                            </button>
+                            <button onClick={() => handleDeleteModel(announcement._id)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                  </div>
-                  <div className="p-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
+                    </div>
+                    <div className="p-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <div>
+                            <p className="text-sm text-gray-600">Announcement Date</p>
+                            <p className="text-sm font-medium">{announcement.date}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-600">Announcement Time</p>
+                            <p className="text-sm font-medium">{announcement.time}</p>
+                          </div>
+                        </div>
                         <div>
-                          <p className="text-sm text-gray-600">Announcement Date</p>
-                          <p className="text-sm font-medium">{announcement.date}</p>
+                          <p className="text-sm text-gray-600">Description</p>
+                          <p className="text-sm">{announcement.description}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-600">Announcement Time</p>
-                          <p className="text-sm font-medium">{announcement.time}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Description</p>
-                        <p className="text-sm">{announcement.description}</p>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -246,16 +311,11 @@ function Announcment() {
       )}
 
       {openDeleteModel && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 p-3">
-                Delete Ganesh Chaturthi?
-              </h2>
-              <p className="text-gray-500 p-3">
-                Are you sure you want to delete this?
-              </p>
-
+              <h2 className="text-xl font-semibold text-gray-900">Delete Announcement?</h2>
+              <p className="text-gray-500">Are you sure you want to delete this announcement?</p>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   onClick={() => setOpenDeleteModel(false)}
@@ -264,14 +324,15 @@ function Announcment() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    handleDeleteAnnouncement(announcementIdToDelete);
+                    setOpenDeleteModel(false);
+                  }}
                   className="px-6 py-2.5 text-white font-medium bg-[#f1523d] rounded-lg hover:bg-[#d13d2a] focus:outline-none focus:ring-2 focus:ring-[#f1523d]"
                 >
                   Delete
                 </button>
               </div>
-
-
             </div>
           </div>
         </div>
@@ -371,80 +432,37 @@ function Announcment() {
           <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
             <div className="p-6 space-y-4">
               <div className="flex justify-between items-center mb-6">
-                <h1 className="text-xl font-semibold">View Security Protocol</h1>
+                <h1 className="text-xl font-semibold">View Announcement</h1>
                 <button onClick={() => setOpenViewModel(false)} className="text-gray-500 hover:text-gray-700">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-gray-500 mb-1">
-                    Title
-                  </label>
-                  <div className="text-sm">
-                    Physical Security
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm text-gray-500 mb-1">
-                    Description
-                  </label>
-                  <div className="text-sm">
-                    The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in.
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+              {announcementDetails && (
+                <div className="space-y-4">
                   <div>
-                    <label className="block text-sm text-gray-500 mb-1">
-                      Date
-                    </label>
-                    <div className="text-sm">
-                      01/02/2024
-                    </div>
+                    <label className="block text-sm text-gray-500 mb-1">Title</label>
+                    <div className="text-sm">{announcementDetails.title}</div>
                   </div>
 
                   <div>
-                    <label className="block text-sm text-gray-500 mb-1">
-                      Time
-                    </label>
-                    <div className="text-sm">
-                      10:15 AM
+                    <label className="block text-sm text-gray-500 mb-1">Description</label>
+                    <div className="text-sm">{announcementDetails.description}</div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-500 mb-1">Date</label>
+                      <div className="text-sm">{announcementDetails.date}</div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-500 mb-1">Time</label>
+                      <div className="text-sm">{announcementDetails.time}</div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {openDeleteModel && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-            <div className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-gray-900">Delete Announcement?</h2>
-
-              <p className="text-gray-500">
-                Are you sure you want to delete this security?
-              </p>
-
-              <div className="flex gap-4 pt-2">
-                <button onClick={() => setOpenDeleteModel(false)}
-                  type="button"
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                >
-                  Delete
-                </button>
-              </div>
+              )}
             </div>
           </div>
         </div>

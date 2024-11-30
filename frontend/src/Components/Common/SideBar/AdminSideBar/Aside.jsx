@@ -1,15 +1,15 @@
 'use client'
 
-import { 
-  Activity, 
-  DollarSign, 
-  Package, 
-  Users, 
-  Bell, 
-  Settings, 
-  LogOut, 
-  ChevronDown, 
-  ChevronUp 
+import {
+  Activity,
+  DollarSign,
+  Package,
+  Users,
+  Bell,
+  Settings,
+  LogOut,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -54,147 +54,151 @@ export default function Aside() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-20
+        className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-20 flex flex-col justify-between
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        <h1 className="hidden text-2xl font-bold text-orange-500 cursor-pointer transition-colors hover:text-orange-600 lg:flex">
-          DashStack
-        </h1>
 
-        <nav className="mt-4">
-          {/* Dashboard */}
-          <SidebarItem
-            icon={Activity}
-            label="Dashboard"
-            path="dashboard"
-            active={activeMenu === 'Dashboard'}
-            hovered={hoveredMenu === 'Dashboard'}
-            onClick={() => {
-              setActiveMenu('Dashboard')
-              setIsSidebarOpen(false)
-              setHoveredMenu(null)
-            }}
-            onMouseEnter={() => setHoveredMenu('Dashboard')}
-            onMouseLeave={() => setHoveredMenu(null)}
-          />
+        <div>
+          <h1 className="hidden text-2xl font-bold text-orange-500 cursor-pointer transition-colors hover:text-orange-600 lg:flex">
+            DashStack
+          </h1>
 
-          {/* Resident Management */}
-          <SidebarItem
-            icon={Users}
-            label="Resident Management"
-            path="residence"
-            active={activeMenu === 'Resident Management'}
-            hovered={hoveredMenu === 'Resident Management'}
-            onClick={() => {
-              setActiveMenu('Resident Management')
-              setIsSidebarOpen(false)
-              setHoveredMenu(null)
-            }}
-            onMouseEnter={() => setHoveredMenu('Resident Management')}
-            onMouseLeave={() => setHoveredMenu(null)}
-          />
+          <nav className="mt-4">
+            {/* Dashboard */}
+            <SidebarItem
+              icon={Activity}
+              label="Dashboard"
+              path="dashboard"
+              active={activeMenu === 'Dashboard'}
+              hovered={hoveredMenu === 'Dashboard'}
+              onClick={() => {
+                setActiveMenu('Dashboard')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
+              }}
+              onMouseEnter={() => setHoveredMenu('Dashboard')}
+              onMouseLeave={() => setHoveredMenu(null)}
+            />
 
-          {/* Financial Management Dropdown */}
-          <Dropdown
-            label="Financial Management"
-            icon={DollarSign}
-            isOpen={openDropdown === 'Financial Management'}
-            active={activeMenu === 'Financial Management'}
-            hovered={hoveredMenu === 'Financial Management'}
-            items={financialMenuItems}
-            onClick={() => handleDropdownToggle('Financial Management')}
-            onHoverEnter={() => setHoveredMenu('Financial Management')}
-            onHoverLeave={() => setHoveredMenu(null)}
-          />
+            {/* Resident Management */}
+            <SidebarItem
+              icon={Users}
+              label="Resident Management"
+              path="residence"
+              active={activeMenu === 'Resident Management'}
+              hovered={hoveredMenu === 'Resident Management'}
+              onClick={() => {
+                setActiveMenu('Resident Management')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
+              }}
+              onMouseEnter={() => setHoveredMenu('Resident Management')}
+              onMouseLeave={() => setHoveredMenu(null)}
+            />
 
-          {/* Other menu items */}
-          <SidebarItem
-            icon={Package}
-            label="Facility Management"
-            path="Facilitymanagment"
-            active={activeMenu === 'Facility Management'}
-            hovered={hoveredMenu === 'Facility Management'}
-            onClick={() => {
-              setActiveMenu('Facility Management')
-              setIsSidebarOpen(false)
-              setHoveredMenu(null)
-            }}
-            onMouseEnter={() => setHoveredMenu('Facility Management')}
-            onMouseLeave={() => setHoveredMenu(null)}
-          />
+            {/* Financial Management Dropdown */}
+            <Dropdown
+              label="Financial Management"
+              icon={DollarSign}
+              isOpen={openDropdown === 'Financial Management'}
+              active={activeMenu === 'Financial Management'}
+              hovered={hoveredMenu === 'Financial Management'}
+              items={financialMenuItems}
+              onClick={() => handleDropdownToggle('Financial Management')}
+              onHoverEnter={() => setHoveredMenu('Financial Management')}
+              onHoverLeave={() => setHoveredMenu(null)}
+            />
 
-          {/* Complaint Tracking Dropdown */}
-          <Dropdown
-            label="Complaint Tracking"
-            icon={Bell}
-            isOpen={openDropdown === 'Complaint Tracking'}
-            active={activeMenu === 'Complaint Tracking'}
-            hovered={hoveredMenu === 'Complaint Tracking'}
-            items={complaintMenuItems}
-            onClick={() => handleDropdownToggle('Complaint Tracking')}
-            onHoverEnter={() => setHoveredMenu('Complaint Tracking')}
-            onHoverLeave={() => setHoveredMenu(null)}
-          />
+            {/* Other menu items */}
+            <SidebarItem
+              icon={Package}
+              label="Facility Management"
+              path="Facilitymanagment"
+              active={activeMenu === 'Facility Management'}
+              hovered={hoveredMenu === 'Facility Management'}
+              onClick={() => {
+                setActiveMenu('Facility Management')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
+              }}
+              onMouseEnter={() => setHoveredMenu('Facility Management')}
+              onMouseLeave={() => setHoveredMenu(null)}
+            />
 
-          {/* Security Management Dropdown */}
-          <Dropdown
-            label="Security Management"
-            icon={Settings}
-            isOpen={openDropdown === 'Security Management'}
-            active={activeMenu === 'Security Management'}
-            hovered={hoveredMenu === 'Security Management'}
-            items={securityManagement}
-            onClick={() => handleDropdownToggle('Security Management')}
-            onHoverEnter={() => setHoveredMenu('Security Management')}
-            onHoverLeave={() => setHoveredMenu(null)}
-          />
+            {/* Complaint Tracking Dropdown */}
+            <Dropdown
+              label="Complaint Tracking"
+              icon={Bell}
+              isOpen={openDropdown === 'Complaint Tracking'}
+              active={activeMenu === 'Complaint Tracking'}
+              hovered={hoveredMenu === 'Complaint Tracking'}
+              items={complaintMenuItems}
+              onClick={() => handleDropdownToggle('Complaint Tracking')}
+              onHoverEnter={() => setHoveredMenu('Complaint Tracking')}
+              onHoverLeave={() => setHoveredMenu(null)}
+            />
 
-          <SidebarItem
-            icon={Package}
-            label="Security Guard"
-            path="securityguard"
-            active={activeMenu === 'Security Guard'}
-            hovered={hoveredMenu === 'Security Guard'}
-            onClick={() => {
-              setActiveMenu('Security Guard')
-              setIsSidebarOpen(false)
-              setHoveredMenu(null)
-            }}
-            onMouseEnter={() => setHoveredMenu('Facility Management')}
-            onMouseLeave={() => setHoveredMenu(null)}
-          />
+            {/* Security Management Dropdown */}
+            <Dropdown
+              label="Security Management"
+              icon={Settings}
+              isOpen={openDropdown === 'Security Management'}
+              active={activeMenu === 'Security Management'}
+              hovered={hoveredMenu === 'Security Management'}
+              items={securityManagement}
+              onClick={() => handleDropdownToggle('Security Management')}
+              onHoverEnter={() => setHoveredMenu('Security Management')}
+              onHoverLeave={() => setHoveredMenu(null)}
+            />
 
-          <SidebarItem
-            icon={Bell}
-            label="Announcement"
-            path="announcment"
-            active={activeMenu === 'Announcement'}
-            hovered={hoveredMenu === 'Announcement'}
-            onClick={() => {
-              setActiveMenu('Announcement')
-              setIsSidebarOpen(false)
-              setHoveredMenu(null)
-            }}
-            onMouseEnter={() => setHoveredMenu('Announcement')}
-            onMouseLeave={() => setHoveredMenu(null)}
-          />
+            <SidebarItem
+              icon={Package}
+              label="Security Guard"
+              path="securityguard"
+              active={activeMenu === 'Security Guard'}
+              hovered={hoveredMenu === 'Security Guard'}
+              onClick={() => {
+                setActiveMenu('Security Guard')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
+              }}
+              onMouseEnter={() => setHoveredMenu('Facility Management')}
+              onMouseLeave={() => setHoveredMenu(null)}
+            />
 
-          <SidebarItem
-            icon={LogOut}
-            className="mt-40"
-            label="Logout"
-            path="/"
-            active={activeMenu === 'Logout'}
-            hovered={hoveredMenu === 'Logout'}
-            onClick={() => {
-              setActiveMenu('Logout')
-              setIsSidebarOpen(false)
-              setHoveredMenu(null)
-            }}
-            onMouseEnter={() => setHoveredMenu('Logout')}
-            onMouseLeave={() => setHoveredMenu(null)}
-          />
-        </nav>
+            <SidebarItem
+              icon={Bell}
+              label="Announcement"
+              path="announcment"
+              active={activeMenu === 'Announcement'}
+              hovered={hoveredMenu === 'Announcement'}
+              onClick={() => {
+                setActiveMenu('Announcement')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
+              }}
+              onMouseEnter={() => setHoveredMenu('Announcement')}
+              onMouseLeave={() => setHoveredMenu(null)}
+            />
+
+          </nav>
+
+        </div>
+        <SidebarItem
+          icon={LogOut}
+          className="mt-40"
+          label="Logout"
+          path="/"
+          active={activeMenu === 'Logout'}
+          hovered={hoveredMenu === 'Logout'}
+          onClick={() => {
+            setActiveMenu('Logout')
+            setIsSidebarOpen(false)
+            setHoveredMenu(null)
+          }}
+          onMouseEnter={() => setHoveredMenu('Logout')}
+          onMouseLeave={() => setHoveredMenu(null)}
+        />
       </div>
 
       {/* Overlay for mobile menu */}
