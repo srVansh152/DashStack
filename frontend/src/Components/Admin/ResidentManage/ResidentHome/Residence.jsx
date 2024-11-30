@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
-import { ArrowLeft, FileText, FileImage, Activity, DollarSign, Package, Users,  Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, MoreHorizontal } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowLeft, FileText, FileImage, Activity, DollarSign, Package, Users, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, MoreHorizontal, Trash } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
 import { getResidents, getResidentDetails } from '../../../../utils/api';
@@ -24,6 +24,8 @@ function Residence() {
   const [error, setError] = useState(null);
   const [residentDetails, setResidentDetails] = useState(null);
   const [selectedResidentId, setSelectedResidentId] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchResidents();
@@ -53,8 +55,10 @@ function Residence() {
           addressProof: resident.addressProof,
           rentAgreement: resident.rentAgreement
         },
-        members: resident.members || []
+        members: resident.members || [],
+        vehicles: resident.vehicles || []
       }));
+      console.log(transformedData);
       setResidents(transformedData);
     } else {
       setError(response.message);
@@ -63,7 +67,39 @@ function Residence() {
   };
 
   const handleAddDetails = () => {
-    setOpenModel(true);
+    if (agreement) {
+      const newResidentData = {
+        _id: null,
+        fullName: '',
+        phoneNumber: '',
+        email: '',
+        age: '',
+        gender: '',
+        unitNumber: '',
+        wing: '',
+        photo: '',
+        owner: status === 'occupied',
+        relation: 'self',
+        members: [],
+        vehicles: [],
+        documents: {
+          aadhaarFront: '',
+          aadhaarBack: '',
+          addressProof: '',
+          rentAgreement: ''
+        },
+        isNewResident: true
+      };
+
+      navigate('/admin/form', {
+        state: {
+          isEditing: false,
+          residentData: newResidentData
+        }
+      });
+    } else {
+      setOpenModel(true);
+    }
   };
   const handleDeleteDetails = () => {
     setOpenDeleteModel(true);
@@ -100,12 +136,55 @@ function Residence() {
     }
   }, [openProfileModel, selectedResidentId]);
 
-  
+  const handleEditModel = (resident) => {
+    const formattedResident = {
+      _id: resident._id,
+      fullName: resident.name,
+      phoneNumber: resident.phoneNumber,
+      email: resident.email,
+      age: resident.age,
+      gender: resident.gender,
+      unitNumber: resident.unitNumber,
+      wing: resident.wing,
+      photo: resident.avatar,
+      owner: resident.residentStatus === 'Owner',
+      relation: 'self',
+      members: resident.members.map(member => ({
+        _id: member._id,
+        name: member.name,
+        phoneNumber: member.phoneNumber,
+        email: member.email,
+        age: member.age,
+        gender: member.gender,
+        relation: member.relation
+      })),
+      vehicles: resident.vehicles?.map(vehicle => ({
+        _id: vehicle._id,
+        type: vehicle.type,
+        name: vehicle.name,
+        number: vehicle.number
+      })) || [],
+      documents: {
+        aadhaarFront: resident.documents?.aadhaarFront,
+        aadhaarBack: resident.documents?.aadhaarBack,
+        addressProof: resident.documents?.addressProof,
+        rentAgreement: resident.documents?.rentAgreement
+      }
+    };
+
+    navigate('/admin/form', { 
+      state: { 
+        isEditing: true,
+        residentData: formattedResident
+      } 
+    });
+  };
+
   return (
     <div>
       <Aside />
       <div className="main">
-      <Navbar/>
+        <Navbar />
 
 
         <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -146,10 +225,10 @@ function Residence() {
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
                                 {resident.avatar ? (
-                                  <img 
-                                    className="h-10 w-10 rounded-full" 
-                                    src={resident.avatar} 
-                                    alt={resident.name} 
+                                  <img
+                                    className="h-10 w-10 rounded-full"
+                                    src={resident.avatar}
+                                    alt={resident.name}
                                   />
                                 ) : (
                                   <div className="h-10 w-10 rounded-full bg-gray-300"></div>
@@ -179,11 +258,15 @@ function Residence() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.member}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{resident.vehicle}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button onClick={() => handleDeleteDetails(resident)} className="text-green-600 hover:text-green-900 mr-2">
+                            <button onClick={() => handleEditModel(resident)} className="rounded p-1 text-green-600 hover:bg-green-50">
                               <Edit className="h-5 w-5" />
                             </button>
-                            <button onClick={() => handleProfileDetails(resident)} className="text-gray-600 hover:text-gray-900">
-                              <MoreHorizontal className="h-5 w-5" />
+                            <button onClick={() => handleDeleteDetails(resident)} className="rounded p-1 text-red-600 hover:bg-red-50">
+                              <Trash className="h-5 w-5" />
+                            </button>
+                            <button onClick={() => handleProfileDetails(resident)} className="rounded p-1 text-blue-600 hover:bg-blue-50">
+                              <Eye className="h-5 w-5" />
+                              {/* <MoreHorizontal className="h-5 w-5" /> */}
                             </button>
                           </td>
                         </tr>
@@ -276,8 +359,8 @@ function Residence() {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
               <div className="p-6">
                 <div className="px-4 py-3 border-b border-gray-200 flex items-center">
-                  <button 
-                    onClick={handleCloseProfileModal} 
+                  <button
+                    onClick={handleCloseProfileModal}
                     className="mr-2 text-gray-600 hover:text-gray-800"
                   >
                     <ArrowLeft className="h-5 w-5" />
@@ -287,10 +370,10 @@ function Residence() {
 
                 <div className="px-4 py-6">
                   <div className="flex flex-col items-center mb-6">
-                    <img 
-                      src={residentDetails?.profileImage || "/public/image/profile.png"} 
-                      alt={residentDetails?.firstName} 
-                      className="w-20 h-20 rounded-full mb-2" 
+                    <img
+                      src={residentDetails?.profileImage || "/public/image/profile.png"}
+                      alt={residentDetails?.firstName}
+                      className="w-20 h-20 rounded-full mb-2"
                     />
                     <h2 className="text-xl font-semibold text-gray-800">
                       {residentDetails?.firstName} {residentDetails?.lastName}

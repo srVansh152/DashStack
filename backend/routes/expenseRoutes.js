@@ -1,18 +1,37 @@
 const express = require('express');
-const router = express.Router();
-const expenseController = require('../controllers/expenseController');
 const { protect } = require('../middlewares/authMiddleware');
- // Middleware to add req.user
+const expenseController = require('../controllers/expenseController');
+const upload = require('../config/multer');
 
-// Middleware to handle file uploads
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // or configure storage as per your requirements
+const router = express.Router();
 
-// Add new expense
-router.post('/add', protect, upload.single('billImage'), expenseController.addExpense);
+// Add new expense with billImage upload
+router.post(
+  '/add',
+  protect,
+  upload.single('billImage'), // Handling single file upload for bill image
+  async (req, res) => {
+    try {
+      await expenseController.addExpense(req, res);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+);
 
-// Update expense
-router.put('/update/:id', protect, upload.single('billImage'), expenseController.updateExpense);
+// Update expense with billImage upload
+router.put(
+  '/update/:id',
+  protect,
+  upload.single('billImage'), // Handling single file upload for bill image
+  async (req, res) => {
+    try {
+      await expenseController.updateExpense(req, res);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+);
 
 // View a single expense
 router.get('/view/:id', protect, expenseController.viewExpense);
