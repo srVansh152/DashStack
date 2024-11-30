@@ -39,9 +39,12 @@ function ForgetPassword() {
       {/* Left side with illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#F6F8FB] p-12 flex-col justify-between items-center">
         <div className="w-full">
-          <h1 className="text-4xl font-bold">
-            <span className="text-orange-500">Dash</span>Stack
-          </h1>
+        <div className="mb-8">
+          <div className="text-4xl font-bold text-gray-800">
+            Dash<span className="text-orange-500">Stack</span>
+          </div>
+
+        </div>
         </div>
         <img
           src="/image/forget.jpg"
