@@ -46,6 +46,7 @@ import DashboardLayout from './Components/Dashboard/AdminDashboard/DashboardLayo
 import Editprofile from './Components/Admin/Profile/EditProfile/Editprofile'
 import ComplaintSubmission from './Components/Resident/ServiceAndComplaint/ComplaintSubmission/ComplaintSubmission'
 import RequestSubmission from './Components/Resident/ServiceAndComplaint/RequestSubmission/RequestSubmission'
+import ZegoRoom from './ZegoRoom'
 
 
 
