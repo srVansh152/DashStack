@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber,  getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
 
 
@@ -338,50 +338,105 @@ const DashboardLayout = () => {
                     <main className="p-4 sm:p-6">
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
-  {/* Card 1 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-orange-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Balance</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
-      <span className="text-orange-500 text-2xl">≡</span>
-    </div>
-  </div>
+                            {/* Card 1 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md overflow-hidden">
+                                {/* Gradient Borders with enhanced shading */}
+                                <div className="absolute inset-0">
+                                    {/* Top Border - Standard 3px */}
+                                    <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r 
+                                        from-transparent 
+                                        via-transparent via-60% 
+                                        to-[rgba(249,115,22,0.7)] to-90%
+                                        "></div>
+                                    {/* Right Border - Increased to 4px */}
+                                    <div className="absolute top-0 right-0 h-full w-[4px] bg-gradient-to-b 
+                                        from-[rgba(249,115,22,0.9)] from-0% 
+                                        via-[rgba(249,115,22,0.7)] via-50% 
+                                        to-transparent to-90%
+                                        "></div>
+                                </div>
 
-  {/* Card 2 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-green-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Income</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 55,000</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
-      <span className="text-green-500 text-2xl">💲</span>
-    </div>
-  </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-500">Total Balance</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-orange-50 via-orange-100/50 to-white rounded-lg">
+                                    <span className="text-orange-500 text-2xl">≡</span>
+                                </div>
+                            </div>
 
-  {/* Card 3 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-blue-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Expense</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
-      <span className="text-blue-500 text-2xl">💸</span>
-    </div>
-  </div>
+                            {/* Card 2 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md overflow-hidden">
+                                {/* Gradient Borders with enhanced shading */}
+                                <div className="absolute inset-0">
+                                    <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r 
+                                        from-transparent 
+                                        via-transparent via-60% 
+                                        to-[rgba(34,197,94,0.7)] to-90%
+                                        "></div>
+                                    <div className="absolute top-0 right-0 h-full w-[3px] bg-gradient-to-b 
+                                        from-[rgba(34,197,94,0.9)] from-0% 
+                                        via-[rgba(34,197,94,0.7)] via-50% 
+                                        to-transparent to-90%
+                                        "></div>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-500">Total Income</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 55,000</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-green-50 via-green-100/50 to-white rounded-lg">
+                                    <span className="text-green-500 text-2xl">💲</span>
+                                </div>
+                            </div>
 
-  {/* Card 4 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-pink-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Unit</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
-      <span className="text-pink-500 text-2xl">🏢</span>
-    </div>
-  </div>
-</div>
+                            {/* Card 3 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md overflow-hidden">
+                                {/* Gradient Borders with enhanced shading */}
+                                <div className="absolute inset-0">
+                                    <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r 
+                                        from-transparent 
+                                        via-transparent via-60% 
+                                        to-[rgba(59,130,246,0.7)] to-90%
+                                        "></div>
+                                    <div className="absolute top-0 right-0 h-full w-[4px] bg-gradient-to-b 
+                                        from-[rgba(59,130,246,0.9)] from-0% 
+                                        via-[rgba(59,130,246,0.7)] via-50% 
+                                        to-transparent to-90%
+                                        "></div>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-500">Total Expense</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-50 via-blue-100/50 to-white rounded-lg">
+                                    <span className="text-blue-500 text-2xl">💸</span>
+                                </div>
+                            </div>
+
+                            {/* Card 4 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md overflow-hidden">
+                                {/* Gradient Borders with enhanced shading */}
+                                <div className="absolute inset-0">
+                                    <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r 
+                                        from-transparent 
+                                        via-transparent via-60% 
+                                        to-[rgba(236,72,153,0.7)] to-90%
+                                        "></div>
+                                    <div className="absolute top-0 right-0 h-full w-[4px] bg-gradient-to-b 
+                                        from-[rgba(236,72,153,0.9)] from-0% 
+                                        via-[rgba(236,72,153,0.7)] via-50% 
+                                        to-transparent to-90%
+                                        "></div>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-500">Total Unit</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-pink-50 via-pink-100/50 to-white rounded-lg">
+                                    <span className="text-pink-500 text-2xl">🏢</span>
+                                </div>
+                            </div>
+                        </div>
 
 
                         {/* Main Content Section */}
@@ -423,46 +478,46 @@ const DashboardLayout = () => {
                                     </div>
                                 </div>
 
-                                    {/* Important Numbers Section */}
-                                    <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                                        <div className="flex justify-between items-center mb-4 sm:mb-6">
-                                            <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
-                                            <button onClick={() => {
-                                                handleAddDetails();
-                                            }} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
-                                                Add
-                                            </button>
-                                        </div>
-                                        <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
-                                            {importantNumbers.length === 0 ? (
-                                                <div className="p-4 bg-white rounded-lg border text-center">
-                                                    <p className="text-sm text-gray-500">Loading...</p>
-                                                </div>
-                                            ) : (
-                                                importantNumbers.map((number, i) => (
-                                                    <div key={i} className="p-4 bg-white rounded-lg border">
-                                                        <div className="flex justify-between items-start">
-                                                            <div className="space-y-2">
-                                                                <p className="text-sm text-gray-500">Name: <span className="text-gray-700">{number.name}</span></p>
-                                                                <p className="text-sm text-gray-500">Ph Number: <span className="text-gray-700">{number.phoneNumber}</span></p>
-                                                                <p className="text-sm text-gray-500">Work: <span className="text-gray-700">{number.work}</span></p>
-                                                            </div>
-                                                            <div className="flex gap-2">
-                                                                <button onClick={() => {
-                                                                    openDeleteModal(number._id)
-                                                                }} className="p-1 text-red-500 hover:bg-red-50 rounded">
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                                <button onClick={() => handleEditDetails(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
-                                                                    <CheckCircle size={16} />
-                                                                </button>
-                                                            </div>
+                                {/* Important Numbers Section */}
+                                <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                                    <div className="flex justify-between items-center mb-4 sm:mb-6">
+                                        <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
+                                        <button onClick={() => {
+                                            handleAddDetails();
+                                        }} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
+                                        {importantNumbers.length === 0 ? (
+                                            <div className="p-4 bg-white rounded-lg border text-center">
+                                                <p className="text-sm text-gray-500">Loading...</p>
+                                            </div>
+                                        ) : (
+                                            importantNumbers.map((number, i) => (
+                                                <div key={i} className="p-4 bg-white rounded-lg border">
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="space-y-2">
+                                                            <p className="text-sm text-gray-500">Name: <span className="text-gray-700">{number.name}</span></p>
+                                                            <p className="text-sm text-gray-500">Ph Number: <span className="text-gray-700">{number.phoneNumber}</span></p>
+                                                            <p className="text-sm text-gray-500">Work: <span className="text-gray-700">{number.work}</span></p>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button onClick={() => {
+                                                                openDeleteModal(number._id)
+                                                            }} className="p-1 text-red-500 hover:bg-red-50 rounded">
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                            <button onClick={() => handleEditDetails(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
+                                                                <CheckCircle size={16} />
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                ))
-                                            )}
-                                        </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
+                                </div>
 
                                 {/* Pending Maintenances Section */}
                                 <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
