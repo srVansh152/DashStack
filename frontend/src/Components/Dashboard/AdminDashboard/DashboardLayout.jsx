@@ -458,7 +458,7 @@
                                         <div className="flex justify-between items-center mb-4 sm:mb-6">
                                             <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
                                             <button onClick={() => {
-                                                handleAddDetails();
+                                                handleDeleteImportantNumber();
                                             }} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
                                                 Add
                                             </button>
