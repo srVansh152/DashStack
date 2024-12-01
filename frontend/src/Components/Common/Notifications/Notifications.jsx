@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Bell } from 'lucide-react';
+
+import { BsBellFill } from "react-icons/bs";
 
 import { Link } from 'react-router-dom';
 
@@ -47,9 +48,9 @@ const Notifications = () => {
               {/* Notification Bell Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="relative p-2 rounded-lg border hover:bg-gray-100 transition-colors"
               >
-                <Bell className="w-5 h-5 text-gray-600" />
+                <BsBellFill  className="w-5 h-5 text-black" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
 

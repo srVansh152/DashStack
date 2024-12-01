@@ -162,8 +162,11 @@ export default function RegistrationPage() {
     <div className="min-h-screen bg-white flex flex-col lg:flex-row">
       {/* Left side */}
       <div className="lg:w-1/2 p-8 flex flex-col bg-gray-50">
-        <div className="text-2xl font-bold text-gray-800 mb-8">
-          <span className="text-red-500">Dash</span>Stack
+      <div className="mb-8">
+          <div className="text-4xl font-bold text-gray-800">
+            Dash<span className="text-orange-500">Stack</span>
+          </div>
+
         </div>
         <div className="flex-grow flex flex-col items-center justify-center">
           <img

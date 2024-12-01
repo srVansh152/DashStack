@@ -72,13 +72,14 @@ export default function Aside() {
               active={activeMenu === 'Dashboard'}
               hovered={hoveredMenu === 'Dashboard'}
               onClick={() => {
-                setActiveMenu('Dashboard')
-                setIsSidebarOpen(false)
-                setHoveredMenu(null)
+                setActiveMenu('Dashboard');
+                setIsSidebarOpen(false);
+                setHoveredMenu(null);
               }}
               onMouseEnter={() => setHoveredMenu('Dashboard')}
               onMouseLeave={() => setHoveredMenu(null)}
             />
+
 
             {/* Resident Management */}
             <SidebarItem
