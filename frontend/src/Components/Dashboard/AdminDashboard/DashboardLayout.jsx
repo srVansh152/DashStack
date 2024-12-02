@@ -423,46 +423,46 @@ const DashboardLayout = () => {
                                     </div>
                                 </div>
 
-                                {/* Important Numbers Section */}
-                                <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                                    <div className="flex justify-between items-center mb-4 sm:mb-6">
-                                        <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
-                                        <button onClick={() => {
-                                            handleAddDetails();
-                                        }} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
-                                            Add
-                                        </button>
-                                    </div>
-                                    <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
-                                        {importantNumbers.length === 0 ? (
-                                            <div className="p-4 bg-white rounded-lg border text-center">
-                                                <p className="text-sm text-gray-500">Loading...</p>
-                                            </div>
-                                        ) : (
-                                            importantNumbers.map((number, i) => (
-                                                <div key={i} className="p-4 bg-white rounded-lg border">
-                                                    <div className="flex justify-between items-start">
-                                                        <div className="space-y-2">
-                                                            <p className="text-sm text-gray-500">Name: <span className="text-gray-700">{number.name}</span></p>
-                                                            <p className="text-sm text-gray-500">Ph Number: <span className="text-gray-700">{number.phoneNumber}</span></p>
-                                                            <p className="text-sm text-gray-500">Work: <span className="text-gray-700">{number.work}</span></p>
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            <button onClick={() => {
-                                                                openImpDeleteModal(number._id)
-                                                            }} className="p-1 text-red-500 hover:bg-red-50 rounded">
-                                                                <Trash2 size={16} />
-                                                            </button>
-                                                            <button onClick={() => handleEditImpmodel(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
-                                                                <CheckCircle size={16} />
-                                                            </button>
+                                    {/* Important Numbers Section */}
+                                    <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                                        <div className="flex justify-between items-center mb-4 sm:mb-6">
+                                            <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
+                                            <button onClick={() => {
+                                                handleAddDetails();
+                                            }} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
+                                                Add
+                                            </button>
+                                        </div>
+                                        <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
+                                            {importantNumbers.length === 0 ? (
+                                                <div className="p-4 bg-white rounded-lg border text-center">
+                                                    <p className="text-sm text-gray-500">Loading...</p>
+                                                </div>
+                                            ) : (
+                                                importantNumbers.map((number, i) => (
+                                                    <div key={i} className="p-4 bg-white rounded-lg border">
+                                                        <div className="flex justify-between items-start">
+                                                            <div className="space-y-2">
+                                                                <p className="text-sm text-gray-500">Name: <span className="text-gray-700">{number.name}</span></p>
+                                                                <p className="text-sm text-gray-500">Ph Number: <span className="text-gray-700">{number.phoneNumber}</span></p>
+                                                                <p className="text-sm text-gray-500">Work: <span className="text-gray-700">{number.work}</span></p>
+                                                            </div>
+                                                            <div className="flex gap-2">
+                                                                <button onClick={() => {
+                                                                    openDeleteModal(number._id)
+                                                                }} className="p-1 text-red-500 hover:bg-red-50 rounded">
+                                                                    <Trash2 size={16} />
+                                                                </button>
+                                                                <button onClick={() => handleEditDetails(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
+                                                                    <CheckCircle size={16} />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ))
-                                        )}
+                                                ))
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
 
                                 {/* Pending Maintenances Section */}
                                 <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">

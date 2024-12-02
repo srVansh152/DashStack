@@ -11,10 +11,12 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function Aside() {
-  const [activeMenu, setActiveMenu] = useState('')
+  const navigate = useNavigate()
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [hoveredMenu, setHoveredMenu] = useState(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState('')
@@ -42,6 +44,26 @@ export default function Aside() {
     setOpenDropdown(openDropdown === dropdown ? '' : dropdown)
   }
 
+  // Update current path when location changes
+  useEffect(() => {
+    // Set initial path
+    setCurrentPath(window.location.pathname)
+
+    // Automatically open dropdown based on current path
+    if (financialMenuItems.some(item => currentPath.includes(item.path))) {
+      setOpenDropdown('Financial Management')
+    } else if (complaintMenuItems.some(item => currentPath.includes(item.path))) {
+      setOpenDropdown('Complaint Tracking')
+    } else if (securityManagement.some(item => currentPath.includes(item.path))) {
+      setOpenDropdown('Security Management')
+    }
+  }, [currentPath])
+
+  // Helper function to check if a path is active
+  const isPathActive = (path) => {
+    return currentPath === `/admin/${path}` || currentPath.startsWith(`/admin/${path}/`)
+  }
+
   return (
     <>
       {/* Mobile Menu Button */}
@@ -60,21 +82,23 @@ export default function Aside() {
 
         <div>
           <h1 className="hidden text-2xl font-bold text-orange-500 cursor-pointer transition-colors hover:text-orange-600 lg:flex">
-            DashStack
+            Dash<span className="text-gray-800">Stack</span>
           </h1>
 
-          <nav className="mt-4">
+          <nav className="mt-8 space-y-2">
             {/* Dashboard */}
             <SidebarItem
               icon={Activity}
               label="Dashboard"
               path="dashboard"
-              active={activeMenu === 'Dashboard'}
+              active={isPathActive('dashboard')}
               hovered={hoveredMenu === 'Dashboard'}
-              onClick={() => {
-                setActiveMenu('Dashboard');
-                setIsSidebarOpen(false);
-                setHoveredMenu(null);
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/admin/dashboard')
+                setCurrentPath('/admin/dashboard')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
               }}
               onMouseEnter={() => setHoveredMenu('Dashboard')}
               onMouseLeave={() => setHoveredMenu(null)}
@@ -86,10 +110,12 @@ export default function Aside() {
               icon={Users}
               label="Resident Management"
               path="residence"
-              active={activeMenu === 'Resident Management'}
+              active={isPathActive('residence')}
               hovered={hoveredMenu === 'Resident Management'}
-              onClick={() => {
-                setActiveMenu('Resident Management')
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/admin/residence')
+                setCurrentPath('/admin/residence')
                 setIsSidebarOpen(false)
                 setHoveredMenu(null)
               }}
@@ -102,12 +128,16 @@ export default function Aside() {
               label="Financial Management"
               icon={DollarSign}
               isOpen={openDropdown === 'Financial Management'}
-              active={activeMenu === 'Financial Management'}
+              active={financialMenuItems.some(item => isPathActive(item.path))}
               hovered={hoveredMenu === 'Financial Management'}
               items={financialMenuItems}
               onClick={() => handleDropdownToggle('Financial Management')}
               onHoverEnter={() => setHoveredMenu('Financial Management')}
               onHoverLeave={() => setHoveredMenu(null)}
+              currentPath={currentPath}
+              setCurrentPath={setCurrentPath}
+              setIsSidebarOpen={setIsSidebarOpen}
+              setOpenDropdown={setOpenDropdown}
             />
 
             {/* Other menu items */}
@@ -115,10 +145,12 @@ export default function Aside() {
               icon={Package}
               label="Facility Management"
               path="Facilitymanagment"
-              active={activeMenu === 'Facility Management'}
+              active={isPathActive('Facilitymanagment')}
               hovered={hoveredMenu === 'Facility Management'}
-              onClick={() => {
-                setActiveMenu('Facility Management')
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/admin/Facilitymanagment')
+                setCurrentPath('/admin/Facilitymanagment')
                 setIsSidebarOpen(false)
                 setHoveredMenu(null)
               }}
@@ -131,12 +163,16 @@ export default function Aside() {
               label="Complaint Tracking"
               icon={Bell}
               isOpen={openDropdown === 'Complaint Tracking'}
-              active={activeMenu === 'Complaint Tracking'}
+              active={isPathActive('createcomplain') || isPathActive('requesttracking')}
               hovered={hoveredMenu === 'Complaint Tracking'}
               items={complaintMenuItems}
               onClick={() => handleDropdownToggle('Complaint Tracking')}
               onHoverEnter={() => setHoveredMenu('Complaint Tracking')}
               onHoverLeave={() => setHoveredMenu(null)}
+              currentPath={currentPath}
+              setCurrentPath={setCurrentPath}
+              setIsSidebarOpen={setIsSidebarOpen}
+              setOpenDropdown={setOpenDropdown}
             />
 
             {/* Security Management Dropdown */}
@@ -144,22 +180,28 @@ export default function Aside() {
               label="Security Management"
               icon={Settings}
               isOpen={openDropdown === 'Security Management'}
-              active={activeMenu === 'Security Management'}
+              active={securityManagement.some(item => isPathActive(item.path))}
               hovered={hoveredMenu === 'Security Management'}
               items={securityManagement}
               onClick={() => handleDropdownToggle('Security Management')}
               onHoverEnter={() => setHoveredMenu('Security Management')}
               onHoverLeave={() => setHoveredMenu(null)}
+              currentPath={currentPath}
+              setCurrentPath={setCurrentPath}
+              setIsSidebarOpen={setIsSidebarOpen}
+              setOpenDropdown={setOpenDropdown}
             />
 
             <SidebarItem
               icon={Package}
               label="Security Guard"
               path="securityguard"
-              active={activeMenu === 'Security Guard'}
+              active={isPathActive('securityguard')}
               hovered={hoveredMenu === 'Security Guard'}
-              onClick={() => {
-                setActiveMenu('Security Guard')
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/admin/securityguard')
+                setCurrentPath('/admin/securityguard')
                 setIsSidebarOpen(false)
                 setHoveredMenu(null)
               }}
@@ -171,10 +213,12 @@ export default function Aside() {
               icon={Bell}
               label="Announcement"
               path="announcment"
-              active={activeMenu === 'Announcement'}
+              active={isPathActive('announcment')}
               hovered={hoveredMenu === 'Announcement'}
-              onClick={() => {
-                setActiveMenu('Announcement')
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/admin/announcment')
+                setCurrentPath('/admin/announcment')
                 setIsSidebarOpen(false)
                 setHoveredMenu(null)
               }}
@@ -190,10 +234,12 @@ export default function Aside() {
           className="mt-40"
           label="Logout"
           path="/"
-          active={activeMenu === 'Logout'}
+          active={false}
           hovered={hoveredMenu === 'Logout'}
-          onClick={() => {
-            setActiveMenu('Logout')
+          onClick={(e) => {
+            e.preventDefault()
+            navigate('/')
+            setCurrentPath('/')
             setIsSidebarOpen(false)
             setHoveredMenu(null)
           }}
@@ -210,56 +256,108 @@ export default function Aside() {
   )
 }
 
-function SidebarItem({ icon: Icon, label, path, active, hovered, onClick, onMouseEnter, onMouseLeave }) {
+function SidebarItem({ icon: Icon, label, path, active, hovered, onClick }) {
+  const isLogout = label === 'Logout';
+  
   return (
-    <a
-      href={path}
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={`relative flex w-full items-center gap-3 px-4 py-3 text-sm transition-all duration-200
-        ${active ? 'bg-orange-50 font-medium text-orange-500' : 'text-gray-600 hover:bg-orange-50/50 hover:text-orange-500'}
-        ${hovered ? 'shadow-sm' : ''}`}
-    >
-      <Icon className={`h-5 w-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`} />
-      <span>{label}</span>
-      {active && <div className="absolute right-0 top-0 bottom-0 w-1 rounded-l bg-orange-500" />}
-    </a>
+    <div className="relative">
+      {active && !isLogout && (
+        <div 
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
+          style={{ left: '-16px' }}
+        />
+      )}
+      <a
+        href={`/${path}`}
+        onClick={onClick}
+        className={`relative flex w-full items-center gap-3 px-4 py-3 text-sm transition-all duration-200 rounded-lg my-1
+          ${isLogout 
+            ? 'text-red-600 font-bold hover:scale-105' 
+            : active 
+              ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
+              : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
+          ${hovered ? 'shadow-sm' : ''}`}
+      >
+        <Icon className="h-5 w-5" />
+        <span>{label}</span>
+      </a>
+    </div>
   )
 }
 
-function Dropdown({ label, icon: Icon, isOpen, active, hovered, items, onClick, onHoverEnter, onHoverLeave }) {
+function Dropdown({
+  label,
+  icon: Icon,
+  isOpen,
+  active,
+  hovered,
+  items,
+  onClick,
+  onHoverEnter,
+  onHoverLeave,
+  currentPath,
+  setCurrentPath,
+  setIsSidebarOpen,
+  setOpenDropdown
+}) {
+  const navigate = useNavigate()
+
+  const isDropdownActive = items.some(item => currentPath === `/admin/${item.path}`) || active
+
   return (
-    <div>
+    <div className="my-1 relative">
+      {isDropdownActive && (
+        <div 
+          className={`absolute left-0 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r
+            ${isOpen 
+              ? 'h-10 top-0' 
+              : 'h-8 top-1/2 -translate-y-1/2'}`}
+          style={{ left: '-16px' }}
+        />
+      )}
       <button
         onClick={onClick}
         onMouseEnter={onHoverEnter}
         onMouseLeave={onHoverLeave}
-        className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 relative
-          ${active ? 'bg-orange-50 text-orange-500 font-medium' : 'text-gray-600 hover:bg-orange-50/50 hover:text-orange-500'}
+        className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 rounded-lg
+          ${isDropdownActive || isOpen
+            ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
+            : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
           ${hovered ? 'shadow-sm' : ''}`}
       >
         <div className="flex items-center gap-3">
-          <Icon
-            className={`w-5 h-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`}
-          />
+          <Icon className={`w-5 h-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`} />
           <span>{label}</span>
         </div>
         {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        {active && <div className="absolute right-0 top-0 bottom-0 w-1 bg-orange-500 rounded-l" />}
       </button>
 
       {isOpen && (
-        <div className="bg-white pl-4">
+        <div className="pl-8 mt-2 space-y-2">
           {items.map((item) => (
-            <a
-              key={item.id}
-              href={item.path}
-              onClick={() => setActiveMenu(item.label)}
-              className="w-full flex items-center px-4 py-2 text-sm text-gray-600 hover:bg-orange-50/50 hover:text-orange-500"
-            >
-              <span>{item.label}</span>
-            </a>
+            <div key={item.id} className="relative">
+              {currentPath === `/admin/${item.path}` && (
+                <div 
+                  className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
+                  style={{ left: '-16px' }}
+                />
+              )}
+              <a
+                href={`/admin/${item.path}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate(`/admin/${item.path}`)
+                  setCurrentPath(`/admin/${item.path}`)
+                  setIsSidebarOpen(false)
+                }}
+                className={`w-full flex items-center px-4 py-2 text-sm rounded-lg
+                  ${currentPath === `/admin/${item.path}`
+                    ? 'text-[#FF4B1C] font-medium'
+                    : 'text-gray-600 hover:text-[#FF4B1C]'}`}
+              >
+                <span>{item.label}</span>
+              </a>
+            </div>
           ))}
         </div>
       )}
