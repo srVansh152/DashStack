@@ -54,8 +54,8 @@ function ResetPassword() {
     <div className="flex min-h-screen bg-gray-50">
       <div className="hidden sm:flex flex-1 flex-col p-8">
       <div className="mb-8">
-          <div className="text-4xl font-bold text-gray-800">
-            Dash<span className="text-orange-500">Stack</span>
+      <div className="text-4xl font-bold text-orange-500">
+            Dash<span className="text-gray-800">Stack</span>
           </div>
 
         </div>

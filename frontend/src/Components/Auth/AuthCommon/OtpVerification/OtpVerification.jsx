@@ -104,8 +104,8 @@ const handleVerifyOtp = async () => {
       {/* Left side with illustration and text */}
       <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-between bg-gray-50">
         <div className="mb-8">
-          <div className="text-4xl font-bold text-gray-800">
-            Dash<span className="text-orange-500">Stack</span>
+          <div className="text-4xl font-bold text-orange-500">
+            Dash<span className="text-gray-800">Stack</span>
           </div>
         </div>
         <div className="flex-grow flex items-center justify-center">

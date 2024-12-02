@@ -54,8 +54,8 @@ function Login() {
       {/* Left side with illustration and text */}
       <div className="hidden lg:flex lg:w-1/2 bg-white p-12 flex-col justify-between bg-[#F6F8FB]">
         <div className="mb-8">
-          <div className="text-4xl font-bold text-gray-800">
-            Dash<span className="text-orange-500">Stack</span>
+        <div className="text-4xl font-bold text-orange-500">
+            Dash<span className="text-gray-800">Stack</span>
           </div>
 
         </div>
