@@ -181,25 +181,25 @@ function FinanceManagment() {
                         </div>
                         <div className="overflow-x-auto">
                         <table className="min-w-full table-auto">
-  <thead className="bg-gray-50">
+  <thead className="bg-[#EEF1FD]">
     <tr>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unit Number</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone Number</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Penalty</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Name</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Unit Number</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Date</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Phone Number</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Amount</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Penalty</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Payment</th>
+      <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Action</th>
     </tr>
   </thead>
   <tbody>
     {tenants.map((tenant, index) => (
       <tr
         key={index}
-        className={`text-sm ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} border-b border-gray-100`}
+        className={`text-sm ${index % 2 === 0 ? "bg-white" : "bg-white"} border-b border-gray-100`}
       >
         <td className="whitespace-nowrap px-4 py-3">
           <div className="flex items-center gap-3">
@@ -212,31 +212,31 @@ function FinanceManagment() {
           </div>
         </td>
         <td className="whitespace-nowrap px-4 py-3 font-medium text-[16px]">{tenant.unitNumber}</td>
-        <td className="whitespace-nowrap px-4 py-3 text-gray-500 text-[16px]">{tenant.date}</td>
+        <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.date}</td>
         <td className="whitespace-nowrap px-4 py-3">
           <span
-            className={`inline-flex rounded-full px-2 text-xs text-[16px] font-semibold ${tenant.type === "Tenant"
-              ? "bg-pink-50 text-pink-700"
-              : "bg-purple-50 text-purple-700"
+            className={`inline-flex rounded-full px-2 py-1  text-[16px] font-semibold ${tenant.type === "Tenant"
+              ? "bg-[#FFF1F8] text-[#EC4899]"
+              : "bg-[#F1F0FF] text-[#4F46E5]"
             }`}
           >
             {tenant.type}
           </span>
         </td>
-        <td className="whitespace-nowrap px-4 py-3 text-gray-500 text-[16px]">{tenant.phoneNumber}</td>
+        <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.phoneNumber}</td>
         <td className="whitespace-nowrap px-4 py-3">
           <span className="text-green-600 text-[16px]">₹ {tenant.amount}</span>
         </td>
         <td className="whitespace-nowrap px-4 py-3 text-[16px]">
-          <span className={tenant.penalty !== "--" ? "text-red-500" : "text-gray-500"}>
+          <span className={tenant.penalty !== "--" ? "text-white bg-[#E74C3C] px-3 py-1 rounded-full" : "text-gray-500"}>
             {tenant.penalty}
           </span>
         </td>
         <td className="whitespace-nowrap px-4 py-3">
           <span
-            className={`inline-flex rounded-full text-[16px] px-2 text-xs font-semibold ${tenant.status === "Pending"
-              ? "bg-yellow-50 text-yellow-700"
-              : "bg-green-50 text-green-700"
+            className={`inline-flex rounded-full text-[16px] px-2 py-1 text-sm font-semibold ${tenant.status === "Pending"
+              ? "bg-[#FFC3131A] text-[#FFC313]"
+              : "bg-[#EBF5EC] text-[#39973D]"
             }`}
           >
             {tenant.status}
@@ -244,9 +244,9 @@ function FinanceManagment() {
         </td>
         <td className="whitespace-nowrap px-4 py-3">
           <span
-            className={`inline-flex rounded-full text-[16px] px-2 text-xs font-semibold ${tenant.payment === "Online"
-              ? "bg-blue-50 text-blue-700"
-              : "bg-gray-100 text-gray-700"
+            className={`inline-flex rounded-full text-[16px] px-2  text-sm py-1 font-semibold ${tenant.payment === "Online"
+              ? "bg-[#EEF1FD] text-[#5678E9]"
+              : "bg-[#F4F4F4] text-black"
             }`}
           >
             {tenant.payment}
@@ -254,19 +254,7 @@ function FinanceManagment() {
         </td>
         <td className="whitespace-nowrap px-4 py-3">
           <button onClick={handleViewDetails} className="rounded-full p-1 hover:bg-gray-100">
-            <svg
-              className="h-6 w-6 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-              />
-            </svg>
+            <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
           </button>
         </td>
       </tr>

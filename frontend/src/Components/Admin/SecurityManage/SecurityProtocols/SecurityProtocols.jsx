@@ -106,8 +106,8 @@ function SecurityProtocols() {
     try {
       const { success, data } = await viewSecurityProtocol(id);
       if (success) {
-        setSelectedProtocol(data.protocol); 
-        setOpenViewModel(true); 
+        setSelectedProtocol(data.protocol);
+        setOpenViewModel(true);
       } else {
         alert("Failed to fetch security protocol.");
       }
@@ -117,7 +117,7 @@ function SecurityProtocols() {
   };
 
   const handleDeleteProtocol = async () => {
-    
+
     if (!protocolToDelete) return;
 
     try {
@@ -147,88 +147,88 @@ function SecurityProtocols() {
     setOpenEditModel(true); // Open the edit model
   };
 
-  
+
   return (
     <div>
       <Aside />
-      <div className="main">
+      <div className="main bg-[#F0F5FB]">
         <Navbar />
 
-        <div className="container-fulid p-2">
-          <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
-            <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-2xl font-semibold text-gray-900">Security Protocols</h1>
-              <button onClick={handleAddModel} className="rounded-lg bg-orange-500 px-4 py-2 text-white transition-colors hover:bg-orange-600">
-                <Plus className="mr-2 inline-block h-4 w-4" />
-                Create Protocol
-              </button>
-            </div>
+          <div className='container-fulid rounded px-3 py-3'>
+          <div className='bg-white'>
+            <div className="min-h-screen overflow-hidden p-6">
+              <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-2xl text-gray-900 font-bold">Security Protocols</h1>
+                <button onClick={handleAddModel} className="rounded-lg bg-gradient-to-r from-[#FE512E] to-[#F09619] px-4 py-2 text-white transition-colors hover:bg-orange-600">
+                  <Plus className="mr-2 inline-block h-4 w-4" />
+                  Create Protocol
+                </button>
+              </div>
 
-            <div className="overflow-x-auto rounded-lg border bg-white">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Description
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Time
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {protocols.map((protocol, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-sm text-gray-600">
-                              {protocol.title.split(' ').map(n => n[0]).join('')}
-                            </span>
-                          </div>
-                          <span className="ml-2 text-sm font-medium text-gray-900">{protocol.title}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 break-words">{protocol.description}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{new Date(protocol.createdAt).toLocaleDateString()}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{protocol.time}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm space-x-2">
-                        <button onClick={() => handleEditModel(protocol._id, protocol)} className="p-1 text-green-600 hover:text-green-800">
-                          <PencilIcon className='w-4' />
-                        </button>
-                        <button onClick={() => handleViewModel(protocol._id)}
-                          className="p-1 text-blue-600 hover:text-blue-800">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        </button>
-                        <button onClick={() => {
-                          setProtocolToDelete(protocol._id);
-                          setOpenDeleteModel(true);
-                        }} className="p-1 text-red-600 hover:text-red-800">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </td>
+              <div className="overflow-x-auto rounded-lg border bg-white">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-[#EEF1FD]">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                        Title
+                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                        Description
+                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                        Date
+                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                        Time
+                      </th>
+                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {protocols.map((protocol, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <div className="flex items-center">
+                            <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-sm text-[#202224]">
+                                {protocol.title.split(' ').map(n => n[0]).join('')}
+                              </span>
+                            </div>
+                            <span className="ml-2 text-sm font-medium text-[#202224]">{protocol.title}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-[#202224] break-words">{protocol.description}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{new Date(protocol.createdAt).toLocaleDateString()}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{protocol.time}</td>
+                        <td className="whitespace-nowrap px-6 py-4 text-sm flex space-x-2">
+                          <button onClick={() => handleEditModel(protocol._id, protocol)} className="p-1 text-green-600 hover:text-green-800">
+                            <img src="/public/image/Dashborad/edit.png" alt="" />
+                          </button>
+                          <button onClick={() => handleViewModel(protocol._id)}
+                            className="p-1 text-blue-600 hover:text-blue-800">
+                            <img src="/public/image/Dashborad/view.png" alt="" />
+
+                          </button>
+                          <button onClick={() => {
+                            setProtocolToDelete(protocol._id);
+                            setOpenDeleteModel(true);
+                          }} className="p-1 text-red-600 hover:text-red-800">
+                            <img src="/public/image/Dashborad/delete.png" alt="" />
+
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
+   
       {openModel && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
@@ -298,7 +298,7 @@ function SecurityProtocols() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-[#FE512E] to-[#F09619] text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                   >
                     Create
                   </button>
@@ -400,7 +400,7 @@ function SecurityProtocols() {
                     </button>
                     <button
                       type="submit"
-                      className="w-full px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors"
+                      className="w-full px-4 py-2 text-white bg-gradient-to-r from-[#FE512E] to-[#F09619] rounded-lg hover:bg-orange-600 transition-colors"
                     >
                       Save
                     </button>
@@ -431,8 +431,8 @@ function SecurityProtocols() {
                 </button>
                 <button
                   type="submit"
-                onClick={()=>{handleDeleteProtocol()}}
-                  className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  onClick={() => { handleDeleteProtocol() }}
+                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
                   Delete
                 </button>

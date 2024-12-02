@@ -206,7 +206,8 @@ export default function ExpenseTracker() {
                        <Navbar/>
 
                         <main className="p-6">
-                            <div className="flex items-center justify-between mb-6">
+                           <div className='bg-white p-5'>
+                           <div className="flex items-center justify-between mb-6">
                                 <h1 className="text-2xl font-semibold">Add Expenses Details</h1>
                                 <button onClick={handleAddModel} className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                                     <Plus className="w-4 h-4 mr-2" />
@@ -215,14 +216,14 @@ export default function ExpenseTracker() {
                             </div>
                             <div className="border rounded-lg bg-white overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                                    <thead className="bg-[#EEF1FD]">
                                         <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Format</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Title</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Description</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Date</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Amount</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Bill Format</th>
+                                            <th scope="col" className="px-12 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
@@ -241,16 +242,19 @@ export default function ExpenseTracker() {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <button onClick={() => handleEditModel(expense)} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
-                                                            <Pencil className="w-6 h-5" />
+                                                            
+                                                            <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
                                                         </button>
                                                         <button onClick={() => handleViewModel(expense._id)} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                            <Eye className="w-6 h-5" />
+                                                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+
                                                         </button>
                                                         <button onClick={() => {
                                                             setOpenDeleteModel(true);
                                                             setExpenseToDelete(expense._id); 
                                                         }} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
-                                                            <Trash2 className="w-6 h-5" />
+                                                                                                                       <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+
                                                         </button>
                                                     </div>
                                                 </td>
@@ -259,6 +263,7 @@ export default function ExpenseTracker() {
                                     </tbody>
                                 </table>
                             </div>
+                           </div>
                         </main>
                     </div>
                 </div>

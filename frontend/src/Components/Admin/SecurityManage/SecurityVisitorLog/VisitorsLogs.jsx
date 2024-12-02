@@ -40,20 +40,21 @@ function VisitorsLogs() {
   return (
     <div className="flex">
       <Aside />
-      <div className="main">
+      <div className="main ">
         {/* Navigation */}
         <Navbar />
 
         {/* Main Content */}
-        <div>
+        <div className='bg-[#F0F5FB]'>
           <div className="p-6">
+            <div className='bg-white p-4'>
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-xl font-semibold">Visitor Logs</h1>
             
             </div>
 
             <div className="bg-white rounded-lg shadow">
-              <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-gray-500">
+              <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-black font-bold bg-[#EEF1FD] rounded">
                 <div>Visitor Name</div>
                 <div>Phone Number</div>
                 <div>Date</div>
@@ -86,6 +87,7 @@ function VisitorsLogs() {
                   <div className="col-span-5 text-center py-4 text-gray-500">No visitor logs available</div>
                 )}
               </div>
+            </div>
             </div>
           </div>
         </div>
