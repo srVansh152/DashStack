@@ -59,7 +59,7 @@ exports.getOtherIncomeById = async (req, res) => {
 
 // Edit an Other Income record
 exports.editOtherIncome = async (req, res) => {
-  const { dueDate, description, amount } = req.body;
+  const { title, dueDate, description, amount } = req.body;
 
   try {
     const otherIncome = await OtherIncome.findById(req.params.id);
@@ -67,6 +67,7 @@ exports.editOtherIncome = async (req, res) => {
       return res.status(404).json({ message: 'Other Income record not found' });
     }
 
+    if (title) otherIncome.title = title;
     if (dueDate) otherIncome.dueDate = dueDate;
     if (description) otherIncome.description = description;
     if (amount) otherIncome.amount = amount;
