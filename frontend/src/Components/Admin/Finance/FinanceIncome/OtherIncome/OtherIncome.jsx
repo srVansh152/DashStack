@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, EllipsisVertical  } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, EllipsisVertical } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Aside from '../../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../../Common/Navbar/Navbar';
+import { createOtherIncome, editOtherIncome, getOtherIncomes } from '../../../../../utils/api';
 
 function OtherIncome() {
   const [openModel, setOpenModel] = useState(false);
@@ -17,10 +18,51 @@ function OtherIncome() {
   });
 
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null); // Track open dropdown for each card
+  const [festivals, setFestivals] = useState([]); // Initialize state for festivals
+  const [selectedFestivalId, setSelectedFestivalId] = useState(null); // New state for selected festival ID
 
-  const handleSubmit = (e) => {
+  const fetchFestivals = async () => {
+    try {
+      const response = await getOtherIncomes()
+      setFestivals(response.data); // Set the fetched data to state
+    } catch (error) {
+      console.error('Error fetching festivals:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFestivals(); // Call the fetch function
+  }, []); // Empty dependency array to run once on mount
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    try {
+      const response = await createOtherIncome({
+        title: formData.title,
+        date: formData.date,
+        dueDate: formData.dueDate,
+        description: formData.description,
+        amount: formData.amount
+      });
+      console.log(response);
+
+      if (response.success) {
+        fetchFestivals()
+        setFormData({
+          title: '',
+          date: '',
+          dueDate: '',
+          description: '',
+          amount: ''
+        });
+        setOpenModel(false)
+      } else {
+        console.error(response.errors);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handleChange = (e) => {
@@ -34,11 +76,23 @@ function OtherIncome() {
   const handleAddIncome = () => {
     setOpenModel(true);
   };
-  const handleEditIncome = () => {
+  const handleEditIncome = (festival) => {
+    console.log(festival);
+    setFormData({
+      title: festival.title,
+      date: festival.date,
+      dueDate: festival.dueDate,
+      description: festival.description,
+      amount: festival.amount
+    });
+    setOpenDropdownIndex(null);
+    setSelectedFestivalId(festival._id); // Set the selected festival ID
     setOpenEditModel(true);
   };
 
-  const handleDeleteIncome = () => {
+  const handleDeleteIncome = (festivalId) => {
+    setOpenDropdownIndex(null);
+    setSelectedFestivalId(festivalId); // Set the selected festival ID for deletion
     setOpenDeleteModel(true);
   };
 
@@ -47,40 +101,39 @@ function OtherIncome() {
     setOpenDropdownIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
-  const festivals = [
-    {
-      name: "Ganesh chaturthi",
-      amount: 1500,
-      totalMembers: 12,
-      date: "01/07/2024",
-      dueDate: "10/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesha in."
-    },
-    {
-      name: "Navratri",
-      amount: 1500,
-      totalMembers: 12,
-      date: "01/07/2024",
-      dueDate: "10/07/2024",
-      description: "The celebration of Navratri involves the installation of clay idols of Durga in Resident."
-    },
-    {
-      name: "Diwali",
-      amount: 1500,
-      totalMembers: 12,
-      date: "01/07/2024",
-      dueDate: "10/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesha in."
-    },
-    {
-      name: "Ganesh chaturthi",
-      amount: 1500,
-      totalMembers: 12,
-      date: "01/07/2024",
-      dueDate: "10/07/2024",
-      description: "The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesha in."
+  const handleUpdateIncome = async (e) => {
+    e.preventDefault();
+    console.log("hello", selectedFestivalId);
+
+    console.log(formData.title);
+    try {
+      const response = await editOtherIncome(selectedFestivalId, {
+        title: formData.title,
+        date: formData.date,
+        dueDate: formData.dueDate,
+        description: formData.description,
+        amount: formData.amount
+      });
+      console.log(response);
+
+      if (response.success) {
+        fetchFestivals();
+        setOpenEditModel(false);
+        setSelectedFestivalId(null); // Reset the selected festival ID
+        setFormData({
+          title: '',
+          date: '',
+          dueDate: '',
+          description: '',
+          amount: ''
+        });
+      } else {
+        console.error(response.errors);
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
-  ];
+  };
 
   return (
     <div>
@@ -101,18 +154,18 @@ function OtherIncome() {
               <h2 className='text-[#202224] text-[20px] ps-3 font-semibold'>Other Income</h2>
             </div>
             <div>
-            <div className='flex gap-4'>
-              <Link to="/admin/memberlist">
+              <div className='flex gap-4'>
+                {/* <Link to="/admin/memberlist">
                 <button className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
                   <EyeIcon className="w-5 h-5 mr-2" />
                   Views
                 </button>
-              </Link>
-              <button onClick={handleAddIncome} className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
-                <PlusIcon className="w-5 h-5 mr-2" />
-                Create Other Income
-              </button>
-            </div>
+              </Link> */}
+                <button onClick={handleAddIncome} className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center">
+                  <PlusIcon className="w-5 h-5 mr-2" />
+                  Create Other Income
+                </button>
+              </div>
             </div>
           </div>
 
@@ -123,7 +176,7 @@ function OtherIncome() {
                 className="min-w-[300px] bg-white rounded-lg shadow snap-start"
               >
                 <div className="flex justify-between items-center bg-[#5678E9] text-white p-4 rounded-t-lg">
-                  <h2 className="text-lg font-medium">{festival.name}</h2>
+                  <h2 className="text-lg font-medium">{festival.title}</h2>
 
                   {/* Options button to toggle dropdown */}
                   <div className="relative">
@@ -131,23 +184,23 @@ function OtherIncome() {
                       className="text-black bg-white hover:bg-white hover:text-black rounded p-1"
                       onClick={() => toggleDropdown(index)}
                     >
-                     <EllipsisVertical />
+                      <EllipsisVertical />
                     </button>
 
                     {/* Dropdown menu */}
                     {openDropdownIndex === index && (
                       <div className="absolute right-0 px-2 mt-2 bg-white text-black rounded shadow-md">
                         <ul>
-                          <li onClick={handleEditIncome} className="p-2 hover:bg-gray-200 cursor-pointer">Edit</li>
+                          <li onClick={() => handleEditIncome(festival)} className="p-2 hover:bg-gray-200 cursor-pointer">Edit</li>
                           <Link to="/admin/memberlist">
-                          <li className="p-2 hover:bg-gray-200 cursor-pointer">
-                           
-                            View
+                            <li className="p-2 hover:bg-gray-200 cursor-pointer">
 
-                          
+                              View
+
+
                             </li>
-                            </Link>
-                          <li onClick={handleDeleteIncome} className="p-2 hover:bg-gray-200 cursor-pointer">Delete</li>
+                          </Link>
+                          <li onClick={() => handleDeleteIncome(festival._id)} className="p-2 hover:bg-gray-200 cursor-pointer">Delete</li>
                         </ul>
                       </div>
                     )}
@@ -167,12 +220,12 @@ function OtherIncome() {
 
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Date</span>
-                    <span className="text-gray-900">{festival.date}</span>
+                    <span className="text-gray-900">{festival.date.split('T')[0]}</span>
                   </div>
 
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Due Date</span>
-                    <span className="text-gray-900">{festival.dueDate}</span>
+                    <span className="text-gray-900">{festival.dueDate.split('T')[0]}</span>
                   </div>
 
                   <div className="space-y-1">
@@ -287,14 +340,14 @@ function OtherIncome() {
                   >
                     Cancel
                   </button>
-                  <Link to="/admin/otherincome">
-                    <button
-                      type="submit"
-                      className="w-full px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      Save
-                    </button>
-                  </Link>
+
+                  <button
+                    type="submit"
+                    className="w-full px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    Save
+                  </button>
+
                 </div>
               </form>
             </div>
@@ -302,84 +355,126 @@ function OtherIncome() {
         </div>
       )}
 
-{openEditModel && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+      {openEditModel && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-          <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            Edit Ganesh Chaturthi
-          </h2>
-          
-          <form className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-                Amount<span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
-                <input
-                  type="text"
-                  id="amount"
-                  defaultValue="1,500"
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
-            </div>
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Edit Other Income</h2>
+              <form onSubmit={handleUpdateIncome} className="space-y-4">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                    Title<span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    placeholder="Enter Title"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                  Date<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="date"
-                  defaultValue="2024-07-01"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+                      Date<span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        value={formData.date.split('T')[0]}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              <div className="space-y-2">
-                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
-                  Due Date<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="dueDate"
-                  defaultValue="2024-07-10"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
-            </div>
+                  <div>
+                    <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
+                      Due Date<span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        id="dueDate"
+                        name="dueDate"
+                        value={formData.dueDate.split('T')[0]}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
 
-            <div className="space-y-2">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description<span className="text-red-500">*</span>
-              </label>
-              <textarea
-                id="description"
-                rows={3}
-                defaultValue="The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesa in Resident."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
-            </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                    Description<span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Enter Description"
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
 
-            <div className="flex gap-4 pt-4">
-              <button onClick={()=>setOpenEditModel(false)}
-                type="button"
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                Save
-              </button>
+                <div>
+                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
+                    Amount<span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+                    <input
+                      type="number"
+                      id="amount"
+                      name="amount"
+                      value={formData.amount}
+                      onChange={handleChange}
+                      placeholder="0000"
+                      className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  <button onClick={() => {
+                    setOpenEditModel(false)
+                    setFormData({
+                      title: '',
+                      date: '',
+                      dueDate: '',
+                      description: '',
+                      amount: ''
+                    });
+                  }}
+                    type="button"
+                    className="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="w-full px-4 py-2 text-white bg-orange-600 rounded-lg hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    Save
+                  </button>
+
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
           </div>
         </div>
       )}

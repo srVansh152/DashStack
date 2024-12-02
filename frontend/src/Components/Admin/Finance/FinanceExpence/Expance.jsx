@@ -18,6 +18,15 @@ export default function ExpenseTracker() {
     const [expenses, setExpenses] = useState([]);
     const [expenseToDelete, setExpenseToDelete] = useState(null);
     const [selectedExpense, setSelectedExpense] = useState(null);
+    const [existingFile, setExistingFile] = useState(null);
+    const [formData, setFormData] = useState({
+        id: '',
+        title: '',
+        description: '',
+        date: '',
+        amount: '',
+        file: null
+    });
 
     const expenseData = {
         title: 'Rent Or Mortgage',
@@ -30,14 +39,6 @@ export default function ExpenseTracker() {
         }
     }
 
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        date: '',
-        amount: '',
-        file: null
-    });
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -48,14 +49,31 @@ export default function ExpenseTracker() {
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting edit form with data:', formData); // Log form data
+        const editFormData = new FormData(); // Create a new FormData object for editing
+
+        // Set all form data in a single step
+        Object.entries({
+            id: formData.id,
+            title: formData.title,
+            description: formData.description,
+            date: formData.date,
+            amount: formData.amount,
+            billImage: formData.file || existingFile // Use new file or existing file
+        }).forEach(([key, value]) => {
+            if (value) editFormData.set(key, value); // Only set if value exists
+        });
+
+        // Log the form data for debugging
+        const formDataObject = {};
+        editFormData.forEach((value, key) => {
+            formDataObject[key] = value; // Convert FormData to a regular object for logging
+        });
+        console.log('Form Data to be submitted:', formDataObject);
+
         try {
             const token = localStorage.getItem("token");
-            if (!token) {
-                throw new Error('No token found. Please log in again.'); // Check if token exists
-            }
-            const response = await updateExpense(formData.id, formData, token); // Use formData.id for the update
-            console.log('Response from updateExpense:', response); // Log the response
+            const response = await updateExpense(formData.id, editFormData, token); // Send editFormData
+            console.log('Response from updateExpense:', response);
 
             if (!response.success) {
                 throw new Error('Network response was not ok');
@@ -69,7 +87,6 @@ export default function ExpenseTracker() {
         }
     };
 
-
     const handleAddModel = () => {
         setOpenModel(true);
     };
@@ -79,10 +96,11 @@ export default function ExpenseTracker() {
             id: expense._id,
             title: expense.title,
             description: expense.description,
-            date: expense.date,
+            date: expense.date.split('T')[0], // Format date for input
             amount: expense.amount,
-            file: expense.file // Assuming file is an object with name and size
+            file: null // Reset file to ensure no previous file is carried over
         });
+        setExistingFile(expense.billImage); // Store the existing file reference
         setOpenEditModel(true);
     };
 
@@ -93,6 +111,7 @@ export default function ExpenseTracker() {
         try {
             const response = await viewExpense(expenseId);
             if (response.success) {
+                console.log(response.data);
                 setSelectedExpense(response.data);
             } else {
                 throw new Error('Failed to fetch expense details');
@@ -123,24 +142,25 @@ export default function ExpenseTracker() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const expenseData = {
-            title,
-            description,
-            date,
-            amount,
-            file
-        };
+        const formData = new FormData(); // Create a new FormData object
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('date', date);
+        formData.append('amount', amount);
+        if (file) {
+            formData.append('billImage', file); // Append the file to the form data
+        }
 
         try {
-            const token = localStorage.getItem("token")
-            const response = await addExpense(expenseData,token)
-            console.log(response)
+            const token = localStorage.getItem("token");
+            const response = await addExpense(formData, token); // Send formData instead of expenseData
+            console.log(response);
 
             if (!response.success) {
                 throw new Error('Network response was not ok');
             }
 
-            const data = response.data
+            const data = response.data;
             console.log('Expense submitted successfully:', data);
             fetchExpenses();
             
@@ -391,7 +411,7 @@ export default function ExpenseTracker() {
                     </div>
                 )}
                 {openEditModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
                         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
                             <div className="p-6">
                                 <h2 className="text-xl font-semibold">Edit Expenses</h2>
@@ -445,7 +465,7 @@ export default function ExpenseTracker() {
                                                 Amount<span className="text-red-500">*</span>
                                             </label>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 name="amount"
                                                 value={formData.amount}
                                                 onChange={handleChange}
@@ -466,14 +486,10 @@ export default function ExpenseTracker() {
                                                 const file = e.target.files[0];
                                                 setFormData((prevData) => ({
                                                     ...prevData,
-                                                    file: {
-                                                        name: file.name,
-                                                        size: file.size
-                                                    }
+                                                    file: file // Update the file directly
                                                 }));
                                             }}
                                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            required
                                         />
                                     </div>
 

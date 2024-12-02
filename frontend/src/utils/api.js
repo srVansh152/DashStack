@@ -211,12 +211,7 @@ export const addExpense = async (expenseData, token) => {
 // Update an existing expense
 export const updateExpense = async (expenseId, expenseData) => {
   try {
-    const formData = new FormData();
-    for (const key in expenseData) {
-      formData.append(key, expenseData[key]);
-    }
-
-    const response = await api.put(`/expenses/update/${expenseId}`, formData, { isMultipart: true });
+    const response = await api.put(`/expenses/update/${expenseId}`, expenseData, { isMultipart: true });
     return { success: true, data: response.data };
   } catch (error) {
     console.error('Error updating expense:', error);
@@ -759,3 +754,68 @@ export const getResidentDetails = async (id) => {
     return { success: false, message: error.response?.data?.message || "Failed to fetch resident details." };
   }
 };
+
+// Other Income Management Functions
+
+// Create a new Other Income record
+export const createOtherIncome = async (otherIncomeData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.post('/other-income/other-income', otherIncomeData, {
+      headers: { Authorization: `Bearer ${token}` } // Include the token in the Authorization header
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Create other income error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create other income record." };
+  }
+};
+
+// Get all Other Income records
+export const getOtherIncomes = async () => {
+  try {
+    const response = await api.get('/other-income/other-income');
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Get other incomes error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch other income records." };
+  }
+};
+
+// Get details of a specific Other Income record
+// export const getOtherIncomeById = async (id) => {
+//   try {
+//     const response = await api.get(`/other-income/${id}`);
+//     return { success: true, data: response.data };
+//   } catch (error) {
+//     console.error("Get other income by ID error:", error);
+//     return { success: false, message: error.response?.data?.message || "Failed to fetch other income record." };
+//   }
+// };
+
+// Edit an Other Income record
+export const editOtherIncome = async (id, updatedData) => {
+  console.log(id);
+  
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.patch(`/other-income/other-income/${id}`, updatedData, {
+      headers: { Authorization: `Bearer ${token}` } // Include the token in the Authorization header
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Edit other income error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to update other income record." };
+  }
+};
+
+// Delete expired Other Income records
+// export const deleteExpiredOtherIncome = async () => {
+//   try {
+//     const response = await api.delete('/other-income/other-income/expired');
+//     return { success: true, data: response.data };
+//   } catch (error) {
+//     console.error("Delete expired other income error:", error);
+//     return { success: false, message: error.response?.data?.message || "Failed to delete expired other income records." };
+//   }
+// };

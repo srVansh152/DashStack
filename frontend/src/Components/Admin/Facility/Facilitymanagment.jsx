@@ -6,10 +6,6 @@ import Navbar from '../../Common/Navbar/Navbar';
 import { addFacility, getFacilities, updateFacility } from '../../../utils/api';
 
 
-
-
-
-
 function Facilitymanagment() {
 
   const [openModel, setOpenModel] = useState(false);
