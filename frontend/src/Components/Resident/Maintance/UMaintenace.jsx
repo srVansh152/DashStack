@@ -53,9 +53,9 @@ const UMaintenace = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2, 3].map((item) => (
                 <div key={item} className="bg-white rounded-lg">
-                  <div className="font-semibold flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-t-lg">
+                  <div className="font-semibold flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
                     <div className="text-white py-2 rounded">Maintenance</div>
-                    <div className="bg-white bg-opacity-50 text-white px-5 py-2 rounded-full">Pending</div>
+                    <div className="bg-[#6786EB]  text-white px-5 py-2 rounded-full">Pending</div>
 
                   </div>
                   <div className="space-y-2 mb-4 p-4">
@@ -83,7 +83,7 @@ const UMaintenace = () => {
                     {/* Pay Now button with margin-top applied */}
                     <button
                       onClick={handleAddModel}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white pt-3 rounded-lg transition-colors py-2 mt-4"
+                      className="w-full bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors mt-5"
                     >
                       Pay Now
                     </button>
@@ -100,9 +100,9 @@ const UMaintenace = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2].map((item) => (
                 <div key={item} className="bg-white rounded-lg p-4">
-                  <div className="font-semibold flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-t-lg">
+                  <div className="font-semibold flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
                     <div className=" text-white  rounded">Maintenance</div>
-                    <div className="bg-white bg-opacity-50 text-white px-5 py-2 rounded-full">Pending</div>
+                    <div className="bg-[#6786EB] text-white px-5 py-2 rounded-full">Pending</div>
                   </div>
                   <div className="space-y-2 mb-4 p-3">
                     <div className="flex justify-between">
@@ -118,7 +118,7 @@ const UMaintenace = () => {
                       <span>250.00</span>
                     </div>
                   </div>
-                  <button onClick={handleAddModel} className="w-full py-2 bg-orange-600 text-white rounded-lg">
+                  <button onClick={handleAddModel} className="w-full py-2   bg-gradient-to-r from-[#FE512E] to-[#F09619] text-white rounded-lg">
                     Pay Now
                   </button>
                 </div>
@@ -185,11 +185,16 @@ const UMaintenace = () => {
             </div>
 
             <div className="p-4 flex gap-3">
-              <button onClick={() => setOpenModel(false)} className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50">
+              <button 
+                onClick={() => setOpenModel(false)} 
+                className="w-full px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
                 Cancel
               </button>
-              <Link to="/user/Ucard">
-                <button className="flex-1 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+              <Link to="/user/Ucard" className="w-full">
+                <button 
+                  className="w-full px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                >
                   Pay Now
                 </button>
               </Link>

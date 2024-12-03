@@ -182,11 +182,11 @@ const RequestSubmission = () => {
                   </div>
                   <div className="mb-3  flex justify-between">
                     <span className="font-semibold">Status:</span>
-                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                    <span className="ml-2 px-2 py-2 bg-[#EEF1FD] text-blue-800 rounded-full text-xs">
                       {complaint.status}
                     </span>
                   </div>
-                  <div className=' flex justify-between'>
+                  <div className='flex justify-between'>
                     <span className="font-semibold">Description:</span>
                     <p className="mt-1 text-gray-600">{complaint.description}</p>
                   </div>

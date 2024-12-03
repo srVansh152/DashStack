@@ -160,7 +160,7 @@ function SecurityGuard() {
       if (response.success) {
         console.log(response);
         setOpenModel(false);
-        await fetchGuards();
+         fetchGuards();
         // Reset form
         setFormData({
           fullName: '',
@@ -295,7 +295,7 @@ function SecurityGuard() {
 
       if (response.success) {
         setOpenEditModel(false);
-        await fetchGuards(); // Refresh the list
+         fetchGuards(); // Refresh the list
         setSelectedGuard(null); // Clear selected guard
         // Reset form
         setFormData({
@@ -340,7 +340,7 @@ function SecurityGuard() {
       const response = await deleteSecurityGuard(selectedGuard._id);
       if (response.success) {
         setOpenDeleteModel(false);
-        await fetchGuards(); // Refresh the list
+         fetchGuards(); // Refresh the list
         setSelectedGuard(null);
         alert('Security Guard deleted successfully');
       } else {
@@ -369,7 +369,10 @@ function SecurityGuard() {
 
               <div className="overflow-x-auto">
                 {loading ? (
-                  <div className="text-center py-4">Loading...</div>
+                  <div className="flex  items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#FE512E]"></div>
+                    <span className="ml-3 text-gray-500">Loading...</span>
+                  </div>
                 ) : (
                   <table className="min-w-full">
                     <thead className='bg-[#EEF1FD] rounded-lg'>
@@ -399,23 +402,41 @@ function SecurityGuard() {
                           <td className="p-4">{guard.phoneNumber}</td>
                           <td className="p-4">
                             <span
-                              className={`px-3 py-1 px-2 rounded-full text-md ${guard.shift === "day"
-                                ? "bg-[#F4F4F4] text-[#FF9300]"
-                                : "bg-[#4F4F4F] text-white"
-                                }`}
+                              className={`px-1 py-1 rounded-full text-md flex justify-center items-center gap-2 ${
+                                guard.shift === "day"
+                                  ? "bg-[#F4F4F4] text-[#FF9300]"
+                                  : "bg-[#4F4F4F] text-white"
+                              }`}
                             >
+                              <img 
+                                src={guard.shift === "day" 
+                                  ? "/public/image/securityGurad/light.png" 
+                                  : "/public/image/securityGurad/night.png"
+                                } 
+                                alt="" 
+                                className="w-4 h-4"
+                              />
                               {guard.shift}
+
                             </span>
                           </td>
                           <td className="p-4">{formatDate(guard.shiftDate)}</td>
                           <td className="p-4">{guard.shiftTime}</td>
                           <td className="p-4">
                             <span
-                              className={`px-3 py-1 rounded-full text-md ${guard.gender === "male"
+                              className={`px-1 py-1 rounded-full text-md flex justify-center items-center gap-2 ${guard.gender === "male"
                                 ? "bg-[#E9F6FC] text-[#5678E9]"
                                 : "bg-[#FFF1F6] text-[#FE76A8]"
                                 }`}
                             >
+                               <img 
+                                src={guard.gender === "male" 
+                                  ? "/public/image/securityGurad/male.png" 
+                                  : "/public/image/securityGurad/female.png"
+                                } 
+                                alt="" 
+                                className="w-4 h-4"
+                              />
                               {guard.gender}
                             </span>
                           </td>
@@ -647,17 +668,17 @@ function SecurityGuard() {
                   </div>
 
                   {/* Buttons */}
-                  <div className="flex justify-between pt-4">
+                  <div className="flex justify-between gap-4 pt-4">
                     <button
                       type="button"
                       onClick={() => setOpenModel(false)}
-                      className="px-6 py-2 border rounded-md hover:bg-gray-50"
+                      className="flex-1 px-6 py-2 border rounded-md hover:bg-gray-50"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                      className="flex-1 px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                     >
                       Create
                     </button>

@@ -67,7 +67,7 @@ function VisitorsLogs() {
                   visitors.map((visitor, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-5 gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-colors"
+                      className="grid grid-cols-5 gap-4 px-6 py-4 items-center  transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <img

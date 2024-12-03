@@ -248,7 +248,7 @@ export default function ExpenseTracker() {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {expenses.map((expense, index) => (
-                                            <tr key={index} className="hover:bg-gray-100">
+                                            <tr key={index} className="">
                                                 <td className="px-6 py-4 whitespace-nowrap">{expense.title}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap max-w-md truncate">{expense.description}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{expense.date}</td>
@@ -390,17 +390,17 @@ export default function ExpenseTracker() {
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-between pt-4">
+                                    <div className="flex justify-between gap-4 pt-4">
                                         <button
                                             type="button"
                                             onClick={() => setOpenModel(false)}
-                                            className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                                            className="flex-1 px-4 py-2 border rounded-md hover:bg-gray-50"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                            className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                                         >
                                             Save
                                         </button>
@@ -493,17 +493,17 @@ export default function ExpenseTracker() {
                                         />
                                     </div>
 
-                                    <div className="flex justify-between pt-4">
+                                    <div className="flex justify-between gap-4 pt-4">
                                         <button
                                             onClick={() => setOpenEditModel(false)}
                                             type="button"
-                                            className="px-6 py-2 border rounded-md hover:bg-gray-50"
+                                            className="flex-1 px-6 py-2 border rounded-md hover:bg-gray-50"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                            className="flex-1 px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                                         >
                                             Save
                                         </button>

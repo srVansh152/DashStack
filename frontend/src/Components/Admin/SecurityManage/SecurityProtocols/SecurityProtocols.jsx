@@ -188,7 +188,7 @@ function SecurityProtocols() {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {protocols.map((protocol, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
+                      <tr key={index} className="">
                         <td className="whitespace-nowrap px-6 py-4">
                           <div className="flex items-center">
                             <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">

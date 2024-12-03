@@ -33,32 +33,33 @@ const UsecurityProtocol = () => {
   }, []);
 
   return (
-    <div className='flex h-screen'>
+    <div className='flex h-screen bg-gray-50'>
       <UAside />
       <div className="flex-1 overflow-auto">
         <Navbar />
 
-        <div className="container-fulid p-2">
-          <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
-            <div className="mb-6 flex items-center justify-between">
+        <div className="container-fulid px-2 py-4">
+          <div className="bg-white px-3">
+          <div className='min-h-screen overflow-hidden   p-6'>
+          <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Security Protocols</h1>
 
             </div>
 
             <div className="overflow-x-auto rounded-lg border bg-white">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-[#EEF1FD]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224] font-semibold">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224] font-semibold">
                       Description
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224] font-semibold">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224] font-semibold">
                       Time
                     </th>
 
@@ -66,7 +67,7 @@ const UsecurityProtocol = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {protocols.map((protocol, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
+                    <tr key={index} className="">
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
@@ -79,13 +80,16 @@ const UsecurityProtocol = () => {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 break-words">{protocol.description}</td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{new Date(protocol.createdAt).toLocaleDateString()}</td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{protocol.time}</td>
+                      <td className="whitespace-nowrap px-5 py-3 text-sm  ">
+                        <span className='bg-[#F6F8FB] p-3 rounded-full'>{protocol.time}</span>
+                        </td>
 
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          </div>
           </div>
         </div>
       </div>

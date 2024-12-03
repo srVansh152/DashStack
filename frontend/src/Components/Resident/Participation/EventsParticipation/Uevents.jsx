@@ -127,7 +127,7 @@ const Uevents = () => {
 
 
     return (
-        <div className='flex h-screen bg-gray-50'>
+        <div className='flex h-screen bg-[#EEF1FD]'>
             <UAside />
             <div className="flex-1 overflow-auto">
                 <Navbar/>
@@ -152,7 +152,7 @@ const Uevents = () => {
                         <div className="bg-white rounded-lg shadow">
                             <div className="p-8">
                                 <h2 className="text-xl font-semibold mb-6">Events Participation</h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-2 bg-gray-50 rounded-t-lg">
+                                <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-2 bg-[#EEF1FD] rounded-t-lg">
                                     <div className="font-medium text-gray-700 p-2">Participator Name</div>
                                     <div className="font-medium text-gray-700 p-2">Description</div>
                                     <div className="font-medium text-gray-700 p-2">Event Time</div>
@@ -161,7 +161,7 @@ const Uevents = () => {
                                 </div>
                                 <div className="divide-y">
                                     {events.map((event, index) => (
-                                        <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-5 items-center hover:bg-gray-100 transition-colors">
+                                        <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-5 items-center  transition-colors">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                                                     {event.name.charAt(0)}
@@ -183,7 +183,7 @@ const Uevents = () => {
                             <div className="bg-white rounded-lg shadow-sm">
                                 <div className="p-8">
                                     <h2 className="text-xl font-semibold mb-6">Events Participation</h2>
-                                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-3 bg-gray-50 rounded-t-lg">
+                                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-3 bg-[#EEF1FD] rounded-t-lg">
                                         <div className="font-medium text-gray-700 p-2">Participator Name</div>
                                         <div className="font-medium text-gray-700 p-2">Description</div>
                                         <div className="font-medium text-gray-700 p-2">Activity Time</div>
@@ -192,7 +192,7 @@ const Uevents = () => {
                                     </div>
                                     <div className="divide-y divide-gray-200">
                                         {eventssecond.map((event, index) => (
-                                            <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-5 items-center hover:bg-gray-50">
+                                            <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-5 items-center">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-600">
                                                         {event.name.charAt(0)}

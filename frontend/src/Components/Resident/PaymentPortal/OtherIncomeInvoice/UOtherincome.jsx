@@ -58,9 +58,9 @@ const UOtherincome = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {payments.map((payment, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-4 bg-blue-500 text-white flex justify-between items-center">
+                <div className="p-4 bg-[#5678E9] text-white flex justify-between items-center">
                   <div className="text-sm font-medium">Due Event Payment</div>
-                  <span className="text-xs bg-blue-400 px-2 py-1 rounded">Pending</span>
+                  <span className="text-xs bg-[#6786EB] px-2 py-1 rounded">Pending</span>
                 </div>
                 <div className="p-4 space-y-4">
                   <div className="space-y-2">
@@ -77,7 +77,7 @@ const UOtherincome = () => {
                       <span className="text-sm font-medium">${payment.amount}</span>
                     </div>
                   </div>
-                  <button onClick={handlePaymentModel} className="w-full py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                  <button onClick={handlePaymentModel} className="w-full py-2 bg-gradient-to-r from-[#FE512E] to-[#F09619]  text-white rounded-md hover:bg-orange-600 transition-colors">
                     Pay Now
                   </button>
                 </div>

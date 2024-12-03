@@ -134,8 +134,8 @@ function Note() {
                     <div className="flex items-center gap-2">
                       {/* New Dropdown Button */}
                       <div className="relative group">
-                        <button className="text-white hover:bg-blue-600 p-1 rounded">
-                          <MoreVertical className="w-5 h-5" />
+                        <button className="text-blue-600 bg-white hover:bg-white p-1 rounded ">
+                          <MoreVertical className=" w-5 h-5  rounded" />
                         </button>
                         <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 transform scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100">
                           <div className="py-1">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import { getProfile, updateProfile } from '../../../../utils/api';
@@ -162,35 +162,32 @@ const Update = () => {
               </div>
               <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/3 mb-6 md:mb-0 flex flex-col items-center">
-                  <div className="relative w-40 h-40">
-                    {selectedImage ? (
-                      <img
-                        src={
-                          typeof selectedImage === 'string'
-                            ? selectedImage // For previously uploaded image URLs
-                            : URL.createObjectURL(selectedImage) // For new uploaded files
-                        }
-                        alt="Profile"
-                        className="w-40 h-40 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-40 h-40 bg-gray-100 rounded-full flex items-center justify-center">
-                        <button className="absolute inset-0 w-full h-full rounded-full focus:outline-none">
-                          <input
-                            type="file"
-                            onChange={handleImageUpload}
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          />
-                          <div className="text-center">
-                            <div className="w-8 h-8 mx-auto bg-gray-200 rounded-full flex items-center justify-center">
-                              <span className="text-gray-500">+</span>
-                            </div>
-                          </div>
-                        </button>
-                      </div>
-                    )}
-                    {errorMessage && <p className="mt-2 text-xs text-red-500">{errorMessage}</p>}
+                  <div className="relative">
+                    <div className="w-40 h-40 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                      {selectedImage ? (
+                        <img 
+                          src={typeof selectedImage === 'string' ? selectedImage : URL.createObjectURL(selectedImage)} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover" 
+                        />
+                      ) : (
+                        <Camera className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('photo-upload').click()}
+                      className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-lg border hover:bg-gray-50"
+                    >
+                      <Camera className="w-4 h-4 text-gray-600" />
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="photo-upload"
+                    />
                   </div>
                   <h2 className="text-xl font-semibold text-center mt-4">
                     {formValues.firstname || 'Your Name'}
