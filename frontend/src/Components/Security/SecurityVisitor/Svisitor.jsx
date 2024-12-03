@@ -82,7 +82,7 @@ const Svisitor = () => {
         <Navbar />
 
         {/* Main Content */}
-        <div>
+        <div className='bg-white px-4 rounded py-4'>
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-xl font-semibold">Visitor Tracking</h1>
@@ -90,14 +90,14 @@ const Svisitor = () => {
                 <select className="px-3 py-2 border rounded-md bg-white">
                   <option>Week</option>
                 </select>
-                <button onClick={handleAddModel} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
+                <button onClick={handleAddModel} className="px-4 py-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] text-white rounded-md hover:bg-orange-600 transition-colors">
                   Add Visitor details
                 </button>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow">
-              <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-gray-500">
+            <div className=" rounded-lg shadow">
+              <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-gray-500 bg-[#EEF1FD]">
                 <div>Visitor Name</div>
                 <div>Phone Number</div>
                 <div>Date</div>

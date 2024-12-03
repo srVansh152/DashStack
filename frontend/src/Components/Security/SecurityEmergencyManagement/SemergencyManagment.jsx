@@ -77,9 +77,9 @@ const SemergencyManagment = () => {
                 <Navbar />
 
                 {/* Main Content */}
-                <main className="flex items-center justify-center p-4" style={{ height: "92vh" }}>
+                <main className="flex min-h-[calc(100vh-81px)] items-center justify-center p-4">
                     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-sm">
-                        <h1 className="mb-6 text-xl font-semibold">Alert</h1>
+                        <h1 className="mb-6 text-xl font-semibold text-center">Alert</h1>
 
                         <form className="space-y-4" onSubmit={handleSubmit}>
                             <div className="space-y-2">

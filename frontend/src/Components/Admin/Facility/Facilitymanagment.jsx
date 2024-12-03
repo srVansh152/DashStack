@@ -135,12 +135,12 @@ function Facilitymanagment() {
                     <div className="flex items-center gap-2">
                       {/* Dropdown Menu for Edit, View, Delete */}
                       <div className="relative group">
-                        <button className="text-white hover:bg-blue-600 p-1 rounded">
+                        <button className="text-blue-600 bg-white hover:bg-white p-1 rounded ">
                           <MoreVertical className="w-5 h-5" />
                         </button>
                         <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 transform scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100">
                           <div className="py-1">
-                            <button onClick={() => handleEdirIncome(facility)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <button onClick={() => handleEdirIncome(facility)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 ">
                               Edit
                             </button>
 
