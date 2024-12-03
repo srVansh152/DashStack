@@ -45,7 +45,13 @@ exports.getOtherIncomes = async (req, res) => {
 exports.getOtherIncomeById = async (req, res) => {
   try {
     const otherIncome = await OtherIncome.findById(req.params.id)
-      .populate('paidByResidents', 'firstname lastname');
+      .populate({
+        path: 'paidByResidents',
+        populate: {
+          path: 'residentId',
+          select: 'unitNumber wing owner phoneNumber'
+        }
+      });
 
     if (!otherIncome) {
       return res.status(404).json({ message: 'Other Income record not found' });
