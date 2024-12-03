@@ -46,10 +46,10 @@ exports.getFinancialIncomes = async (req, res) => {
         select: 'profilePhoto fullName wing unitNumber owner phoneNumber createdAt'
       });
 
-    // Fetch all payments related to those financial incomes
+    // Fetch all payments with payment method
     const paymentData = await Payment.find({
       incomeId: { $in: financialIncomes.map(f => f._id) }
-    });
+    }).select('incomeId residentId hasPaid amount paymentMethod paymentDate');
 
     // Format the data to include payment status and penalties
     const financialData = financialIncomes.map(financialIncome => {
@@ -97,6 +97,7 @@ exports.getFinancialIncomes = async (req, res) => {
           },
           hasPaid: payment ? payment.hasPaid : status.hasPaid,
           paymentMethod: payment ? payment.paymentMethod : null,
+          paymentDate: payment ? payment.paymentDate : null,
           penaltyAmount: payment && payment.hasPaid ? 0 : penaltyAmount,
           paymentStatus: payment ? payment.hasPaid : status.hasPaid,
           totalAmount: totalAmount
