@@ -17,7 +17,6 @@ const financialIncomeSchema = new mongoose.Schema({
       penaltyAmount: { type: Number, default: 0 }, 
       penaltyAfterDays: { type: Number, default: 0 } 
     },
-    required: true
   }
 });
 
