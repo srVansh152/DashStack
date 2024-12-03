@@ -251,12 +251,18 @@ export default function ExpenseTracker() {
                                             <tr key={index} className="hover:bg-gray-100">
                                                 <td className="px-6 py-4 whitespace-nowrap">{expense.title}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap max-w-md truncate">{expense.description}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{expense.date}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{expense.date.split('T')[0]}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">₹ {expense.amount}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <FileText className="w-4 h-4" />
-                                                        {expense.format}
+                                                        {expense.billImage ? (
+                                                            <>
+                                                                Bill Available: <span className="font-semibold">{expense.billImage.name}</span>
+                                                            </>
+                                                        ) : (
+                                                            'Bill Not Available'
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -538,7 +544,7 @@ export default function ExpenseTracker() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm text-gray-500">Date</label>
-                                            <p className="mt-1 text-base">{selectedExpense.date}</p>
+                                            <p className="mt-1 text-base">{selectedExpense.date.split('T')[0]}</p>
                                         </div>
 
                                         <div>
@@ -551,15 +557,28 @@ export default function ExpenseTracker() {
                                         <label className="block text-sm text-gray-500">Bill</label>
                                         <div className="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                             <div className="h-10 w-10 flex-shrink-0 rounded-lg border bg-white flex items-center justify-center">
-
                                                 {selectedExpense.billImage ? (
-                                                    <img src={selectedExpense.billImage} alt="Bill" className="h-10 w-10 rounded-lg" />
+                                                    <img src={selectedExpense.billImage} alt={selectedExpense.billImage.name} className="h-10 w-10 rounded-lg" />
                                                 ) : (
                                                     <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
                                                 )}
-                                                
+                                            </div>
+                                            <div className="ml-3 flex flex-col flex-grow">
+                                                {selectedExpense.billImage && (
+                                                    <p className="text-sm">{selectedExpense.billImage.split('/').pop()}</p>
+                                                )}
+                                            </div>
+                                            <div className="ml-3 flex items-center">
+                                                {selectedExpense.billImage && (
+                                                    <button
+                                                        onClick={() => window.open(selectedExpense.billImage, '_blank')}
+                                                        className="text-gray-500 hover:text-gray-700"
+                                                    >
+                                                        <Eye className="h-5 w-5" /> {/* Eye icon for download */}
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

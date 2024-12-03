@@ -192,12 +192,9 @@ function OtherIncome() {
                       <div className="absolute right-0 px-2 mt-2 bg-white text-black rounded shadow-md">
                         <ul>
                           <li onClick={() => handleEditIncome(festival)} className="p-2 hover:bg-gray-200 cursor-pointer">Edit</li>
-                          <Link to="/admin/memberlist">
+                          <Link to={`/admin/memberlist/${festival._id}`}>
                             <li className="p-2 hover:bg-gray-200 cursor-pointer">
-
                               View
-
-
                             </li>
                           </Link>
                           <li onClick={() => handleDeleteIncome(festival._id)} className="p-2 hover:bg-gray-200 cursor-pointer">Delete</li>

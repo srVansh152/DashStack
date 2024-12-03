@@ -638,7 +638,7 @@ export const listSecurityGuards = async () => {
 // Create an announcement
 export const createAnnouncement = async (announcementData) => {
   console.log(announcementData);
-  
+
   try {
     const token = localStorage.getItem('token');
     const response = await api.post('/announcements/create', announcementData);
@@ -783,20 +783,24 @@ export const getOtherIncomes = async () => {
 };
 
 // Get details of a specific Other Income record
-// export const getOtherIncomeById = async (id) => {
-//   try {
-//     const response = await api.get(`/other-income/${id}`);
-//     return { success: true, data: response.data };
-//   } catch (error) {
-//     console.error("Get other income by ID error:", error);
-//     return { success: false, message: error.response?.data?.message || "Failed to fetch other income record." };
-//   }
-// };
+
+export const getOtherIncomeById = async (id) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.get(`/other-income/other-income/${id}`, {
+      headers: { Authorization: `Bearer ${token}` } // Include the token in the Authorization header
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Get other income by ID error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch other income record." };
+  }
+};
 
 // Edit an Other Income record
 export const editOtherIncome = async (id, updatedData) => {
   console.log(id);
-  
+
   try {
     const token = localStorage.getItem('token');
     const response = await api.patch(`/other-income/other-income/${id}`, updatedData, {
@@ -819,3 +823,41 @@ export const editOtherIncome = async (id, updatedData) => {
 //     return { success: false, message: error.response?.data?.message || "Failed to delete expired other income records." };
 //   }
 // };
+
+// Financial Management Functions
+
+// Create a new Financial Income record
+export const createFinancialIncome = async (financialIncomeData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await api.post('/financial/financial-income', financialIncomeData, {
+      headers: { Authorization: `Bearer ${token}` } // Include the token in the Authorization header
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Create financial income error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to create financial income record." };
+  }
+};
+
+// Get all Financial Income records
+export const getFinancialIncomes = async () => {
+  try {
+    const response = await api.get('/financial/financial-income');
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Get financial incomes error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch financial income records." };
+  }
+};
+
+// Get payment status for a specific Financial Income record by ID
+export const getFinancialIncomeById = async (id) => {
+  try {
+    const response = await api.get(`/financial/financial-income/${id}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Get financial income by ID error:", error);
+    return { success: false, message: error.response?.data?.message || "Failed to fetch financial income record." };
+  }
+};
