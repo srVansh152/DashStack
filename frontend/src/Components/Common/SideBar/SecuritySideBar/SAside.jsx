@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+
 // SidebarItem component
 function SidebarItem({ icon: Icon, label, path, active, hovered, onClick }) {
   const isLogout = label === 'Logout';
@@ -127,22 +128,42 @@ export default function SAside() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState('')
 
-  // Visitor Management menu items
-  const visitorMenuItems = [
-    { id: 1, label: 'Visitors Logs', path: 'visitorslogs' },
-    { id: 2, label: 'Security Protocols', path: 'securityprotocols' },
+  // Security menu items
+  const securityMenuItems = [
+    { id: 1, label: 'Emergency', path: 'Semergency' },
+    { id: 2, label: 'Visitors Logs', path: 'Svisitor' }
   ]
+
+  const handleLogout = (e) => {
+    e.preventDefault()
+    // Clear all localStorage items
+    localStorage.removeItem("token")
+    localStorage.removeItem("Email")
+    localStorage.removeItem("userId")
+    navigate('/')
+    setCurrentPath('/')
+    setIsSidebarOpen(false)
+    setHoveredMenu(null)
+  }
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem("token")
+    const userEmail = localStorage.getItem("Email")
+    
+    if (!token || !userEmail) {
+      navigate('/')
+    }
+
+    setCurrentPath(window.location.pathname)
+    if (securityMenuItems.some(item => currentPath.includes(item.path))) {
+      setOpenDropdown('Security Management')
+    }
+  }, [currentPath, navigate])
 
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdown(openDropdown === dropdown ? '' : dropdown)
   }
-
-  useEffect(() => {
-    setCurrentPath(window.location.pathname)
-    if (visitorMenuItems.some(item => currentPath.includes(item.path))) {
-      setOpenDropdown('Security Management')
-    }
-  }, [currentPath])
 
   const isPathActive = (path) => {
     return currentPath === `/security/${path}` || currentPath.startsWith(`/security/${path}/`)
@@ -157,8 +178,7 @@ export default function SAside() {
         <Menu className="w-5 h-5 text-orange-500" />
       </button>
 
-      <div
-        className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-20 flex flex-col justify-between
+      <div className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-20 flex flex-col justify-between
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
         <div>
@@ -170,7 +190,7 @@ export default function SAside() {
             <SidebarItem
               icon={Activity}
               label="Dashboard"
-              path="sdashboard"
+              path="security/sdashboard"
               active={isPathActive('sdashboard')}
               hovered={hoveredMenu === 'Dashboard'}
               onClick={(e) => {
@@ -180,17 +200,15 @@ export default function SAside() {
                 setIsSidebarOpen(false)
                 setHoveredMenu(null)
               }}
-              onMouseEnter={() => setHoveredMenu('Dashboard')}
-              onMouseLeave={() => setHoveredMenu(null)}
             />
 
             <Dropdown
               label="Security Management"
               icon={Shield}
               isOpen={openDropdown === 'Security Management'}
-              active={visitorMenuItems.some(item => isPathActive(item.path))}
+              active={securityMenuItems.some(item => isPathActive(item.path))}
               hovered={hoveredMenu === 'Security Management'}
-              items={visitorMenuItems}
+              items={securityMenuItems}
               onClick={() => handleDropdownToggle('Security Management')}
               onHoverEnter={() => setHoveredMenu('Security Management')}
               onHoverLeave={() => setHoveredMenu(null)}
@@ -209,13 +227,7 @@ export default function SAside() {
           path="/"
           active={false}
           hovered={hoveredMenu === 'Logout'}
-          onClick={(e) => {
-            e.preventDefault()
-            navigate('/')
-            setCurrentPath('/')
-            setIsSidebarOpen(false)
-            setHoveredMenu(null)
-          }}
+          onClick={handleLogout}
           onMouseEnter={() => setHoveredMenu('Logout')}
           onMouseLeave={() => setHoveredMenu(null)}
         />

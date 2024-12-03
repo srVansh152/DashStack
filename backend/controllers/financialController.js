@@ -40,26 +40,29 @@ exports.createFinancialIncome = async (req, res) => {
 exports.getFinancialIncomes = async (req, res) => {
   try {
     // Fetch financial incomes for the society
-    const financialIncomes = await FinancialIncome.find({ societyId: req.user.society._id });
+    const financialIncomes = await FinancialIncome.find({ societyId: req.user.society._id })
+      .populate({
+        path: 'residentStatus.residentId',
+        select: 'profilePhoto fullName wing unitNumber owner phoneNumber createdAt'
+      });
 
     // Fetch all payments related to those financial incomes
     const paymentData = await Payment.find({
       incomeId: { $in: financialIncomes.map(f => f._id) }
-    }).populate('residentId'); // Populate residentId to get resident details
-
+    });
 
     // Format the data to include payment status and penalties
     const financialData = financialIncomes.map(financialIncome => {
-      // Get the payments for the current financial income
       const payments = paymentData.filter(payment => 
         payment.incomeId.toString() === financialIncome._id.toString()
       );
 
-      // Format resident status with penalty calculation and payment status
       const residentStatuses = financialIncome.residentStatus.map(status => {
-        // Find the payment made by this resident, if any
-        const payment = payments.find(p => String(p.residentId._id) === String(status.residentId));
-
+        const payment = payments.find(p => String(p.residentId) === String(status.residentId));
+        
+        // Get resident details from populated data
+        const residentDetails = status.residentId;
+        
         // Calculate the penalty if the resident hasn't paid
         const currentDate = new Date();
         const dueDate = new Date(financialIncome.dueDate);
@@ -82,11 +85,21 @@ exports.getFinancialIncomes = async (req, res) => {
         }
 
         return {
-          residentId: status.residentId,
-          hasPaid: payment ? payment.hasPaid : status.hasPaid, // Use the payment status or the resident status
-          penaltyAmount: payment && payment.hasPaid ? 0 : penaltyAmount, // Reset penalty if paid
-          paymentStatus: payment ? payment.hasPaid : status.hasPaid, // Use the payment's hasPaid status
-          totalAmount: totalAmount  // Total amount due (including penalty if unpaid, or actual paid amount)
+          resident: {
+            _id: status.residentId,
+            profilePhoto: residentDetails?.profilePhoto || null,
+            fullName: residentDetails?.fullName || null,
+            wing: residentDetails?.wing || null,
+            unitNumber: residentDetails?.unitNumber || null,
+            owner: residentDetails?.owner || null,
+            phoneNumber: residentDetails?.phoneNumber || null,
+            createdAt: residentDetails?.createdAt || null
+          },
+          hasPaid: payment ? payment.hasPaid : status.hasPaid,
+          paymentMethod: payment ? payment.paymentMethod : null,
+          penaltyAmount: payment && payment.hasPaid ? 0 : penaltyAmount,
+          paymentStatus: payment ? payment.hasPaid : status.hasPaid,
+          totalAmount: totalAmount
         };
       });
 
