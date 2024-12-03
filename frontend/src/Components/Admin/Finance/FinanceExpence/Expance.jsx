@@ -217,8 +217,8 @@ export default function ExpenseTracker() {
     return (
         <>
             <Aside />
-            <div className="main">
-                <div className="flex min-h-screen bg-gray-100">
+            <div className="main bg-[#F0F5FB]">
+                <div className="flex min-h-screen">
                     {/* Sidebar placeholder */}
 
 
