@@ -2,98 +2,186 @@ import React, { useState, useEffect, useRef } from 'react';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import UAside from '../../../Common/SideBar/ResidentSideBar/UAside';
-import EmojiPicker from 'emoji-picker-react';
-import { Video, Phone, Paperclip, Smile, Send, Bell, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Video, Phone, X } from 'lucide-react';
 import Navbar from '../../../Common/Navbar/Navbar';
-
-
+import { useChat } from '../../../../context/ChatContext.jsx';
+import { getResidents } from '../../../../utils/api.js';
+import { chatApi } from '../../../../services/chatApi.js';
 
 const Uchat = () => {
-    
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const {
+        socket,
+        messages: contextMessages,
+        setMessages: setContextMessages,
+        sendMessage: contextSendMessage,
+        joinChat,
+        onlineUsers,
+        isUserOnline,
+        getUserLastSeen
+    } = useChat();
 
+    const loggedInUserId = localStorage.getItem('userId');
+
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
-    const [contacts, setContacts] = useState([]);
+    const [residents, setResidents] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedContact, setSelectedContact] = useState(null);
+    const [selectedResident, setSelectedResident] = useState(null);
     const [callState, setCallState] = useState({ isActive: false, type: null });
     const fileInputRef = useRef(null);
+    const [currentChatId, setCurrentChatId] = useState(null);
+    const messagesEndRef = useRef(null);
 
-    // Mock data for initial contacts
+    const fetchResidents = async () => {
+        try {
+            const response = await getResidents();
+            const loggedInUserEmail = localStorage.getItem('Email');
+            const filteredResidents = response.data.filter(
+                resident => resident.email !== loggedInUserEmail
+            );
+            setResidents(filteredResidents);
+            if (filteredResidents.length > 0) {
+                setSelectedResident(filteredResidents[0]);
+            }
+        } catch (error) {
+            if (error.response?.status === 401) {
+                window.location.href = '/login';
+            }
+            console.error('Error fetching residents:', error);
+        }
+    };
+
     useEffect(() => {
-        const initialContacts = [
-            { id: 1, name: 'Ariene McCoy', lastMessage: 'Hi there! How are you?', lastMessageTime: '9:00 PM' },
-            { id: 2, name: 'Michael John', lastMessage: 'Can we meet tomorrow?', lastMessageTime: '8:30 PM' },
-            { id: 3, name: 'Elizabeth Sarah', lastMessage: 'The project is done!', lastMessageTime: '7:45 PM' },
-            { id: 4, name: 'Jenny Wilson', lastMessage: "Don't forget the meeting", lastMessageTime: '6:15 PM' },
-            { id: 5, name: 'Esther Howard', lastMessage: 'Thanks for your help', lastMessageTime: '5:30 PM' },
-        ];
-        setContacts(initialContacts);
-        setSelectedContact(initialContacts[0]);
+        fetchResidents();
     }, []);
 
-    // Mock data for initial messages
-    useEffect(() => {
-        if (selectedContact) {
-            const initialMessages = [
-                { id: 1, sender: selectedContact.name, content: 'Hi there! How are you?', timestamp: '9:00 PM', type: 'text' },
-                { id: 2, sender: 'You', content: "Hey! I'm doing great, thanks for asking!", timestamp: '9:02 PM', type: 'text' },
-                { id: 3, sender: selectedContact.name, content: 'https://s3-alpha-sig.figma.com/img/f214/0926/d71e2d85050dcb9cf461aa925fc7d4ce?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=oE3cN04u4Ph2RrMhlG77bv29~onm6Rf015EDn-NcYUtMgq-spMjDFtabpMtkpUnxPxcCm1UlVwDfFxsqmpzAMg6A1jXfH01fLXtatGclxILNGtRm1geoiUJDKPTyt03Te7NJzfaVvQjqPrJg6qvYMWyYByWmIQQ25-G5aoBvY~grZMtIPOc9q7YiP3TxVc-mua8mPtfzCqIrkZn0vDL6IFxj~YzkBh~7gpfH-BHv7Cr41P1WR3TRBzjY1FoJiq2F6On8b8lF6j5wIFag24CU4yTm2eA2ff~9awAa4PDAJmBrnjFj5el7~HKbHGPe~fAJNi99acAQjIEwlGZypfnTVA__', timestamp: '9:15 PM', type: 'image' },
-            ];
-            setMessages(initialMessages);
-        }
-    }, [selectedContact]);
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
-    const handleSendMessage = () => {
-        if (message.trim() !== '') {
-            const newMessage = {
-                id: messages.length + 1,
-                sender: 'You',
-                content: message,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                type: 'text',
+    useEffect(() => {
+        scrollToBottom();
+    }, [contextMessages]);
+
+    useEffect(() => {
+        if (socket) {
+            // Remove any existing listeners first
+            socket.off('newMessage');
+            
+            // Add new listener
+            socket.on('newMessage', (newMessage) => {
+                console.log('Received new message:', newMessage);
+                
+                // Only add message if it's for the current chat
+                if (newMessage.chat === currentChatId) {
+                    setContextMessages(prev => {
+                        // Check if message already exists
+                        if (prev.some(msg => msg.id === newMessage._id)) {
+                            return prev;
+                        }
+                        
+                        return [...prev, {
+                            id: newMessage._id,
+                            sender: newMessage.sender._id === loggedInUserId ? 'You' : newMessage.sender.fullName,
+                            content: newMessage.text,
+                            timestamp: new Date(newMessage.createdAt).toLocaleTimeString([], { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            }),
+                            senderId: newMessage.sender._id
+                        }];
+                    });
+                }
+            });
+
+            return () => {
+                socket.off('newMessage');
             };
-            setMessages([...messages, newMessage]);
+        }
+    }, [socket, currentChatId, loggedInUserId]);
+
+    useEffect(() => {
+        if (selectedResident && socket) {
+            const initializeChat = async () => {
+                try {
+                    const response = await chatApi.createChat(selectedResident._id);
+                    const chatId = response._id;
+                    setCurrentChatId(chatId);
+                    
+                    // Fetch existing messages first
+                    const existingMessages = await chatApi.getChatMessages(chatId);
+                    setContextMessages(existingMessages);
+                    
+                    // Join the chat room
+                    joinChat(chatId);
+                    socket.emit('joinChat', {
+                        chatId,
+                        userId: loggedInUserId
+                    });
+
+                } catch (error) {
+                    console.error('Error initializing chat:', error);
+                }
+            };
+            initializeChat();
+        }
+    }, [selectedResident, socket]);
+
+    const handleSendMessage = async () => {
+        if (message.trim() === '' || !selectedResident || !currentChatId) return;
+
+        try {
+            const messageData = {
+                chatId: currentChatId,
+                text: message.trim(),
+                senderId: loggedInUserId,
+                receiverId: selectedResident._id
+            };
+
+            // Clear input field immediately
             setMessage('');
 
-            if (selectedContact) {
-                const updatedContacts = contacts.map((contact) =>
-                    contact.id === selectedContact.id
-                        ? { ...contact, lastMessage: message, lastMessageTime: newMessage.timestamp }
-                        : contact
-                );
-                setContacts(updatedContacts);
-            }
+            // Use context's sendMessage
+            await contextSendMessage(messageData);
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message. Please try again.');
         }
     };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const filteredContacts = contacts.filter((contact) =>
-            contact.name.toLowerCase().includes(query.toLowerCase()) ||
-            contact.lastMessage.toLowerCase().includes(query.toLowerCase())
+        const filteredResidents = residents.filter((resident) =>
+            resident.name?.toLowerCase().includes(query.toLowerCase()) ||
+            resident.email?.toLowerCase().includes(query.toLowerCase())
         );
-        setContacts(filteredContacts);
+        setResidents(filteredResidents);
     };
 
-    const handleFileUpload = (event) => {
+    const handleFileUpload = async (event) => {
         const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const content = e.target?.result;
-                const newMessage = {
-                    id: messages.length + 1,
-                    sender: 'You',
-                    content,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    type: file.type.startsWith('image/') ? 'image' : 'video',
-                };
-                setMessages([...messages, newMessage]);
+        if (!file || !currentChatId) return;
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const uploadResponse = await chatApi.uploadMedia(formData);
+            
+            const messageData = {
+                chatId: currentChatId,
+                text: file.name,
+                senderId: loggedInUserId,
+                receiverId: selectedResident._id,
+                mediaUrl: uploadResponse.url
             };
-            reader.readAsDataURL(file);
+
+            socket.emit('sendMessage', messageData);
+
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert('Failed to upload file. Please try again.');
         }
     };
 
@@ -110,8 +198,11 @@ const Uchat = () => {
         setCallState({ isActive: false, type: null });
     };
 
-  
-
+    const formatLastSeen = (userId) => {
+        const lastSeen = getUserLastSeen(userId);
+        if (!lastSeen) return 'Offline';
+        return new Date(lastSeen).toLocaleString();
+    };
 
     return (
         <div className='flex h-screen bg-gray-50'>
@@ -125,7 +216,7 @@ const Uchat = () => {
                             <div className="relative">
                                 <input
                                     type="search"
-                                    placeholder="Search Here"
+                                    placeholder="Search Residents"
                                     className="w-full px-4 py-2 rounded-lg bg-gray-100 focus:outline-none"
                                     value={searchQuery}
                                     onChange={(e) => handleSearch(e.target.value)}
@@ -133,21 +224,41 @@ const Uchat = () => {
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto">
-                            {/* Chat List */}
-                            {contacts.map((contact) => (
+                            {/* Residents List */}
+                            {residents.map((resident) => (
                                 <div
-                                    key={contact.id}
-                                    className={`flex items-center gap-3 p-4 hover:bg-gray-50 cursor-pointer border-b ${selectedContact?.id === contact.id ? 'bg-gray-100' : ''}`}
-                                    onClick={() => setSelectedContact(contact)}
+                                    key={resident._id}
+                                    className={`flex items-center gap-3 p-4 hover:bg-gray-50 cursor-pointer border-b 
+                                        ${selectedResident?._id === resident._id ? 'bg-gray-100' : ''}`}
+                                    onClick={() => setSelectedResident(resident)}
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0" />
+                                    <div className="relative">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
+                                            {resident.photo ? (
+                                                <img 
+                                                    src={resident.photo} 
+                                                    alt={resident.name} 
+                                                    className="w-full h-full rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-500 font-semibold">
+                                                    {resident.name?.charAt(0)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                                            isUserOnline(resident._id) ? 'bg-green-500' : 'bg-gray-400'
+                                        }`}></div>
+                                    </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
-                                            <p className="font-medium truncate">{contact.name}</p>
-                                            <span className="text-xs text-gray-500">{contact.lastMessageTime}</span>
+                                            <p className="font-medium truncate">{resident.name}</p>
+                                            <span className="text-xs text-gray-500">
+                                                {isUserOnline(resident._id) ? 'Online' : `Last seen: ${formatLastSeen(resident._id)}`}
+                                            </span>
                                         </div>
                                         <p className="text-sm text-gray-500 truncate">
-                                            {contact.lastMessage}
+                                            {resident.lastMessage || resident.email}
                                         </p>
                                     </div>
                                 </div>
@@ -160,10 +271,35 @@ const Uchat = () => {
                         {/* Chat Header */}
                         <div className="flex items-center justify-between p-4 border-b">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gray-200" />
+                                <div className="relative">
+                                    <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                                        {selectedResident?.photo ? (
+                                            <img 
+                                                src={selectedResident.photo} 
+                                                alt={selectedResident.name} 
+                                                className="w-full h-full rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-500 font-semibold">
+                                                {selectedResident?.name?.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {selectedResident && (
+                                        <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                                            isUserOnline(selectedResident._id) ? 'bg-green-500' : 'bg-gray-400'
+                                        }`}></div>
+                                    )}
+                                </div>
                                 <div>
-                                    <h2 className="font-semibold">{selectedContact?.name || 'Select a contact'}</h2>
-                                    <p className="text-sm text-gray-500">{selectedContact ? 'Active Now' : 'No contact selected'}</p>
+                                    <h2 className="font-semibold">{selectedResident?.name || 'Select a resident'}</h2>
+                                    <p className="text-sm text-gray-500">
+                                        {selectedResident ? 
+                                            (isUserOnline(selectedResident._id) ? 
+                                                'Active Now' : 
+                                                `Last seen: ${formatLastSeen(selectedResident._id)}`) 
+                                            : 'No resident selected'}
+                                    </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -201,34 +337,58 @@ const Uchat = () => {
 
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                            {selectedContact && messages.map((msg) => (
-                                <div key={msg.id} className={`flex items-start gap-2.5 ${msg.sender === 'You' ? 'flex-row-reverse' : ''}`}>
-                                    <div className="w-8 h-8 rounded-full bg-gray-200" />
-                                    <div className={`flex flex-col gap-1 ${msg.sender === 'You' ? 'items-end' : ''}`}>
-                                        <div className="flex items-center gap-2">
-                                            {msg.sender !== 'You' && <span className="font-medium">{msg.sender}</span>}
-                                            <span className="text-sm text-gray-500">{msg.timestamp}</span>
-                                            {msg.sender === 'You' && <span className="font-medium">{msg.sender}</span>}
-                                        </div>
-                                        <div className={`${msg.sender === 'You' ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3 max-w-md`}>
-                                            {msg.type === 'text' && <p>{msg.content}</p>}
-                                            {msg.type === 'image' && (
-                                                <img
-                                                    src={msg.content}
-                                                    alt="Shared image"
-                                                    className="rounded-lg mb-2 w-full h-48 object-cover"
-                                                />
-                                            )}
-                                            {msg.type === 'video' && (
-                                                <video controls className="rounded-lg mb-2 w-full h-48 object-cover">
-                                                    <source src={msg.content} type="video/mp4" />
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            )}
+                            {contextMessages.map((msg) => {
+                                const isOwnMessage = msg.senderId === loggedInUserId;
+                                const senderName = isOwnMessage ? 'You' : 
+                                    (msg.sender?.fullName || selectedResident?.name || 'User');
+                                
+                                return (
+                                    <div 
+                                        key={msg.id} 
+                                        className={`flex items-start gap-2.5 ${
+                                            isOwnMessage ? 'justify-end' : 'justify-start'
+                                        }`}
+                                    >
+                                        {!isOwnMessage && (
+                                            <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
+                                                {msg.sender?.photo ? (
+                                                    <img 
+                                                        src={msg.sender.photo} 
+                                                        alt={senderName} 
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+                                                        {senderName.charAt(0)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                        
+                                        <div className={`flex flex-col gap-1 max-w-[70%] ${
+                                            isOwnMessage ? 'items-end' : 'items-start'
+                                        }`}>
+                                            <div className={`${
+                                                isOwnMessage 
+                                                    ? 'bg-blue-500 text-white' 
+                                                    : 'bg-gray-100'
+                                            } rounded-lg p-3`}>
+                                                <p>{msg.content}</p>
+                                            </div>
+                                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                                                <span>{msg.timestamp}</span>
+                                                {isOwnMessage && (
+                                                    <span>
+                                                        {msg.read ? '✓✓' : '✓'}
+                                                    </span>
+                                                )}
+                                                {msg.pending && <span>(sending...)</span>}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
+                            <div ref={messagesEndRef} />
                         </div>
 
                         {/* Message Input */}
@@ -317,7 +477,7 @@ const Uchat = () => {
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <div className="bg-white p-6 rounded-lg shadow-xl text-center">
                                 <h3 className="text-xl font-semibold mb-4">
-                                    {callState.type === 'audio' ? 'Audio Call' : 'Video Call'} with {selectedContact?.name}
+                                    {callState.type === 'audio' ? 'Audio Call' : 'Video Call'} with {selectedResident?.name}
                                 </h3>
                                 <p className="mb-4">Call duration: 00:00</p>
                                 <button
@@ -333,8 +493,7 @@ const Uchat = () => {
                 </div>
             </div>
         </div>
-
     )
 }
 
-export default Uchat
+export default Uchat;
