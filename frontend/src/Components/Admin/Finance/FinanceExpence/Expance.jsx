@@ -27,6 +27,8 @@ export default function ExpenseTracker() {
         amount: '',
         file: null
     });
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const expenseData = {
         title: 'Rent Or Mortgage',
@@ -142,6 +144,7 @@ export default function ExpenseTracker() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const formData = new FormData(); // Create a new FormData object
         formData.append('title', title);
         formData.append('description', description);
@@ -173,10 +176,14 @@ export default function ExpenseTracker() {
             setOpenModel(false);
         } catch (error) {
             console.error('Error submitting expense:', error);
+        } finally {
+            setIsSubmitting(false);
+            setOpenModel(false);
         }
     };
 
     const fetchExpenses = async () => {
+        setIsLoading(true);
         try {
             const response = await listExpenses()
             if (response.data) {
@@ -184,6 +191,8 @@ export default function ExpenseTracker() {
             }
         } catch (error) {
             console.error('Error fetching expenses:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -235,59 +244,68 @@ export default function ExpenseTracker() {
                                 </button>
                             </div>
                             <div className="border rounded-lg bg-white overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-[#EEF1FD]">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Title</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Description</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Date</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Amount</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Bill Format</th>
-                                            <th scope="col" className="px-12 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {expenses.map((expense, index) => (
-                                            <tr key={index} className="">
-                                                <td className="px-6 py-4 whitespace-nowrap">{expense.title}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap max-w-md truncate">{expense.description}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{expense.date.split('T')[0]}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">₹ {expense.amount}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2">
-                                                        <FileText className="w-4 h-4" />
-                                                        {expense.billImage ? (
-                                                            <>
-                                                                Bill Available: <span className="font-semibold">{expense.billImage.name}</span>
-                                                            </>
-                                                        ) : (
-                                                            'Bill Not Available'
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2">
-                                                        <button onClick={() => handleEditModel(expense)} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
-                                                            
-                                                            <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
-                                                        </button>
-                                                        <button onClick={() => handleViewModel(expense._id)} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+                                {isLoading ? (
+                                     <div className="flex items-center justify-center p-8">
+                                     <div className="text-center">
+                                       <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                                       
+                                     </div>
+                                   </div>
+                                ) : (
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead className="bg-[#EEF1FD]">
+                                            <tr>
+                                                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Title</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Description</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Date</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Amount</th>
+                                                <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Bill Format</th>
+                                                <th scope="col" className="px-12 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {expenses.map((expense, index) => (
+                                                <tr key={index} className="">
+                                                    <td className="px-6 py-4 whitespace-nowrap">{expense.title}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap max-w-md truncate">{expense.description}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">{expense.date.split('T')[0]}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">₹ {expense.amount}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2">
+                                                            <FileText className="w-4 h-4" />
+                                                            {expense.billImage ? (
+                                                                <>
+                                                                    Bill Available: <span className="font-semibold">{expense.billImage.name}</span>
+                                                                </>
+                                                            ) : (
+                                                                'Bill Not Available'
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2">
+                                                            <button onClick={() => handleEditModel(expense)} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
+                                                                
+                                                                <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                                                            </button>
+                                                            <button onClick={() => handleViewModel(expense._id)} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
+                                                            <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
 
-                                                        </button>
-                                                        <button onClick={() => {
-                                                            setOpenDeleteModel(true);
-                                                            setExpenseToDelete(expense._id); 
-                                                        }} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
+                                                            </button>
+                                                            <button onClick={() => {
+                                                                setOpenDeleteModel(true);
+                                                                setExpenseToDelete(expense._id); 
+                                                            }} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
                                                                                                                        <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
 
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
                             </div>
                            </div>
                         </main>
@@ -406,9 +424,17 @@ export default function ExpenseTracker() {
                                         </button>
                                         <button
                                             type="submit"
-                                            className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                            disabled={isSubmitting}
+                                            className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed"
                                         >
-                                            Save
+                                            {isSubmitting ? (
+                                                <div className="flex items-center justify-center">
+                                                    <div className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-solid border-white border-r-transparent align-[-0.125em] mr-2"></div>
+                                                    Saving...
+                                                </div>
+                                            ) : (
+                                                'Save'
+                                            )}
                                         </button>
                                     </div>
                                 </form>

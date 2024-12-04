@@ -21,6 +21,7 @@ function FinanceManagment() {
     const [penaltyAfterDays, setPenaltyAfterDays] = useState('4');
     const [tenants, setTenants] = useState([]);
     const [selectedTenant, setSelectedTenant] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const getTenants = async () => {
         try {
@@ -28,6 +29,8 @@ function FinanceManagment() {
             setTenants(response.data[0].residentStatuses);
         } catch (error) {
             console.error('Error fetching tenants data:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -124,83 +127,91 @@ function FinanceManagment() {
                             <h2 className="text-lg font-semibold">Maintenance Details</h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full table-auto">
-                                <thead className="bg-[#EEF1FD]">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Name</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Unit Number</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Date</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Phone Number</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Amount</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Penalty</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Payment</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {tenants.map((tenant, index) => (
-                                        <tr
-                                            key={index}
-                                            className={`text-sm ${index % 2 === 0 ? "bg-white" : "bg-white"} border-b border-gray-100`}
-                                        >
-                                            <td className="whitespace-nowrap px-4 py-3">
-                                                <div className="flex items-center gap-3">
-                                                    <img
-                                                        src={tenant.resident.profilePhoto}
-                                                        alt=""
-                                                        className="h-10 w-10 rounded-full object-cover"
-                                                    />
-                                                    <span className="font-medium  text-[16px]">{tenant.resident.fullName}</span>
-                                                </div>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3 font-medium text-[16px]">{tenant.resident.unitNumber} / {tenant.resident.wing}</td>
-                                            <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.resident.createdAt.split('T')[0]}</td>
-                                            <td className="whitespace-nowrap px-4 py-3">
-                                                <span
-                                                    className={`inline-flex rounded-full px-2 py-1  text-[16px] font-semibold ${tenant.type === "Tenant"
-                                                        ? "bg-[#FFF1F8] text-[#EC4899]"
-                                                        : "bg-[#F1F0FF] text-[#4F46E5]"
-                                                        }`}
-                                                >
-                                                    {tenant.resident.owner ? "Owner" : "Tenant"}
-                                                </span>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.resident.phoneNumber}</td>
-                                            <td className="whitespace-nowrap px-4 py-3">
-                                                <span className="text-green-600 text-[16px]">₹ {tenant.totalAmount}</span>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3 text-[16px]">
-                                                <span className={tenant.penalty !== "--" ? "text-white bg-[#E74C3C] px-3 py-1 rounded-full" : "text-gray-500"}>
-                                                    {tenant.penaltyAmount}
-                                                </span>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3">
-                                                <span className={`inline-flex rounded-full text-[16px] px-2 py-1 text-sm font-semibold ${tenant.hasPaid ? "bg-[#EBF5EC] text-[#39973D]" : "bg-[#FFC3131A] text-[#FFC313]"}`}>
-                                                    {tenant.hasPaid ? "Done" : "Pending"}
-                                                </span>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3">
-                                                <span
-                                                    className={`inline-flex rounded-full text-[16px] px-2  text-sm py-1 font-semibold ${tenant.payment === "Online"
-                                                        ? "bg-[#EEF1FD] text-[#5678E9]"
-                                                        : "bg-[#F4F4F4] text-black"
-                                                        }`}
-                                                >
-                                                    {tenant.paymentMethod}
-                                                </span>
-                                            </td>
-                                            <td className="whitespace-nowrap px-4 py-3">
-                                                <button onClick={() => handleViewDetails(tenant)} className="rounded-full p-1 hover:bg-gray-100">
-                                                    <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
-                                                </button>
-                                            </td>
+                            {loading ? (
+                                <div className="flex items-center justify-center p-8">
+                                <div className="text-center">
+                                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                                  
+                                </div>
+                              </div>
+                            ) : (
+                                <table className="min-w-full table-auto">
+                                    <thead className="bg-[#EEF1FD]">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Name</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Unit Number</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Date</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Phone Number</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Amount</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Penalty</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Payment</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Action</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-
+                                    </thead>
+                                    <tbody>
+                                        {tenants.map((tenant, index) => (
+                                            <tr
+                                                key={index}
+                                                className={`text-sm ${index % 2 === 0 ? "bg-white" : "bg-white"} border-b border-gray-100`}
+                                            >
+                                                <td className="whitespace-nowrap px-4 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <img
+                                                            src={tenant.resident.profilePhoto}
+                                                            alt=""
+                                                            className="h-10 w-10 rounded-full object-cover"
+                                                        />
+                                                        <span className="font-medium  text-[16px]">{tenant.resident.fullName}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3 font-medium text-[16px]">{tenant.resident.unitNumber} / {tenant.resident.wing}</td>
+                                                <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.resident.createdAt.split('T')[0]}</td>
+                                                <td className="whitespace-nowrap px-4 py-3">
+                                                    <span
+                                                        className={`inline-flex rounded-full px-2 py-1  text-[16px] font-semibold ${tenant.type === "Tenant"
+                                                            ? "bg-[#FFF1F8] text-[#EC4899]"
+                                                            : "bg-[#F1F0FF] text-[#4F46E5]"
+                                                            }`}
+                                                    >
+                                                        {tenant.resident.owner ? "Owner" : "Tenant"}
+                                                    </span>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.resident.phoneNumber}</td>
+                                                <td className="whitespace-nowrap px-4 py-3">
+                                                    <span className="text-green-600 text-[16px]">₹ {tenant.totalAmount}</span>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3 text-[16px]">
+                                                    <span className={tenant.penalty !== "--" ? "text-white bg-[#E74C3C] px-3 py-1 rounded-full" : "text-gray-500"}>
+                                                        {tenant.penaltyAmount}
+                                                    </span>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3">
+                                                    <span className={`inline-flex rounded-full text-[16px] px-2 py-1 text-sm font-semibold ${tenant.hasPaid ? "bg-[#EBF5EC] text-[#39973D]" : "bg-[#FFC3131A] text-[#FFC313]"}`}>
+                                                        {tenant.hasPaid ? "Done" : "Pending"}
+                                                    </span>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3">
+                                                    <span
+                                                        className={`inline-flex rounded-full text-[16px] px-2  text-sm py-1 font-semibold ${tenant.payment === "Online"
+                                                            ? "bg-[#EEF1FD] text-[#5678E9]"
+                                                            : "bg-[#F4F4F4] text-black"
+                                                            }`}
+                                                    >
+                                                        {tenant.paymentMethod}
+                                                    </span>
+                                                </td>
+                                                <td className="whitespace-nowrap px-4 py-3">
+                                                    <button onClick={() => handleViewDetails(tenant)} className="rounded-full p-1 hover:bg-gray-100">
+                                                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
                     </div>
                 </div>

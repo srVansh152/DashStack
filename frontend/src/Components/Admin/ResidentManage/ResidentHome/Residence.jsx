@@ -205,7 +205,12 @@ function Residence() {
               </div>
               <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 {loading ? (
-                  <div className="p-4 text-center text-gray-600">Loading residents...</div>
+                   <div className="flex items-center justify-center p-8">
+                   <div className="text-center">
+                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+             
+                   </div>
+                 </div>
                 ) : error ? (
                   <div className="p-4 text-center text-red-600">{error}</div>
                 ) : (

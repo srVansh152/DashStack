@@ -20,13 +20,17 @@ function OtherIncome() {
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null); // Track open dropdown for each card
   const [festivals, setFestivals] = useState([]); // Initialize state for festivals
   const [selectedFestivalId, setSelectedFestivalId] = useState(null); // New state for selected festival ID
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   const fetchFestivals = async () => {
     try {
+      setIsLoading(true); // Set loading to true before fetch
       const response = await getOtherIncomes()
       setFestivals(response.data); // Set the fetched data to state
     } catch (error) {
       console.error('Error fetching festivals:', error);
+    } finally {
+      setIsLoading(false); // Set loading to false after fetch (success or error)
     }
   };
 
@@ -169,70 +173,77 @@ function OtherIncome() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {festivals.map((festival, index) => (
-              <div
-                key={index}
-                className="min-w-[300px] bg-white rounded-lg shadow snap-start"
-              >
-                <div className="flex justify-between items-center bg-[#5678E9] text-white p-4 rounded-t-lg">
-                  <h2 className="text-lg font-medium">{festival.title}</h2>
+          {isLoading ? (
+           <div className="flex  items-center justify-center py-8">
+           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#FE512E]"></div>
+           <span className="ml-3 text-gray-500">Loading...</span>
+         </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {festivals.map((festival, index) => (
+                <div
+                  key={index}
+                  className="min-w-[300px] bg-white rounded-lg shadow snap-start"
+                >
+                  <div className="flex justify-between items-center bg-[#5678E9] text-white p-4 rounded-t-lg">
+                    <h2 className="text-lg font-medium">{festival.title}</h2>
 
-                  {/* Options button to toggle dropdown */}
-                  <div className="relative">
-                    <button
-                      className="text-black bg-white hover:bg-white hover:text-black rounded p-1"
-                      onClick={() => toggleDropdown(index)}
-                    >
-                      <EllipsisVertical />
-                    </button>
+                    {/* Options button to toggle dropdown */}
+                    <div className="relative">
+                      <button
+                        className="text-black bg-white hover:bg-white hover:text-black rounded p-1"
+                        onClick={() => toggleDropdown(index)}
+                      >
+                        <EllipsisVertical />
+                      </button>
 
-                    {/* Dropdown menu */}
-                    {openDropdownIndex === index && (
-                      <div className="absolute right-0 px-2 mt-2 bg-white text-black rounded shadow-md">
-                        <ul>
-                          <li onClick={() => handleEditIncome(festival)} className="p-2 hover:bg-gray-200 cursor-pointer">Edit</li>
-                          <Link to={`/admin/memberlist/${festival._id}`}>
-                            <li className="p-2 hover:bg-gray-200 cursor-pointer">
-                              View
-                            </li>
-                          </Link>
-                          <li onClick={() => handleDeleteIncome(festival._id)} className="p-2 hover:bg-gray-200 cursor-pointer">Delete</li>
-                        </ul>
-                      </div>
-                    )}
+                      {/* Dropdown menu */}
+                      {openDropdownIndex === index && (
+                        <div className="absolute right-0 px-2 mt-2 bg-white text-black rounded shadow-md">
+                          <ul>
+                            <li onClick={() => handleEditIncome(festival)} className="p-2 hover:bg-gray-200 cursor-pointer">Edit</li>
+                            <Link to={`/admin/memberlist/${festival._id}`}>
+                              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+                                View
+                              </li>
+                            </Link>
+                            <li onClick={() => handleDeleteIncome(festival._id)} className="p-2 hover:bg-gray-200 cursor-pointer">Delete</li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="p-4 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Amount Per Member</span>
+                      <span className="text-gray-900">₹{festival.amount}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Total Member</span>
+                      <span className="text-gray-900">{festival.totalMembers}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Date</span>
+                      <span className="text-gray-900">{festival.date.split('T')[0]}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Due Date</span>
+                      <span className="text-gray-900">{festival.dueDate.split('T')[0]}</span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-gray-600">Description</span>
+                      <p className="text-gray-900 text-sm">{festival.description}</p>
+                    </div>
                   </div>
                 </div>
-
-                <div className="p-4 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Amount Per Member</span>
-                    <span className="text-gray-900">₹{festival.amount}</span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Member</span>
-                    <span className="text-gray-900">{festival.totalMembers}</span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Date</span>
-                    <span className="text-gray-900">{festival.date.split('T')[0]}</span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Due Date</span>
-                    <span className="text-gray-900">{festival.dueDate.split('T')[0]}</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-gray-600">Description</span>
-                    <p className="text-gray-900 text-sm">{festival.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
