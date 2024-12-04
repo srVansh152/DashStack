@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint, getFinancialIncomes } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
 import { IoMdAddCircle } from "react-icons/io";
 
@@ -13,7 +13,6 @@ const DashboardLayout = () => {
     const [openModel, setOpenModel] = useState(false);
     const [openEditImpModel, setOpenEditImpModal] = useState(false);
     const [openImpDeleteModel, setOpenImpDeleteModel] = useState(false);
-
     const [openEditModel, setOpenEditModal] = useState(false);
     const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [openViewModel, setOpenViewModel] = useState(false);
@@ -36,6 +35,7 @@ const DashboardLayout = () => {
     const [urgency, setUrgency] = useState("medium");
     const [currentStatus, setCurrentStatus] = useState("open");
     const [timeframe, setTimeframe] = useState('Month');
+    const [pendingMaintenances, setPendingMaintenances] = useState([]); // State for pending maintenances
 
 
 
@@ -56,12 +56,28 @@ const DashboardLayout = () => {
     useEffect(() => {
         fetchComplaints();
         fetchFacilities();
-        loadImportantNumbers()
+        loadImportantNumbers();
+        fetchPendingMaintenancesData(); // Call the new function
     }, []);
 
+    // New function to fetch pending maintenance data
+    const fetchPendingMaintenancesData = async () => {
+        try {
+            const response = await getFinancialIncomes(); // Fetch financial incomes
 
-
-
+            if (response.success) {
+                // Filter the data to get only those with hasPaid set to false
+                const pendingData = response.data[0].residentStatuses.filter(income => !income.hasPaid);
+                console.log(pendingData);
+                setPendingMaintenances(pendingData); // Update state with filtered data
+                // setPendingMaintenances(response.data[0].residentStatuses);
+            } else {
+                throw new Error("Failed to fetch pending maintenances");
+            }
+        } catch (error) {
+            console.error("Error fetching pending maintenances:", error);
+        }
+    };
 
     const fetchFacilities = async () => {
         try {
@@ -179,13 +195,7 @@ const DashboardLayout = () => {
     ];
 
 
-    const maintenanceData = [
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-2.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-3.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-4.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-5.png" }
-    ];
+
 
     const getPriorityStyles = (priority) => {
         switch (priority.toLowerCase()) {
@@ -504,17 +514,21 @@ const DashboardLayout = () => {
                                         <h2 className="text-lg sm:text-xl font-semibold">Pending Maintenances</h2>
                                         <a href="#" className="text-blue-500 hover:underline">View all</a>
                                     </div>
-                                    <div className="grid gap-4 overflow-y-auto h-48 sm:h-72">
-                                        {maintenanceData.map((item, index) => (
-                                            <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border">
-                                                <div className="flex items-center gap-4">
-                                                    <img src={item.img} />
+                                    <div className="grid gap-4 overflow-y-auto ">
+                                        {pendingMaintenances.map((item, index) => (
+                                            <div key={index} className="flex border-b border-gray-200 justify-between items-center p-4 bg-white rounded-lg border">
+                                                <div className="flex gap-4">
+                                                        {item.resident.profilePhoto ? (
+                                                            <img src={item.resident.profilePhoto} className="h-10 w-10 rounded-full object-cover border" />
+                                                        ) : (
+                                                            <img src="/path/to/default-logo.png" alt="Not Found" className="h-10 w-10 rounded-full border" />
+                                                        )}
                                                     <div>
-                                                        <p className="font-medium">{item.name}</p>
-                                                        <p className="text-sm text-gray-500">{item.status}</p>
+                                                        <p className="font-medium">{item.resident.fullName}</p>
+                                                        <p className="text-sm text-gray-500">{"Pending"}</p>
                                                     </div>
                                                 </div>
-                                                <p className="font-medium text-red-500">{item.amount}</p>
+                                                <p className="font-medium text-red-500">{item.totalAmount}</p>
                                             </div>
                                         ))}
                                     </div>
