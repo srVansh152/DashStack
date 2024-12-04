@@ -1,126 +1,71 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, DollarSign, EyeOff, Package, Users, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, UserCircle as UserCircleIcon } from 'lucide-react';
+import { Calendar, EyeOff, Eye, ChevronDown, UserCircle as UserCircleIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link, NavLink } from 'react-router-dom';
 import Aside from '../../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../../Common/Navbar/Navbar';
-
-
-
-
+import axios from 'axios';
+import { createFinancialIncome, getFinancialIncomes } from '../../../../../utils/api';
 
 function FinanceManagment() {
 
     const [openModel, setOpenModel] = useState(false);
     const [openViewModel, setOpenViewModel] = useState(false);
     const [showPassword, setShowPassword] = useState(false)
-    const tenants = [
-        {
-            name: "Cody Fisher",
-            unitNumber: "A 1001",
-            date: "10/02/2024",
-            type: "Tenant",
-            phoneNumber: "92524 34522",
-            amount: "1000",
-            penalty: "--",
-            status: "Pending",
-            payment: "Online",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Esther Howard",
-            unitNumber: "B 1002",
-            date: "11/02/2024",
-            type: "Owner",
-            phoneNumber: "92524 12355",
-            amount: "1000",
-            penalty: "250",
-            status: "Done",
-            payment: "Cash",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Jenny Wilson",
-            unitNumber: "C 1003",
-            date: "12/02/2024",
-            type: "Tenant",
-            phoneNumber: "92589 34522",
-            amount: "1000",
-            penalty: "--",
-            status: "Pending",
-            payment: "Online",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Robert Fox",
-            unitNumber: "D 1004",
-            date: "13/02/2024",
-            type: "Owner",
-            phoneNumber: "92524 12369",
-            amount: "1000",
-            penalty: "--",
-            status: "Done",
-            payment: "Cash",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Jacob Jones",
-            unitNumber: "E 2001",
-            date: "14/02/2024",
-            type: "Tenant",
-            phoneNumber: "92333 34522",
-            amount: "1000",
-            penalty: "250",
-            status: "Pending",
-            payment: "Online",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Albert Flores",
-            unitNumber: "F 2002",
-            date: "15/02/2024",
-            type: "Owner",
-            phoneNumber: "92524 34522",
-            amount: "1000",
-            penalty: "--",
-            status: "Done",
-            payment: "Cash",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Annette Black",
-            unitNumber: "G 2003",
-            date: "16/02/2024",
-            type: "Tenant",
-            phoneNumber: "92258 34522",
-            amount: "1000",
-            penalty: "250",
-            status: "Pending",
-            payment: "Online",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-        {
-            name: "Jerome Bell",
-            unitNumber: "H 2004",
-            date: "17/02/2024",
-            type: "Owner",
-            phoneNumber: "92589 34522",
-            amount: "1000",
-            penalty: "--",
-            status: "Done",
-            payment: "Cash",
-            image: "/placeholder.svg?height=40&width=40",
-        },
-    ]
+    const [openAddModel, setOpenAddModel] = useState(false);
+    const currentYear = new Date().getFullYear();
+    const maintenanceDueDate = `${currentYear + 1}-03-13`;
+    const [amount, setAmount] = useState('');
+    const [penaltyAmount, setPenaltyAmount] = useState('');
+    const [dueDate, setDueDate] = useState(maintenanceDueDate);
+    const [penaltyAfterDays, setPenaltyAfterDays] = useState('4');
+    const [tenants, setTenants] = useState([]);
+    const [selectedTenant, setSelectedTenant] = useState(null);
+
+    const getTenants = async () => {
+        try {
+            const response = await getFinancialIncomes();
+            console.log(response.data[0].residentStatuses);
+            setTenants(response.data[0].residentStatuses);
+        } catch (error) {
+            console.error('Error fetching tenants data:', error);
+        }
+    };
+
+    useEffect(() => {
+        getTenants();
+    }, []);
 
     const handleAddDetails = () => {
         setOpenModel(true);
     };
-    const handleViewDetails = () => {
+
+    const handleAdd = () => {
+        setOpenModel(false);
+        setOpenAddModel(true);
+    }
+
+    const handleViewDetails = (tenant) => {
+        setSelectedTenant(tenant);
         setOpenViewModel(true);
     };
 
-
+    const handleSaveDetails = async () => {
+        try {
+            const details = {
+                dueDate: dueDate,
+                amount: amount,
+                penalty: penaltyAmount,
+                penaltyAppliedAfter: penaltyAfterDays
+            };
+            console.log(details);
+            const response = await createFinancialIncome(details);
+            console.log('Data saved successfully:', response.success);
+            setOpenAddModel(false);
+        } catch (error) {
+            console.error('Error saving data:', error);
+        }
+    };
 
     return (
         <div>
@@ -180,99 +125,82 @@ function FinanceManagment() {
                             <h2 className="text-lg font-semibold">Maintenance Details</h2>
                         </div>
                         <div className="overflow-x-auto">
-                        <table className="min-w-full table-auto">
-  <thead className="bg-gray-50">
-    <tr>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unit Number</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone Number</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Penalty</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {tenants.map((tenant, index) => (
-      <tr
-        key={index}
-        className={`text-sm ${index % 2 === 0 ? "bg-gray-50" : "bg-white"} border-b border-gray-100`}
-      >
-        <td className="whitespace-nowrap px-4 py-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={tenant.image}
-              alt=""
-              className="h-10 w-10 rounded-full object-cover"
-            />
-            <span className="font-medium  text-[16px]">{tenant.name}</span>
-          </div>
-        </td>
-        <td className="whitespace-nowrap px-4 py-3 font-medium text-[16px]">{tenant.unitNumber}</td>
-        <td className="whitespace-nowrap px-4 py-3 text-gray-500 text-[16px]">{tenant.date}</td>
-        <td className="whitespace-nowrap px-4 py-3">
-          <span
-            className={`inline-flex rounded-full px-2 text-xs text-[16px] font-semibold ${tenant.type === "Tenant"
-              ? "bg-pink-50 text-pink-700"
-              : "bg-purple-50 text-purple-700"
-            }`}
-          >
-            {tenant.type}
-          </span>
-        </td>
-        <td className="whitespace-nowrap px-4 py-3 text-gray-500 text-[16px]">{tenant.phoneNumber}</td>
-        <td className="whitespace-nowrap px-4 py-3">
-          <span className="text-green-600 text-[16px]">₹ {tenant.amount}</span>
-        </td>
-        <td className="whitespace-nowrap px-4 py-3 text-[16px]">
-          <span className={tenant.penalty !== "--" ? "text-red-500" : "text-gray-500"}>
-            {tenant.penalty}
-          </span>
-        </td>
-        <td className="whitespace-nowrap px-4 py-3">
-          <span
-            className={`inline-flex rounded-full text-[16px] px-2 text-xs font-semibold ${tenant.status === "Pending"
-              ? "bg-yellow-50 text-yellow-700"
-              : "bg-green-50 text-green-700"
-            }`}
-          >
-            {tenant.status}
-          </span>
-        </td>
-        <td className="whitespace-nowrap px-4 py-3">
-          <span
-            className={`inline-flex rounded-full text-[16px] px-2 text-xs font-semibold ${tenant.payment === "Online"
-              ? "bg-blue-50 text-blue-700"
-              : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {tenant.payment}
-          </span>
-        </td>
-        <td className="whitespace-nowrap px-4 py-3">
-          <button onClick={handleViewDetails} className="rounded-full p-1 hover:bg-gray-100">
-            <svg
-              className="h-6 w-6 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-              />
-            </svg>
-          </button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+                            <table className="min-w-full table-auto">
+                                <thead className="bg-[#EEF1FD]">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Name</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Unit Number</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Date</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Phone Number</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Amount</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Penalty</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Status</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Payment</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-black uppercase">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tenants.map((tenant, index) => (
+                                        <tr
+                                            key={index}
+                                            className={`text-sm ${index % 2 === 0 ? "bg-white" : "bg-white"} border-b border-gray-100`}
+                                        >
+                                            <td className="whitespace-nowrap px-4 py-3">
+                                                <div className="flex items-center gap-3">
+                                                    <img
+                                                        src={tenant.resident.profilePhoto}
+                                                        alt=""
+                                                        className="h-10 w-10 rounded-full object-cover"
+                                                    />
+                                                    <span className="font-medium  text-[16px]">{tenant.resident.fullName}</span>
+                                                </div>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3 font-medium text-[16px]">{tenant.resident.unitNumber} / {tenant.resident.wing}</td>
+                                            <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.resident.createdAt.split('T')[0]}</td>
+                                            <td className="whitespace-nowrap px-4 py-3">
+                                                <span
+                                                    className={`inline-flex rounded-full px-2 py-1  text-[16px] font-semibold ${tenant.type === "Tenant"
+                                                        ? "bg-[#FFF1F8] text-[#EC4899]"
+                                                        : "bg-[#F1F0FF] text-[#4F46E5]"
+                                                        }`}
+                                                >
+                                                    {tenant.resident.owner ? "Owner" : "Tenant"}
+                                                </span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3 text-black text-[16px]">{tenant.resident.phoneNumber}</td>
+                                            <td className="whitespace-nowrap px-4 py-3">
+                                                <span className="text-green-600 text-[16px]">₹ {tenant.totalAmount}</span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3 text-[16px]">
+                                                <span className={tenant.penalty !== "--" ? "text-white bg-[#E74C3C] px-3 py-1 rounded-full" : "text-gray-500"}>
+                                                    {tenant.penaltyAmount}
+                                                </span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3">
+                                                <span className={`inline-flex rounded-full text-[16px] px-2 py-1 text-sm font-semibold ${tenant.hasPaid ? "bg-[#EBF5EC] text-[#39973D]" : "bg-[#FFC3131A] text-[#FFC313]"}`}>
+                                                    {tenant.hasPaid ? "Done" : "Pending"}
+                                                </span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3">
+                                                <span
+                                                    className={`inline-flex rounded-full text-[16px] px-2  text-sm py-1 font-semibold ${tenant.payment === "Online"
+                                                        ? "bg-[#EEF1FD] text-[#5678E9]"
+                                                        : "bg-[#F4F4F4] text-black"
+                                                        }`}
+                                                >
+                                                    {tenant.paymentMethod}
+                                                </span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-4 py-3">
+                                                <button onClick={() => handleViewDetails(tenant)} className="rounded-full p-1 hover:bg-gray-100">
+                                                    <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
 
                         </div>
                     </div>
@@ -307,18 +235,18 @@ function FinanceManagment() {
                                     <button onClick={() => setOpenModel(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                                         Cancel
                                     </button>
-                                    <Link to='/addmain'>
-                                        <button className="flex-1 px-4 py-3 rounded-xl bg-orange-500 text-white font-medium  hover:bg-orange-600 transition-colors duration-200">
-                                            Continue
-                                        </button>
-                                    </Link>
+
+                                    <button onClick={handleAdd} className="flex-1 px-4 py-3 rounded-xl bg-orange-500 text-white font-medium  hover:bg-orange-600 transition-colors duration-200">
+                                        Continue
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 )}
-                {openViewModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                {openViewModel && selectedTenant && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
                         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
                             <div className="p-6">
                                 {/* Header */}
@@ -336,14 +264,14 @@ function FinanceManagment() {
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-12 h-12 rounded-full overflow-hidden">
                                         <img
-                                            src="/placeholder.svg?height=48&width=48"
+                                            src={selectedTenant.resident.profilePhoto}
                                             alt="Profile"
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
                                     <div>
-                                        <div className="font-medium text-gray-900 text-[16px]">Cody Fisher</div>
-                                        <div className="text-sm text-gray-500 text-[16px]">Feb 10, 2024</div>
+                                        <div className="font-medium text-gray-900 text-[16px]">{selectedTenant.resident.fullName}</div>
+                                        <div className="text-sm text-gray-500 text-[16px]">{selectedTenant.resident.createdAt.split('T')[0]}</div>
                                     </div>
                                 </div>
 
@@ -351,31 +279,31 @@ function FinanceManagment() {
                                 <div className="grid grid-cols-3 gap-4 mb-4">
                                     <div>
                                         <div className="text-sm text-gray-500 mb-1 text-[16px]">Wing</div>
-                                        <div className="text-sm font-medium text-blue-600 text-[16px]">A</div>
+                                        <div className="text-sm font-medium text-blue-600 text-[16px]">{selectedTenant.resident.wing}</div>
                                     </div>
                                     <div>
                                         <div className="text-sm text-gray-500 mb-1 text-[16px]">Unit</div>
-                                        <div className="text-sm font-medium text-[16px]">1001</div>
+                                        <div className="text-sm font-medium text-[16px]">{selectedTenant.resident.unitNumber}</div>
                                     </div>
                                     <div>
                                         <div className="text-sm text-gray-500 mb-1 text-[16px]">Status</div>
                                         <div className="inline-flex text-[16px] items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                            Owner
+                                            {selectedTenant.resident.owner ? "Owner" : "Tenant"}
                                         </div>
                                     </div>
                                     <div>
                                         <div className="text-sm text-gray-500 mb-1 text-[16px]">Amount</div>
-                                        <div className="text-sm font-medium text-green-600 text-[16px]">₹1000</div>
+                                        <div className="text-sm font-medium text-green-600 text-[16px]">₹{selectedTenant.totalAmount}</div>
                                     </div>
                                     <div>
                                         <div className="text-sm text-gray-500 mb-1 text-[16px]">Penalty</div>
-                                        <div className="text-sm font-medium text-[16px]">--</div>
+                                        <div className="text-sm font-medium text-[16px]">{selectedTenant.penaltyAmount}</div>
                                     </div>
                                     <div>
                                         <div className="text-sm text-gray-500 mb-1">Status</div>
                                         <div className="inline-flex items-center gap-1 text-[16px] text-sm font-medium text-yellow-600">
                                             <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 text-[16px]" />
-                                            Pending
+                                            {selectedTenant.hasPaid ? "Done" : "Pending"}
                                         </div>
                                     </div>
                                     <div>
@@ -395,8 +323,95 @@ function FinanceManagment() {
                                                     d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
                                                 />
                                             </svg>
-                                            Cash
+                                            {selectedTenant.paymentMethod}
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {openAddModel && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                            <div className="p-5">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Add Maintenance Detail</h2>
+
+                                <div className="space-y-4">
+                                    <div className="flex gap-4">
+                                        <div className="flex-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Maintenance Amount
+                                            </label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+                                                <input
+                                                    type="text"
+                                                    value={amount}
+                                                    onChange={(e) => setAmount(e.target.value)}
+                                                    className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1">
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Penalty Amount
+                                            </label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+                                                <input
+                                                    type="text"
+                                                    value={penaltyAmount}
+                                                    onChange={(e) => setPenaltyAmount(e.target.value)}
+                                                    className="w-full pl-7 pr-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Maintenance Due Date
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                value={dueDate}
+                                                onChange={(e) => setDueDate(e.target.value)}
+                                                className="w-full pr-10 pl-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                            />
+                                            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Penalty Applied After Day Selection
+                                        </label>
+                                        <div className="relative">
+                                            <select
+                                                value={penaltyAfterDays}
+                                                onChange={(e) => setPenaltyAfterDays(e.target.value)}
+                                                className="w-full appearance-none px-3 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                            >
+                                                <option value="4">4 Days</option>
+                                                <option value="5">5 Days</option>
+                                                <option value="6">6 Days</option>
+                                                <option value="7">7 Days</option>
+                                            </select>
+                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-4">
+                                        <button onClick={() => setOpenAddModel(false)} className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                                            Cancel
+                                        </button>
+
+                                        <button onClick={handleSaveDetails} className="flex-1 px-4 py-3 rounded-xl bg-orange-500 text-white font-medium hover:opacity-90 transition-opacity">
+                                            Apply
+                                        </button>
                                     </div>
                                 </div>
                             </div>

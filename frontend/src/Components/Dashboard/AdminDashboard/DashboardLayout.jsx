@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber,  getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
+import { IoMdAddCircle } from "react-icons/io";
+
 
 
 const DashboardLayout = () => {
@@ -178,21 +180,21 @@ const DashboardLayout = () => {
 
 
     const maintenanceData = [
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000" }
+        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger.png" },
+        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-2.png" },
+        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-3.png" },
+        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-4.png" },
+        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-5.png" }
     ];
 
     const getPriorityStyles = (priority) => {
         switch (priority.toLowerCase()) {
             case 'high':
-                return 'bg-red-500 text-white'
+                return 'bg-[#E74C3C] text-white'
             case 'medium':
-                return 'bg-blue-500 text-white'
+                return 'bg-[#5678E9] text-white'
             case 'low':
-                return 'bg-green-500 text-white'
+                return 'bg-[#39973D] text-white'
             default:
                 return 'bg-gray-500 text-white'
         }
@@ -201,11 +203,11 @@ const DashboardLayout = () => {
     const getStatusStyles = (status) => {
         switch (status.toLowerCase()) {
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800'
+                return 'bg-[#FFC3131A] text-[#FFC313]'
             case 'open':
-                return 'bg-blue-100 text-blue-800'
+                return 'bg-[#5678E91A] text-[#5678E9]'
             case 'solve':
-                return 'bg-green-100 text-green-800'
+                return 'bg-[#39973D1A] text-[#39973D]'
             default:
                 return 'bg-gray-100 text-gray-800'
         }
@@ -330,7 +332,7 @@ const DashboardLayout = () => {
 
     return (<>
         <Aside />
-        <div className="main">
+        <div className="main bg-[#F0F5FB]">
             <div className="flex h-screen bg-gray-50">
 
                 <div className="flex-1 overflow-auto">
@@ -338,50 +340,80 @@ const DashboardLayout = () => {
                     <main className="p-4 sm:p-6">
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
-  {/* Card 1 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-orange-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Balance</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
-      <span className="text-orange-500 text-2xl">≡</span>
-    </div>
-  </div>
+                            {/* Card 1 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+                                <div
+                                    className="absolute top-5 left-0 h-[52px] w-2 bg-[#FFB480] rounded-r-md"
+                                />
+                                <div className="ms-3">
+                                    <p className="text-sm font-medium text-gray-500">Total Balance</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
+                                    <img
+                                        src="/public/image/Dashborad/balance.png"
+                                        alt="Balance Icon"
+                                        className="text-orange-500 text-2xl"
+                                    />
+                                </div>
+                            </div>
 
-  {/* Card 2 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-green-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Income</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 55,000</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
-      <span className="text-green-500 text-2xl">💲</span>
-    </div>
-  </div>
 
-  {/* Card 3 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-blue-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Expense</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
-      <span className="text-blue-500 text-2xl">💸</span>
-    </div>
-  </div>
+                            {/* Card 2 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md ">
+                                <div
+                                    className="absolute top-5 left-0 h-[52px] w-2 bg-[#9CCB9E] rounded-r-md"
+                                />
 
-  {/* Card 4 */}
-  <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border-l-4 border-pink-500">
-    <div>
-      <p className="text-sm font-medium text-gray-500">Total Unit</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
-    </div>
-    <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
-      <span className="text-pink-500 text-2xl">🏢</span>
-    </div>
-  </div>
-</div>
+                                <div className="ms-3">
+                                    <p className="text-sm font-medium text-gray-500">Total Income</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 55,000</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                                    <span className="text-green-500 text-2xl">
+                                        <img src="/public/image/Dashborad/money.png" alt="" srcset="" />
+
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Card 3 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+
+                                <div
+                                    className="absolute top-5 left-0 h-[52px] w-2 bg-[#C3CFF9] rounded-r-md"
+                                />
+                                <div className="ms-3">
+                                    <p className="text-sm font-medium text-gray-500">Total Expense</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                                    <span className="text-blue-500 text-2xl">
+                                        <img src="/public/image/Dashborad/money-send.png" alt="" srcset="" />
+
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Card 4 */}
+                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+
+                                <div
+                                    className="absolute top-5 left-0 h-[52px] w-2 bg-[#F59BE1] rounded-r-md"
+                                />
+
+                                <div className="ms-3">
+                                    <p className="text-sm font-medium text-gray-500">Total Unit</p>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
+                                </div>
+                                <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
+                                    <span className="text-pink-500 text-2xl">
+                                        <img src="/public/image/Dashborad/building-4.png" alt="" srcset="" />
+
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
 
                         {/* Main Content Section */}
@@ -423,46 +455,48 @@ const DashboardLayout = () => {
                                     </div>
                                 </div>
 
-                                    {/* Important Numbers Section */}
-                                    <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                                        <div className="flex justify-between items-center mb-4 sm:mb-6">
-                                            <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
-                                            <button onClick={() => {
-                                                handleAddDetails();
-                                            }} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
-                                                Add
-                                            </button>
-                                        </div>
-                                        <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
-                                            {importantNumbers.length === 0 ? (
-                                                <div className="p-4 bg-white rounded-lg border text-center">
-                                                    <p className="text-sm text-gray-500">Loading...</p>
-                                                </div>
-                                            ) : (
-                                                importantNumbers.map((number, i) => (
-                                                    <div key={i} className="p-4 bg-white rounded-lg border">
-                                                        <div className="flex justify-between items-start">
-                                                            <div className="space-y-2">
-                                                                <p className="text-sm text-gray-500">Name: <span className="text-gray-700">{number.name}</span></p>
-                                                                <p className="text-sm text-gray-500">Ph Number: <span className="text-gray-700">{number.phoneNumber}</span></p>
-                                                                <p className="text-sm text-gray-500">Work: <span className="text-gray-700">{number.work}</span></p>
-                                                            </div>
-                                                            <div className="flex gap-2">
-                                                                <button onClick={() => {
-                                                                    openDeleteModal(number._id)
-                                                                }} className="p-1 text-red-500 hover:bg-red-50 rounded">
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                                <button onClick={() => handleEditDetails(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
-                                                                    <CheckCircle size={16} />
-                                                                </button>
-                                                            </div>
+                                {/* Important Numbers Section */}
+                                <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                                    <div className="flex justify-between items-center mb-4 sm:mb-6">
+                                        <h2 className="text-lg sm:text-xl font-semibold">Important Numbers</h2>
+
+                                        <button onClick={() => {
+                                            handleAddDetails();
+                                        }} className="px-4 flex  py-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] text-white rounded-md hover:bg-orange-600">
+                                            <IoMdAddCircle className='mt-[2px]  me-2 text-[20px]  rounded' />
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
+                                        {importantNumbers.length === 0 ? (
+                                            <div className="p-4 bg-white rounded-lg border text-center">
+                                                <p className="text-sm text-gray-500">Loading...</p>
+                                            </div>
+                                        ) : (
+                                            importantNumbers.map((number, i) => (
+                                                <div key={i} className="p-4 bg-white rounded-lg border">
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="space-y-2">
+                                                            <p className="text-md text-black">Name : <span className="text-[#A7A7A7] text-md">{number.name}</span></p>
+                                                            <p className="text-md text-black">Ph Number : <span className="text-[#A7A7A7] text-md">{number.phoneNumber}</span></p>
+                                                            <p className="text-md text-black">Work : <span className="text-[#A7A7A7] text-md">{number.work}</span></p>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button onClick={() => {
+                                                                openImpDeleteModal(number._id)
+                                                            }} className="p-1 text-red-500 hover:bg-red-50 rounded">
+                                                                <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+                                                            </button>
+                                                            <button onClick={() => handleEditImpmodel(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
+                                                                <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                ))
-                                            )}
-                                        </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
+                                </div>
 
                                 {/* Pending Maintenances Section */}
                                 <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-4 sm:p-6">
@@ -474,7 +508,7 @@ const DashboardLayout = () => {
                                         {maintenanceData.map((item, index) => (
                                             <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 bg-gray-100 rounded-full" />
+                                                    <img src={item.img} />
                                                     <div>
                                                         <p className="font-medium">{item.name}</p>
                                                         <p className="text-sm text-gray-500">{item.status}</p>
@@ -506,25 +540,25 @@ const DashboardLayout = () => {
                                             <table className="min-w-full divide-y divide-gray-200">
                                                 <thead className="bg-gray-50">
                                                     <tr>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
                                                             Complainer Name
                                                         </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
                                                             Complaint Name
                                                         </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
                                                             Description
                                                         </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
                                                             Unit Number
                                                         </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
                                                             Priority
                                                         </th>
-                                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
                                                             Status
                                                         </th>
-                                                        <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                        <th className="px-10 py-3  items-center text-right text-xs font-medium uppercase tracking-wider text-black">
                                                             Action
                                                         </th>
                                                     </tr>
@@ -539,20 +573,20 @@ const DashboardLayout = () => {
                                                                         src={complaint.complainer.avatar}
                                                                         alt={complaint.complaintName}
                                                                     />
-                                                                    <span className="ml-2 text-sm font-medium text-gray-900">{complaint.complaintName}</span>
+                                                                    <span className="ml-2 text-[16px] font-medium text-gray-900">{complaint.complaintName}</span>
                                                                 </div>
                                                             </td>
-                                                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{complaint.complaintName}</td>
-                                                            <td className="max-w-xs truncate px-6 py-4 text-sm text-gray-500">{complaint.description}</td>
+                                                            <td className="whitespace-nowrap px-6 py-4 text-[16px] text-gray-900">{complaint.complaintName}</td>
+                                                            <td className="max-w-xs truncate px-6 py-4 text-[16px] text-gray-500">{complaint.description}</td>
                                                             <td className="whitespace-nowrap px-6 py-4">
                                                                 <div className="flex items-center gap-1">
-                                                                    <span className="text-sm font-medium text-gray-900">{complaint.unitNumber}</span>
-                                                                    <span className="text-sm text-gray-500">{complaint.unitId}</span>
+                                                                    <span className="text-[16px] font-medium text-gray-900">{complaint.unitNumber}</span>
+                                                                    <span className="text-[16px] text-gray-500">{complaint.unitId}</span>
                                                                 </div>
                                                             </td>
                                                             <td className="whitespace-nowrap px-6 py-4">
                                                                 <span
-                                                                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getPriorityStyles(
+                                                                    className={`inline-flex rounded-full px-2.5 py-2  text-xs font-medium ${getPriorityStyles(
                                                                         complaint.priority
                                                                     )}`}
                                                                 >
@@ -561,7 +595,7 @@ const DashboardLayout = () => {
                                                             </td>
                                                             <td className="whitespace-nowrap px-6 py-4">
                                                                 <span
-                                                                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusStyles(
+                                                                    className={`inline-flex rounded-full px-2.5 py-2 text-xs font-medium ${getStatusStyles(
                                                                         complaint.status
                                                                     )}`}
                                                                 >
@@ -570,14 +604,15 @@ const DashboardLayout = () => {
                                                             </td>
                                                             <td className="whitespace-nowrap px-6 py-4 text-right">
                                                                 <div className="flex justify-end space-x-2">
-                                                                    <button onClick={() => handleEditModel(complaint)} className="rounded p-1 text-green-600 hover:bg-green-50">
-                                                                        <PencilIcon className="h-4 w-4" />
+                                                                    <button onClick={() => handleEditModel(complaint)} className="rounded  text-green-600 hover:bg-green-50">
+                                                                        <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+
                                                                     </button>
-                                                                    <button onClick={() => handleViewModel(complaint._id)} className="rounded p-1 text-blue-600 hover:bg-blue-50">
-                                                                        <Eye className="h-4 w-4" />
+                                                                    <button onClick={() => handleViewModel(complaint._id)} className="rounded  text-blue-600 hover:bg-blue-50">
+                                                                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
                                                                     </button>
-                                                                    <button onClick={() => handleDeleteModel(complaint._id)} className="rounded p-1 text-red-600 hover:bg-red-50">
-                                                                        <Trash className="h-4 w-4" />
+                                                                    <button onClick={() => handleDeleteModel(complaint._id)} className="rounded  text-red-600 hover:bg-red-50">
+                                                                        <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
                                                                     </button>
                                                                 </div>
                                                             </td>

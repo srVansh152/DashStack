@@ -42,7 +42,7 @@ function SecurityGuard() {
     aadhaarCardName: '',
     aadhaarCardPreview: null
   });
-  
+
   const [photoPreview, setPhotoPreview] = useState(null);
   const [guards, setGuards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -160,7 +160,7 @@ function SecurityGuard() {
       if (response.success) {
         console.log(response);
         setOpenModel(false);
-        await fetchGuards();
+         fetchGuards();
         // Reset form
         setFormData({
           fullName: '',
@@ -292,10 +292,10 @@ function SecurityGuard() {
       };
 
       const response = await updateSecurityGuard(selectedGuard._id, requestData);
-      
+
       if (response.success) {
         setOpenEditModel(false);
-        await fetchGuards(); // Refresh the list
+         fetchGuards(); // Refresh the list
         setSelectedGuard(null); // Clear selected guard
         // Reset form
         setFormData({
@@ -340,7 +340,7 @@ function SecurityGuard() {
       const response = await deleteSecurityGuard(selectedGuard._id);
       if (response.success) {
         setOpenDeleteModel(false);
-        await fetchGuards(); // Refresh the list
+         fetchGuards(); // Refresh the list
         setSelectedGuard(null);
         alert('Security Guard deleted successfully');
       } else {
@@ -355,86 +355,113 @@ function SecurityGuard() {
   return (
     <>
       <Aside />
-      <div className="main">
-        <Navbar />
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Security Guard Details</h2>
-            <button onClick={handleAddModel} className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-              <span className="text-lg">+</span> Add Security
-            </button>
-          </div>
+      <div className="main ">
+        <div className='bg-[#F0F5FB]'>
+          <Navbar />
+          <div className="p-6 py-3">
+            <div className='bg-white p-4 rounded'>
+              <div className="flex  justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold">Security Guard Details</h2>
+                <button onClick={handleAddModel} className="bg-gradient-to-r from-[#FE512E] to-[#F09619] text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                  <span className="text-lg">+</span> Add Security
+                </button>
+              </div>
 
-          <div className="overflow-x-auto">
-            {loading ? (
-              <div className="text-center py-4">Loading...</div>
-            ) : (
-              <table className="min-w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4">Security Guard Name</th>
-                    <th className="text-left p-4">Phone Number</th>
-                    <th className="text-left p-4">Select Shift</th>
-                    <th className="text-left p-4">Shift Date</th>
-                    <th className="text-left p-4">Shift Time</th>
-                    <th className="text-left p-4">Gender</th>
-                    <th className="text-left p-4">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {guards.map((guard) => (
-                    <tr key={guard._id} className="border-b">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={guard.profilePhoto}
-                            alt=""
-                            className="w-10 h-10 rounded-full"
-                          />
-                          <span>{guard.fullName}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">{guard.phoneNumber}</td>
-                      <td className="p-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm ${guard.shift === "day"
-                            ? "bg-orange-100 text-orange-500"
-                            : "bg-gray-200 text-gray-700"
-                            }`}
-                        >
-                          {guard.shift}
-                        </span>
-                      </td>
-                      <td className="p-4">{formatDate(guard.shiftDate)}</td>
-                      <td className="p-4">{guard.shiftTime}</td>
-                      <td className="p-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm ${guard.gender === "male"
-                            ? "bg-blue-100 text-blue-500"
-                            : "bg-pink-100 text-pink-500"
-                            }`}
-                        >
-                          {guard.gender}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex gap-2">
-                          <button onClick={() => handleEditModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
-                            <Pencil className="w-6 h-5 text-green-500" />
-                          </button>
-                          <button onClick={() => handleViewModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
-                            <Eye className="w-6 h-5 text-blue-500" />
-                          </button>
-                          <button onClick={() => handleDeleteModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
-                            <Trash2 className="w-6 h-5 text-red-500" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+              <div className="overflow-x-auto">
+                {loading ? (
+                  <div className="flex  items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#FE512E]"></div>
+                    <span className="ml-3 text-gray-500">Loading...</span>
+                  </div>
+                ) : (
+                  <table className="min-w-full">
+                    <thead className='bg-[#EEF1FD] rounded-lg'>
+                      <tr className="border-b">
+                        <th className="text-left p-4">Security Guard Name</th>
+                        <th className="text-left p-4">Phone Number</th>
+                        <th className="text-left p-4">Select Shift</th>
+                        <th className="text-left p-4">Shift Date</th>
+                        <th className="text-left p-4">Shift Time</th>
+                        <th className="text-left p-4">Gender</th>
+                        <th className="text-left p-4">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {guards.map((guard) => (
+                        <tr key={guard._id} className="border-b">
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={guard.profilePhoto}
+                                alt=""
+                                className="w-10 h-10 rounded-full"
+                              />
+                              <span>{guard.fullName}</span>
+                            </div>
+                          </td>
+                          <td className="p-4">{guard.phoneNumber}</td>
+                          <td className="p-4">
+                            <span
+                              className={`px-1 py-1 rounded-full text-md flex justify-center items-center gap-2 ${
+                                guard.shift === "day"
+                                  ? "bg-[#F4F4F4] text-[#FF9300]"
+                                  : "bg-[#4F4F4F] text-white"
+                              }`}
+                            >
+                              <img 
+                                src={guard.shift === "day" 
+                                  ? "/public/image/securityGurad/light.png" 
+                                  : "/public/image/securityGurad/night.png"
+                                } 
+                                alt="" 
+                                className="w-4 h-4"
+                              />
+                              {guard.shift}
+
+                            </span>
+                          </td>
+                          <td className="p-4">{formatDate(guard.shiftDate)}</td>
+                          <td className="p-4">{guard.shiftTime}</td>
+                          <td className="p-4">
+                            <span
+                              className={`px-1 py-1 rounded-full text-md flex justify-center items-center gap-2 ${guard.gender === "male"
+                                ? "bg-[#E9F6FC] text-[#5678E9]"
+                                : "bg-[#FFF1F6] text-[#FE76A8]"
+                                }`}
+                            >
+                               <img 
+                                src={guard.gender === "male" 
+                                  ? "/public/image/securityGurad/male.png" 
+                                  : "/public/image/securityGurad/female.png"
+                                } 
+                                alt="" 
+                                className="w-4 h-4"
+                              />
+                              {guard.gender}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex gap-2">
+                              <button onClick={() => handleEditModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
+                                <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                              </button>
+                              <button onClick={() => handleViewModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
+                                <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+
+                              </button>
+                              <button onClick={() => handleDeleteModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
+                                <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
           </div>
         </div>
         {openModel && (
@@ -474,7 +501,7 @@ function SecurityGuard() {
 
                   {/* Full Name */}
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-md font-medium mb-1">
                       Full Name<span className="text-red-500">*</span>
                     </label>
                     <input
@@ -490,7 +517,7 @@ function SecurityGuard() {
 
                   {/* Phone Number */}
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-md font-medium mb-1">
                       Phone Number<span className="text-red-500">*</span>
                     </label>
                     <div className="flex">
@@ -511,7 +538,7 @@ function SecurityGuard() {
                   {/* Gender and Shift */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-md font-medium mb-1">
                         Gender<span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -532,7 +559,7 @@ function SecurityGuard() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-md font-medium mb-1">
                         Shift<span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -556,7 +583,7 @@ function SecurityGuard() {
                   {/* Shift Date and Time */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-md font-medium mb-1">
                         Shift Date<span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -573,7 +600,7 @@ function SecurityGuard() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      <label className="block text-md font-medium mb-1">
                         Shift Time<span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -592,7 +619,7 @@ function SecurityGuard() {
 
                   {/* Aadhar Card Upload */}
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-md font-medium mb-1">
                       Upload Aadhar Card<span className="text-red-500">*</span>
                     </label>
                     <div
@@ -610,12 +637,12 @@ function SecurityGuard() {
                       />
                       {formData.aadhaarCardPreview ? (
                         <div className="space-y-2">
-                          <img 
-                            src={formData.aadhaarCardPreview} 
-                            alt="Aadhaar Card" 
+                          <img
+                            src={formData.aadhaarCardPreview}
+                            alt="Aadhaar Card"
                             className="mx-auto max-h-32 object-contain"
                           />
-                          <p className="text-sm text-gray-600">Current Aadhaar Card</p>
+                          <p className="text-md text-gray-600">Current Aadhaar Card</p>
                           <p className="text-xs text-blue-600">Click or drag to replace</p>
                         </div>
                       ) : (
@@ -623,7 +650,7 @@ function SecurityGuard() {
                           <div className="mx-auto w-12 h-12 border-2 rounded-lg flex items-center justify-center mb-2">
                             <span className="text-2xl">+</span>
                           </div>
-                          <div className="text-sm font-medium">
+                          <div className="text-md font-medium">
                             {formData.aadhaarCardName ? (
                               formData.aadhaarCardName
                             ) : (
@@ -641,17 +668,17 @@ function SecurityGuard() {
                   </div>
 
                   {/* Buttons */}
-                  <div className="flex justify-between pt-4">
+                  <div className="flex justify-between gap-4 pt-4">
                     <button
                       type="button"
                       onClick={() => setOpenModel(false)}
-                      className="px-6 py-2 border rounded-md hover:bg-gray-50"
+                      className="flex-1 px-6 py-2 border rounded-md hover:bg-gray-50"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                      className="flex-1 px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                     >
                       Create
                     </button>
@@ -686,7 +713,7 @@ function SecurityGuard() {
                     />
                   </div>
                   <h3 className="text-lg font-medium">{selectedGuardForView?.fullName}</h3>
-                  <p className="text-sm text-gray-500">{formatDate(selectedGuardForView?.shiftDate)}</p>
+                  <p className="text-md text-gray-500">{formatDate(selectedGuardForView?.shiftDate)}</p>
                 </div>
 
                 {/* Info Grid */}
@@ -697,7 +724,7 @@ function SecurityGuard() {
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
-                      <span className="text-sm">{selectedGuardForView?.shift}</span>
+                      <span className="text-md">{selectedGuardForView?.shift}</span>
                     </div>
                     <span className="text-xs text-gray-600">Select Shift</span>
                   </div>
@@ -734,7 +761,7 @@ function SecurityGuard() {
                 </p>
 
                 <div className="flex gap-4 pt-2">
-                  <button 
+                  <button
                     onClick={() => {
                       setOpenDeleteModel(false);
                       setSelectedGuard(null);
@@ -768,10 +795,10 @@ function SecurityGuard() {
                     <div className="relative">
                       <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                         {formData.profilePhotoPreview ? (
-                          <img 
-                            src={formData.profilePhotoPreview} 
-                            alt="Profile" 
-                            className="w-full h-full object-cover" 
+                          <img
+                            src={formData.profilePhotoPreview}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <Camera className="w-8 h-8 text-gray-400" />
@@ -906,9 +933,9 @@ function SecurityGuard() {
                       />
                       {formData.aadhaarCardPreview ? (
                         <div className="space-y-2">
-                          <img 
-                            src={formData.aadhaarCardPreview} 
-                            alt="Aadhaar Card" 
+                          <img
+                            src={formData.aadhaarCardPreview}
+                            alt="Aadhaar Card"
                             className="mx-auto max-h-32 object-contain"
                           />
                           <p className="text-sm text-gray-600">Current Aadhaar Card</p>

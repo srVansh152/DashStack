@@ -163,39 +163,40 @@ function RequestTracking() {
 
   const getPriorityStyles = (priority) => {
     switch (priority.toLowerCase()) {
-      case 'high':
-        return 'bg-red-500 text-white'
-      case 'medium':
-        return 'bg-blue-500 text-white'
-      case 'low':
-        return 'bg-green-500 text-white'
-      default:
-        return 'bg-gray-500 text-white'
+        case 'high':
+            return 'bg-[#E74C3C] text-white'
+        case 'medium':
+            return 'bg-[#5678E9] text-white'
+        case 'low':
+            return 'bg-[#39973D] text-white'
+        default:
+            return 'bg-gray-500 text-white'
     }
-  }
+}
 
-  const getStatusStyles = (status) => {
+const getStatusStyles = (status) => {
     switch (status.toLowerCase()) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'open':
-        return 'bg-blue-100 text-blue-800'
-      case 'solve':
-        return 'bg-green-100 text-green-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
+        case 'pending':
+            return 'bg-[#FFC3131A] text-[#FFC313]'
+        case 'open':
+            return 'bg-[#5678E91A] text-[#5678E9]'
+        case 'solve':
+            return 'bg-[#39973D1A] text-[#39973D]'
+        default:
+            return 'bg-gray-100 text-gray-800'
     }
-  }
+}
 
   return (
     <>
       <Aside />
       <div className="main">
         <Navbar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 m-2">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#F0F5FB] p-6 m-2">
           <div className="container-fluid  px-6 py-8">
+            <div className='bg-white p-4'>
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-semibold text-gray-900">Request Tracking</h1>
+              <h1 className="text-2xl font-semibold text-gray-900">Request Tracking</h1>
               <button onClick={handleCreateIncome} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
                 <Plus className="inline-block w-5 h-5 mr-2" />
                 Create Request
@@ -206,28 +207,28 @@ function RequestTracking() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Requester Name
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Request Name
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider hidden md:table-cell">
                       Description
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Request Date
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Unit Number
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Priority
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Status
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-3 text-right text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
                       Action
                     </th>
                   </tr>
@@ -246,39 +247,41 @@ function RequestTracking() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{complaint.requestName}</div>
+                        <div className="text-md text-gray-900">{complaint.requestName}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                        <div className="text-sm text-gray-500 max-w-xs truncate">{complaint.description}</div>
+                        <div className="text-md text-gray-500 max-w-xs truncate">{complaint.description}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{new Date(complaint.createdAt).toLocaleDateString()}</div>
+                        <div className="text-md text-gray-900">{new Date(complaint.createdAt).toLocaleDateString()}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{complaint.unitNumber}</div>
-                        <div className="text-sm text-gray-500">{complaint.unitId}</div>
+                        <div className="text-md text-gray-900">{complaint.unitNumber}</div>
+                        <div className="text-md text-gray-500">{complaint.unitId}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getPriorityStyles(complaint.priority)}`}>
+                        <span className={`px-2 inline-flex text-sm py-1 leading-5 font-semibold rounded-full ${getPriorityStyles(complaint.priority)}`}>
                           {complaint.priority}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyles(complaint.status)}`}>
+                        <span className={`px-2 inline-flex text-sm py-1 leading-5 font-semibold rounded-full ${getStatusStyles(complaint.status)}`}>
                           {complaint.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className=" flex py-4 whitespace-nowrap text-right text-md font-medium">
                         <button onClick={() => handleEditIncome(complaint._id)} className="text-green-600 hover:text-green-900 mr-2">
-                          <PencilIcon className="h-5 w-5" />
+                          <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
                           <span className="sr-only">Edit</span>
                         </button>
                         <button onClick={() => handleViewIncome(complaint._id)} className="text-blue-600 hover:text-blue-900 mr-2">
-                          <Eye className="h-5 w-5" />
+                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+
                           <span className="sr-only">View</span>
                         </button>
                         <button onClick={() => handleDeleteIncome(complaint._id)} className="text-red-600 hover:text-red-900">
-                          <Trash className="h-5 w-5" />
+                        <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+
                           <span className="sr-only">Delete</span>
                         </button>
                       </td>
@@ -286,6 +289,7 @@ function RequestTracking() {
                   ))}
                 </tbody>
               </table>
+            </div>
             </div>
           </div>
         </main>

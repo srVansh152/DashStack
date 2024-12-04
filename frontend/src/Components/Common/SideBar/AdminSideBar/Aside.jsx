@@ -23,7 +23,7 @@ export default function Aside() {
 
   // Financial menu items
   const financialMenuItems = [
-    { id: 2, label: 'Income', path: 'otherincome' },
+    { id: 2, label: 'Income', path: 'financial' },
     { id: 3, label: 'Expanse', path: 'expance' },
     { id: 4, label: 'Note', path: 'note' },
   ]

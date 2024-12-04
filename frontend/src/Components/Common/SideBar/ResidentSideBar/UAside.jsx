@@ -1,178 +1,352 @@
-import React, { useState } from 'react'
-import { ChevronDown, Menu } from 'lucide-react'
-import { Link } from 'react-router-dom';
+'use client'
 
-function UAside() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpenn, setIsOpenn] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+import {
+  Activity,
+  User,
+  FileText,
+  Calendar,
+  Users,
+  DollarSign,
+  Shield,
+  LogOut,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+export default function UAside() {
+  const navigate = useNavigate()
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+  const [hoveredMenu, setHoveredMenu] = useState(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState('')
+
+  // Community menu items
+  const communityMenuItems = [
+    { id: 1, label: 'Access Forums', path: 'uchat' },
+    { id: 2, label: 'Polls', path: 'upools' },
+    { id: 3, label: 'Communities Discussion', path: 'ucommunity' },
+  ]
+
+  // Payment Portal menu items
+  const paymentMenuItems = [
+    { id: 1, label: 'Maintenance invoices', path: 'Maintenace' },
+    { id: 2, label: 'Other Income invoice', path: 'otherincome' },
+  ]
+
+  const handleDropdownToggle = (dropdown) => {
+    setOpenDropdown(openDropdown === dropdown ? '' : dropdown)
+  }
+
+  // Update current path when location changes
+  useEffect(() => {
+    setCurrentPath(window.location.pathname)
+
+    if (communityMenuItems.some(item => currentPath.includes(item.path))) {
+      setOpenDropdown('Community')
+    } else if (paymentMenuItems.some(item => currentPath.includes(item.path))) {
+      setOpenDropdown('Payment Portal')
+    }
+  }, [currentPath])
+
+  // Helper function to check if a path is active
+  const isPathActive = (path) => {
+    return currentPath === `/user/${path}` || currentPath.startsWith(`/user/${path}/`)
+  }
 
   return (
-    <div className="flex h-screen">
-      {/* Mobile Sidebar Toggle Button */}
+    <>
+      {/* Mobile Menu Button */}
       <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="p-2 bg-orange-500 text-white rounded-md sm:hidden fixed  top-2.5 left-5 z-20"
+        className="md:hidden fixed top-0 left-0 z-20 p-4"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
-        <Menu className="w-5 h-5" />
+        <span className="text-2xl font-bold text-[#FF4B1C]">☰</span>
       </button>
 
       {/* Sidebar */}
-      <div
-        className={`w-64 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } sm:translate-x-0 sm:static`}
-      >
-        <div className="p-4 border-b">
-          <h1 className="text-2xl font-bold">
-            <span className="text-orange-500">Dash</span>
-            <span className="text-gray-800">Stack</span>
-          </h1>
+      <div className={`w-[70%] md:w-[17%] p-4 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 z-30 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0 sm:static`}>
+
+        <div className='flex flex-col justify-between h-full'>
+          <div className='sidebar-content'>
+            <h1 className="hidden text-2xl font-bold text-orange-500 cursor-pointer transition-colors hover:text-orange-600 lg:flex">
+              Dash<span className="text-gray-800">Stack</span>
+            </h1>
+
+            <nav className="mt-8 space-y-2">
+              {/* Dashboard */}
+              <SidebarItem
+                icon={Activity}
+                label="Dashboard"
+                path="udashboard"
+                active={isPathActive('udashboard')}
+                hovered={hoveredMenu === 'Dashboard'}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/user/udashboard')
+                  setCurrentPath('/user/udashboard')
+                  setIsSidebarOpen(false)
+                  setHoveredMenu(null)
+                }}
+                onMouseEnter={() => setHoveredMenu('Dashboard')}
+                onMouseLeave={() => setHoveredMenu(null)}
+              />
+
+              {/* Personal Detail */}
+              <SidebarItem
+                icon={User}
+                label="Personal Detail"
+                path="upersonaldetail"
+                active={isPathActive('upersonaldetail')}
+                hovered={hoveredMenu === 'Personal Detail'}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/user/upersonaldetail')
+                  setCurrentPath('/user/upersonaldetail')
+                  setIsSidebarOpen(false)
+                  setHoveredMenu(null)
+                }}
+                onMouseEnter={() => setHoveredMenu('Personal Detail')}
+                onMouseLeave={() => setHoveredMenu(null)}
+              />
+
+              {/* Service and Complaint */}
+              <SidebarItem
+                icon={FileText}
+                label="Service and Complaint"
+                path="ucomplaintSubmission"
+                active={isPathActive('ucomplaintSubmission')}
+                hovered={hoveredMenu === 'Service and Complaint'}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/user/ucomplaintSubmission')
+                  setCurrentPath('/user/ucomplaintSubmission')
+                  setIsSidebarOpen(false)
+                  setHoveredMenu(null)
+                }}
+                onMouseEnter={() => setHoveredMenu('Service and Complaint')}
+                onMouseLeave={() => setHoveredMenu(null)}
+              />
+
+              {/* Events Participation */}
+              <SidebarItem
+                icon={Calendar}
+                label="Events Participation"
+                path="uevents"
+                active={isPathActive('uevents')}
+                hovered={hoveredMenu === 'Events Participation'}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/user/uevents')
+                  setCurrentPath('/user/uevents')
+                  setIsSidebarOpen(false)
+                  setHoveredMenu(null)
+                }}
+                onMouseEnter={() => setHoveredMenu('Events Participation')}
+                onMouseLeave={() => setHoveredMenu(null)}
+              />
+
+              {/* Community Dropdown */}
+              <Dropdown
+                label="Community"
+                icon={Users}
+                isOpen={openDropdown === 'Community'}
+                active={communityMenuItems.some(item => isPathActive(item.path))}
+                hovered={hoveredMenu === 'Community'}
+                items={communityMenuItems}
+                onClick={() => handleDropdownToggle('Community')}
+                onHoverEnter={() => setHoveredMenu('Community')}
+                onHoverLeave={() => setHoveredMenu(null)}
+                currentPath={currentPath}
+                setCurrentPath={setCurrentPath}
+                setIsSidebarOpen={setIsSidebarOpen}
+                setOpenDropdown={setOpenDropdown}
+              />
+
+              {/* Payment Portal Dropdown */}
+              <Dropdown
+                label="Payment Portal"
+                icon={DollarSign}
+                isOpen={openDropdown === 'Payment Portal'}
+                active={paymentMenuItems.some(item => isPathActive(item.path))}
+                hovered={hoveredMenu === 'Payment Portal'}
+                items={paymentMenuItems}
+                onClick={() => handleDropdownToggle('Payment Portal')}
+                onHoverEnter={() => setHoveredMenu('Payment Portal')}
+                onHoverLeave={() => setHoveredMenu(null)}
+                currentPath={currentPath}
+                setCurrentPath={setCurrentPath}
+                setIsSidebarOpen={setIsSidebarOpen}
+                setOpenDropdown={setOpenDropdown}
+              />
+
+              {/* Security Protocols */}
+              <SidebarItem
+                icon={Shield}
+                label="Security Protocols"
+                path="usecurityprotocol"
+                active={isPathActive('usecurityprotocol')}
+                hovered={hoveredMenu === 'Security Protocols'}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/user/usecurityprotocol')
+                  setCurrentPath('/user/usecurityprotocol')
+                  setIsSidebarOpen(false)
+                  setHoveredMenu(null)
+                }}
+                onMouseEnter={() => setHoveredMenu('Security Protocols')}
+                onMouseLeave={() => setHoveredMenu(null)}
+              />
+            </nav>
+          </div>
+
+          <div className='logoutbtn'>
+
+            {/* Logout */}
+            <SidebarItem
+              icon={LogOut}
+              label="Logout"
+              path="/"
+              active={false}
+              hovered={hoveredMenu === 'Logout'}
+              onClick={(e) => {
+                e.preventDefault()
+                navigate('/')
+                setCurrentPath('/')
+                setIsSidebarOpen(false)
+                setHoveredMenu(null)
+              }}
+              onMouseEnter={() => setHoveredMenu('Logout')}
+              onMouseLeave={() => setHoveredMenu(null)}
+            />
+          </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto">
-          <ul className="space-y-2 py-4">
-            <li>
-              <Link to="/user/udashboard" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link to="/user/upersonaldetail" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-                Personal Detail
-              </Link>
-            </li>
-            <li>
-              <Link to="/user/ucomplaintSubmission" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-                Service and Complaint
-              </Link>
-            </li>
-            <li>
-              <Link to="/user/uevents" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                Events Participation
-              </Link>
-            </li>
-            <li>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-orange-500"
-              >
-                <div className="flex items-center">
-                  <svg
-                    className="w-5 h-5 mr-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    ></path>
-                  </svg>
-                  Community
-                </div>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {isOpen && (
-                <ul className="pl-12 mt-2 space-y-2">
-                  <li>
-                    <Link
-                      to="/user/uchat"
-                      className="block py-2 text-sm text-orange-500 hover:bg-gray-100 hover:text-orange-500"
-                    >
-                      Access Forums
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/user/upools"
-                      className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
-                    >
-                      Polls
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/user/ucommunity"
-                      className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
-                    >
-                      Communities Discussion
-                    </Link>
-                  </li>
-                </ul>
-              )}
-            </li>
-            <li>
-              <button
-                onClick={() => setIsOpenn(!isOpenn)}
-                className="flex items-center justify-between w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-orange-500"
-              >
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                  </svg>
-                  Payment Portal
-                </div>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              {isOpenn && (
-                <ul className="pl-12 mt-2 space-y-2">
-                  <li>
-                    <Link
-                      to="/user/Maintenace"
-                      className="block py-2 text-sm text-orange-500 hover:bg-gray-100 hover:text-orange-500"
-                    >
-                      Maintenace invoices
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/user/otherincome"
-                      className="block py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-orange-500"
-                    >
-                      Other Income invoice
-                    </Link>
-                  </li>
-
-                </ul>
-              )}
-            </li>
-
-            <li>
-              <Link to="/user/usecurityprotocol" className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-orange-500">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                </svg>
-                Security Protocols
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <div className="p-4 border-t">
-          <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-            Logout
-          </button>
-        </div>
       </div>
+
+
+
+      {/* Overlay for mobile menu */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-5 bg-black opacity-50 md:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+    </>
+  )
+}
+
+// Include the SidebarItem and Dropdown component definitions from your Aside.jsx here
+// ... (keep the existing SidebarItem and Dropdown components from your Aside.jsx)
+
+// Add these component definitions at the bottom of the file
+function SidebarItem({ icon: Icon, label, path, active, hovered, onClick, onMouseEnter, onMouseLeave }) {
+  const isLogout = label === 'Logout';
+
+  return (
+    <div className="relative">
+      {active && !isLogout && (
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
+          style={{ left: '-16px' }}
+        />
+      )}
+      <a
+        href={`/${path}`}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        className={`relative flex w-full items-center gap-3 px-4 py-3 text-sm transition-all duration-200 rounded-lg my-1
+          ${isLogout
+            ? 'text-red-600 font-bold hover:scale-105'
+            : active
+              ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
+              : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
+          ${hovered ? 'shadow-sm' : ''}`}
+      >
+        <Icon className="h-5 w-5" />
+        <span>{label}</span>
+      </a>
     </div>
   )
 }
 
-export default UAside;
+function Dropdown({
+  label,
+  icon: Icon,
+  isOpen,
+  active,
+  hovered,
+  items,
+  onClick,
+  onHoverEnter,
+  onHoverLeave,
+  currentPath,
+  setCurrentPath,
+  setIsSidebarOpen,
+  setOpenDropdown
+}) {
+  const navigate = useNavigate()
+
+  const isDropdownActive = items.some(item => currentPath === `/user/${item.path}`) || active
+
+  return (
+    <div className="my-1 relative">
+      {isDropdownActive && (
+        <div
+          className={`absolute left-0 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r
+            ${isOpen
+              ? 'h-10 top-0'
+              : 'h-8 top-1/2 -translate-y-1/2'}`}
+          style={{ left: '-16px' }}
+        />
+      )}
+      <button
+        onClick={onClick}
+        onMouseEnter={onHoverEnter}
+        onMouseLeave={onHoverLeave}
+        className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 rounded-lg
+          ${isDropdownActive || isOpen
+            ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
+            : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
+          ${hovered ? 'shadow-sm' : ''}`}
+      >
+        <div className="flex items-center gap-3">
+          <Icon className={`w-5 h-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`} />
+          <span>{label}</span>
+        </div>
+        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+      </button>
+
+      {isOpen && (
+        <div className="pl-8 mt-2 space-y-2">
+          {items.map((item) => (
+            <div key={item.id} className="relative">
+              {currentPath === `/user/${item.path}` && (
+                <div
+                  className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
+                  style={{ left: '-16px' }}
+                />
+              )}
+              <a
+                href={`/user/${item.path}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate(`/user/${item.path}`)
+                  setCurrentPath(`/user/${item.path}`)
+                  setIsSidebarOpen(false)
+                }}
+                className={`w-full flex items-center px-4 py-2 text-sm rounded-lg
+                  ${currentPath === `/user/${item.path}`
+                    ? 'text-[#FF4B1C] font-medium'
+                    : 'text-gray-600 hover:text-[#FF4B1C]'}`}
+              >
+                <span>{item.label}</span>
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

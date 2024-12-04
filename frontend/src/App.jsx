@@ -48,11 +48,6 @@ import ComplaintSubmission from './Components/Resident/ServiceAndComplaint/Compl
 import RequestSubmission from './Components/Resident/ServiceAndComplaint/RequestSubmission/RequestSubmission'
 // import ZegoRoom from './ZegoRoom'
 
-
-
-
-
-
 function App() {
   return (
     <div className="App">
@@ -69,9 +64,6 @@ function App() {
             <Route path='/deletemodel' element={<Deletemodel />} />
             <Route path='/addmain' element={<AddMaintain />} />
 
-
-
-
             // Admin routes
             <Route path='/admin'>
               <Route path='dashboard' element={<DashboardLayout />} />
@@ -81,7 +73,7 @@ function App() {
               <Route path='form' element={<Form />} />
               <Route path='financial' element={<FinanceManagment />} />
               <Route path='otherincome' element={<OtherIncome />} />
-              <Route path='memberlist' element={<MemberList />} />
+              <Route path='memberlist/:id' element={<MemberList />} />
               <Route path='note' element={<Note />} />
               <Route path='Facilitymanagment' element={<Facilitymanagment />} />
               <Route path='announcment' element={<Announcment />} />

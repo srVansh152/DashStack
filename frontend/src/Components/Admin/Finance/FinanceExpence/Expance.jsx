@@ -18,6 +18,15 @@ export default function ExpenseTracker() {
     const [expenses, setExpenses] = useState([]);
     const [expenseToDelete, setExpenseToDelete] = useState(null);
     const [selectedExpense, setSelectedExpense] = useState(null);
+    const [existingFile, setExistingFile] = useState(null);
+    const [formData, setFormData] = useState({
+        id: '',
+        title: '',
+        description: '',
+        date: '',
+        amount: '',
+        file: null
+    });
 
     const expenseData = {
         title: 'Rent Or Mortgage',
@@ -30,14 +39,6 @@ export default function ExpenseTracker() {
         }
     }
 
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        date: '',
-        amount: '',
-        file: null
-    });
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -48,14 +49,31 @@ export default function ExpenseTracker() {
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting edit form with data:', formData); // Log form data
+        const editFormData = new FormData(); // Create a new FormData object for editing
+
+        // Set all form data in a single step
+        Object.entries({
+            id: formData.id,
+            title: formData.title,
+            description: formData.description,
+            date: formData.date,
+            amount: formData.amount,
+            billImage: formData.file || existingFile // Use new file or existing file
+        }).forEach(([key, value]) => {
+            if (value) editFormData.set(key, value); // Only set if value exists
+        });
+
+        // Log the form data for debugging
+        const formDataObject = {};
+        editFormData.forEach((value, key) => {
+            formDataObject[key] = value; // Convert FormData to a regular object for logging
+        });
+        console.log('Form Data to be submitted:', formDataObject);
+
         try {
             const token = localStorage.getItem("token");
-            if (!token) {
-                throw new Error('No token found. Please log in again.'); // Check if token exists
-            }
-            const response = await updateExpense(formData.id, formData, token); // Use formData.id for the update
-            console.log('Response from updateExpense:', response); // Log the response
+            const response = await updateExpense(formData.id, editFormData, token); // Send editFormData
+            console.log('Response from updateExpense:', response);
 
             if (!response.success) {
                 throw new Error('Network response was not ok');
@@ -69,7 +87,6 @@ export default function ExpenseTracker() {
         }
     };
 
-
     const handleAddModel = () => {
         setOpenModel(true);
     };
@@ -79,10 +96,11 @@ export default function ExpenseTracker() {
             id: expense._id,
             title: expense.title,
             description: expense.description,
-            date: expense.date,
+            date: expense.date.split('T')[0], // Format date for input
             amount: expense.amount,
-            file: expense.file // Assuming file is an object with name and size
+            file: null // Reset file to ensure no previous file is carried over
         });
+        setExistingFile(expense.billImage); // Store the existing file reference
         setOpenEditModel(true);
     };
 
@@ -93,6 +111,7 @@ export default function ExpenseTracker() {
         try {
             const response = await viewExpense(expenseId);
             if (response.success) {
+                console.log(response.data);
                 setSelectedExpense(response.data);
             } else {
                 throw new Error('Failed to fetch expense details');
@@ -123,24 +142,25 @@ export default function ExpenseTracker() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const expenseData = {
-            title,
-            description,
-            date,
-            amount,
-            file
-        };
+        const formData = new FormData(); // Create a new FormData object
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('date', date);
+        formData.append('amount', amount);
+        if (file) {
+            formData.append('billImage', file); // Append the file to the form data
+        }
 
         try {
-            const token = localStorage.getItem("token")
-            const response = await addExpense(expenseData,token)
-            console.log(response)
+            const token = localStorage.getItem("token");
+            const response = await addExpense(formData, token); // Send formData instead of expenseData
+            console.log(response);
 
             if (!response.success) {
                 throw new Error('Network response was not ok');
             }
 
-            const data = response.data
+            const data = response.data;
             console.log('Expense submitted successfully:', data);
             fetchExpenses();
             
@@ -197,8 +217,8 @@ export default function ExpenseTracker() {
     return (
         <>
             <Aside />
-            <div className="main">
-                <div className="flex min-h-screen bg-gray-100">
+            <div className="main bg-[#F0F5FB]">
+                <div className="flex min-h-screen">
                     {/* Sidebar placeholder */}
 
 
@@ -206,7 +226,8 @@ export default function ExpenseTracker() {
                        <Navbar/>
 
                         <main className="p-6">
-                            <div className="flex items-center justify-between mb-6">
+                           <div className='bg-white p-5'>
+                           <div className="flex items-center justify-between mb-6">
                                 <h1 className="text-2xl font-semibold">Add Expenses Details</h1>
                                 <button onClick={handleAddModel} className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">
                                     <Plus className="w-4 h-4 mr-2" />
@@ -215,42 +236,51 @@ export default function ExpenseTracker() {
                             </div>
                             <div className="border rounded-lg bg-white overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                                    <thead className="bg-[#EEF1FD]">
                                         <tr>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill Format</th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Title</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Description</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Date</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Amount</th>
+                                            <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Bill Format</th>
+                                            <th scope="col" className="px-12 py-3 text-left text-sm font-medium text-black uppercase tracking-wider">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {expenses.map((expense, index) => (
-                                            <tr key={index} className="hover:bg-gray-100">
+                                            <tr key={index} className="">
                                                 <td className="px-6 py-4 whitespace-nowrap">{expense.title}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap max-w-md truncate">{expense.description}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{expense.date}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{expense.date.split('T')[0]}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">₹ {expense.amount}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <FileText className="w-4 h-4" />
-                                                        {expense.format}
+                                                        {expense.billImage ? (
+                                                            <>
+                                                                Bill Available: <span className="font-semibold">{expense.billImage.name}</span>
+                                                            </>
+                                                        ) : (
+                                                            'Bill Not Available'
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <button onClick={() => handleEditModel(expense)} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
-                                                            <Pencil className="w-6 h-5" />
+                                                            
+                                                            <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
                                                         </button>
                                                         <button onClick={() => handleViewModel(expense._id)} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                            <Eye className="w-6 h-5" />
+                                                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+
                                                         </button>
                                                         <button onClick={() => {
                                                             setOpenDeleteModel(true);
                                                             setExpenseToDelete(expense._id); 
                                                         }} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
-                                                            <Trash2 className="w-6 h-5" />
+                                                                                                                       <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+
                                                         </button>
                                                     </div>
                                                 </td>
@@ -259,6 +289,7 @@ export default function ExpenseTracker() {
                                     </tbody>
                                 </table>
                             </div>
+                           </div>
                         </main>
                     </div>
                 </div>
@@ -365,17 +396,17 @@ export default function ExpenseTracker() {
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-between pt-4">
+                                    <div className="flex justify-between gap-4 pt-4">
                                         <button
                                             type="button"
                                             onClick={() => setOpenModel(false)}
-                                            className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                                            className="flex-1 px-4 py-2 border rounded-md hover:bg-gray-50"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                            className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                                         >
                                             Save
                                         </button>
@@ -386,7 +417,7 @@ export default function ExpenseTracker() {
                     </div>
                 )}
                 {openEditModel && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40">
                         <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
                             <div className="p-6">
                                 <h2 className="text-xl font-semibold">Edit Expenses</h2>
@@ -440,7 +471,7 @@ export default function ExpenseTracker() {
                                                 Amount<span className="text-red-500">*</span>
                                             </label>
                                             <input
-                                                type="text"
+                                                type="number"
                                                 name="amount"
                                                 value={formData.amount}
                                                 onChange={handleChange}
@@ -461,28 +492,24 @@ export default function ExpenseTracker() {
                                                 const file = e.target.files[0];
                                                 setFormData((prevData) => ({
                                                     ...prevData,
-                                                    file: {
-                                                        name: file.name,
-                                                        size: file.size
-                                                    }
+                                                    file: file // Update the file directly
                                                 }));
                                             }}
                                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            required
                                         />
                                     </div>
 
-                                    <div className="flex justify-between pt-4">
+                                    <div className="flex justify-between gap-4 pt-4">
                                         <button
                                             onClick={() => setOpenEditModel(false)}
                                             type="button"
-                                            className="px-6 py-2 border rounded-md hover:bg-gray-50"
+                                            className="flex-1 px-6 py-2 border rounded-md hover:bg-gray-50"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+                                            className="flex-1 px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
                                         >
                                             Save
                                         </button>
@@ -517,7 +544,7 @@ export default function ExpenseTracker() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm text-gray-500">Date</label>
-                                            <p className="mt-1 text-base">{selectedExpense.date}</p>
+                                            <p className="mt-1 text-base">{selectedExpense.date.split('T')[0]}</p>
                                         </div>
 
                                         <div>
@@ -530,15 +557,28 @@ export default function ExpenseTracker() {
                                         <label className="block text-sm text-gray-500">Bill</label>
                                         <div className="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                             <div className="h-10 w-10 flex-shrink-0 rounded-lg border bg-white flex items-center justify-center">
-
                                                 {selectedExpense.billImage ? (
-                                                    <img src={selectedExpense.billImage} alt="Bill" className="h-10 w-10 rounded-lg" />
+                                                    <img src={selectedExpense.billImage} alt={selectedExpense.billImage.name} className="h-10 w-10 rounded-lg" />
                                                 ) : (
                                                     <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
                                                 )}
-                                                
+                                            </div>
+                                            <div className="ml-3 flex flex-col flex-grow">
+                                                {selectedExpense.billImage && (
+                                                    <p className="text-sm">{selectedExpense.billImage.split('/').pop()}</p>
+                                                )}
+                                            </div>
+                                            <div className="ml-3 flex items-center">
+                                                {selectedExpense.billImage && (
+                                                    <button
+                                                        onClick={() => window.open(selectedExpense.billImage, '_blank')}
+                                                        className="text-gray-500 hover:text-gray-700"
+                                                    >
+                                                        <Eye className="h-5 w-5" /> {/* Eye icon for download */}
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

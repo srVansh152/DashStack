@@ -5,7 +5,9 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: { borderWidth: {
+      '10p': '10%', // Custom border width as 10%
+    },},
   },
   plugins: [],
 }
