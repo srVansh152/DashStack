@@ -59,14 +59,14 @@ exports.getFinancialIncomes = async (req, res) => {
 
       const residentStatuses = financialIncome.residentStatus.map(status => {
         const payment = payments.find(p => 
-          p.residentId.toString() === status.residentId._id.toString()
+          p.residentId && p.residentId.toString() === status.residentId?._id.toString()
         );
 
-        console.log('Debug Payment:', {
-          paymentResidentId: payment?.residentId,
-          statusResidentId: status.residentId._id,
-          payment: payment
-        });
+        // Ensure residentId is not null before accessing its properties
+        if (!status.residentId) {
+          console.warn('Warning: Resident ID is null for status:', status);
+          return null; // or handle the case as needed
+        }
 
         // Get resident details from populated data
         const residentDetails = status.residentId;
@@ -106,7 +106,7 @@ exports.getFinancialIncomes = async (req, res) => {
           penaltyAmount: payment && payment.hasPaid ? 0 : penaltyAmount,
           totalAmount: totalAmount
         };
-      });
+      }).filter(status => status !== null); // Filter out any null statuses
 
       return {
         financialIncome,
@@ -116,6 +116,7 @@ exports.getFinancialIncomes = async (req, res) => {
 
     res.json(financialData);
   } catch (error) {
+    console.error('Error fetching financial incomes:', error);
     res.status(400).json({ message: error.message });
   }
 };
