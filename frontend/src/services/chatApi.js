@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://socitey-management-system-server.onrender.com/api';
 
 const setAuthHeader = () => ({
   headers: {

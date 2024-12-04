@@ -369,10 +369,12 @@ function SecurityGuard() {
 
               <div className="overflow-x-auto">
                 {loading ? (
-                  <div className="flex  items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#FE512E]"></div>
-                    <span className="ml-3 text-gray-500">Loading...</span>
-                  </div>
+                     <div className="flex items-center justify-center p-8">
+                     <div className="text-center">
+                       <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+               
+                     </div>
+                   </div>
                 ) : (
                   <table className="min-w-full">
                     <thead className='bg-[#EEF1FD] rounded-lg'>

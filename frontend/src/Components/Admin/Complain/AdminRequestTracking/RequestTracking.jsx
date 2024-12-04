@@ -204,91 +204,108 @@ const getStatusStyles = (status) => {
             </div>
 
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Requester Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Request Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider hidden md:table-cell">
-                      Description
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Request Date
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Unit Number
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Priority
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-right text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {complaints.map((complaint) => (
-                    <tr key={complaint.id} className='hover:bg-gray-50 transition-colors duration-150'>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <img className="h-10 w-10 rounded-full" src={''} alt="" />
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{complaint.requestName}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-md text-gray-900">{complaint.requestName}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                        <div className="text-md text-gray-500 max-w-xs truncate">{complaint.description}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-md text-gray-900">{new Date(complaint.createdAt).toLocaleDateString()}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-md text-gray-900">{complaint.unitNumber}</div>
-                        <div className="text-md text-gray-500">{complaint.unitId}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-sm py-1 leading-5 font-semibold rounded-full ${getPriorityStyles(complaint.priority)}`}>
-                          {complaint.priority}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-sm py-1 leading-5 font-semibold rounded-full ${getStatusStyles(complaint.status)}`}>
-                          {complaint.status}
-                        </span>
-                      </td>
-                      <td className=" flex py-4 whitespace-nowrap text-right text-md font-medium">
-                        <button onClick={() => handleEditIncome(complaint._id)} className="text-green-600 hover:text-green-900 mr-2">
-                          <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
-                          <span className="sr-only">Edit</span>
-                        </button>
-                        <button onClick={() => handleViewIncome(complaint._id)} className="text-blue-600 hover:text-blue-900 mr-2">
-                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
-
-                          <span className="sr-only">View</span>
-                        </button>
-                        <button onClick={() => handleDeleteIncome(complaint._id)} className="text-red-600 hover:text-red-900">
-                        <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
-
-                          <span className="sr-only">Delete</span>
-                        </button>
-                      </td>
+              {loading ? (
+                 <div className="flex items-center justify-center p-8">
+                 <div className="text-center">
+                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+           
+                 </div>
+               </div>
+              ) : (
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Requester Name
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Request Name
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider hidden md:table-cell">
+                        Description
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Request Date
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Unit Number
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Priority
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-right text-sm font-medium text-[#202224] font-medium	font-bold uppercase tracking-wider">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {complaints.length === 0 ? (
+                      <tr>
+                        <td colSpan="8" className="px-6 py-4 text-center text-gray-500">
+                          No requests found
+                        </td>
+                      </tr>
+                    ) : (
+                      complaints.map((complaint) => (
+                        <tr key={complaint.id} className='hover:bg-gray-50 transition-colors duration-150'>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10">
+                                <img className="h-10 w-10 rounded-full" src={''} alt="" />
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">{complaint.requestName}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-md text-gray-900">{complaint.requestName}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div className="text-md text-gray-500 max-w-xs truncate">{complaint.description}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-md text-gray-900">{new Date(complaint.createdAt).toLocaleDateString()}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-md text-gray-900">{complaint.unitNumber}</div>
+                            <div className="text-md text-gray-500">{complaint.unitId}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-sm py-1 leading-5 font-semibold rounded-full ${getPriorityStyles(complaint.priority)}`}>
+                              {complaint.priority}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-sm py-1 leading-5 font-semibold rounded-full ${getStatusStyles(complaint.status)}`}>
+                              {complaint.status}
+                            </span>
+                          </td>
+                          <td className=" flex py-4 whitespace-nowrap text-right text-md font-medium">
+                            <button onClick={() => handleEditIncome(complaint._id)} className="text-green-600 hover:text-green-900 mr-2">
+                              <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                              <span className="sr-only">Edit</span>
+                            </button>
+                            <button onClick={() => handleViewIncome(complaint._id)} className="text-blue-600 hover:text-blue-900 mr-2">
+                            <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+
+                              <span className="sr-only">View</span>
+                            </button>
+                            <button onClick={() => handleDeleteIncome(complaint._id)} className="text-red-600 hover:text-red-900">
+                            <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+
+                              <span className="sr-only">Delete</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
             </div>
           </div>

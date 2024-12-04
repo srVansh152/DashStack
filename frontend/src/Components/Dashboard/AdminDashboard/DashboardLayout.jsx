@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint } from '../../../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint, getFinancialIncomes } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
 import { IoMdAddCircle } from "react-icons/io";
 
@@ -13,7 +13,6 @@ const DashboardLayout = () => {
     const [openModel, setOpenModel] = useState(false);
     const [openEditImpModel, setOpenEditImpModal] = useState(false);
     const [openImpDeleteModel, setOpenImpDeleteModel] = useState(false);
-
     const [openEditModel, setOpenEditModal] = useState(false);
     const [openDeleteModel, setOpenDeleteModel] = useState(false);
     const [openViewModel, setOpenViewModel] = useState(false);
@@ -36,12 +35,15 @@ const DashboardLayout = () => {
     const [urgency, setUrgency] = useState("medium");
     const [currentStatus, setCurrentStatus] = useState("open");
     const [timeframe, setTimeframe] = useState('Month');
+    const [pendingMaintenances, setPendingMaintenances] = useState([]); // State for pending maintenances
+    const [isLoading, setIsLoading] = useState(true); // New loading state
 
 
 
 
 
     const fetchComplaints = async () => {
+        setIsLoading(true); // Set loading to true
         try {
             const response = await listComplaints(); // Replace with your API endpoint
 
@@ -50,20 +52,39 @@ const DashboardLayout = () => {
             setFetchedComplaints(response.data.complaints); // Assuming the API returns an array of complaints
         } catch (error) {
             console.error('Error fetching complaints:', error);
+        } finally {
+            setIsLoading(false); // Set loading to false after fetching
         }
     };
 
     useEffect(() => {
         fetchComplaints();
         fetchFacilities();
-        loadImportantNumbers()
+        loadImportantNumbers();
+        fetchPendingMaintenancesData(); // Call the new function
     }, []);
 
+    // New function to fetch pending maintenance data
+    const fetchPendingMaintenancesData = async () => {
+        try {
+            const response = await getFinancialIncomes(); // Fetch financial incomes
 
-
-
+            if (response.success) {
+                // Filter the data to get only those with hasPaid set to false
+                const pendingData = response.data[0].residentStatuses.filter(income => !income.hasPaid);
+                console.log(pendingData);
+                setPendingMaintenances(pendingData); // Update state with filtered data
+                // setPendingMaintenances(response.data[0].residentStatuses);
+            } else {
+                throw new Error("Failed to fetch pending maintenances");
+            }
+        } catch (error) {
+            console.error("Error fetching pending maintenances:", error);
+        }
+    };
 
     const fetchFacilities = async () => {
+        setIsLoading(true); // Set loading to true
         try {
             const response = await getFacilities();
             console.log(response);
@@ -75,6 +96,8 @@ const DashboardLayout = () => {
             }
         } catch (error) {
             console.error("Error fetching facilities:", error);
+        } finally {
+            setIsLoading(false); // Set loading to false after fetching
         }
     };
 
@@ -179,13 +202,7 @@ const DashboardLayout = () => {
     ];
 
 
-    const maintenanceData = [
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-2.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-3.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-4.png" },
-        { name: "Roger Lubin", status: "2 Month Pending", amount: "₹ 5,000", img: "/public/image/Dashborad/profile-rouger-5.png" }
-    ];
+
 
     const getPriorityStyles = (priority) => {
         switch (priority.toLowerCase()) {
@@ -331,6 +348,16 @@ const DashboardLayout = () => {
     };
 
     return (<>
+        {isLoading && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center z-50">
+                 <div className="flex items-center justify-center p-8">
+                     <div className="text-center">
+                       <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+               
+                     </div>
+                   </div>
+            </div>
+        )}
         <Aside />
         <div className="main bg-[#F0F5FB]">
             <div className="flex h-screen bg-gray-50">
@@ -346,7 +373,7 @@ const DashboardLayout = () => {
                                     className="absolute top-5 left-0 h-[52px] w-2 bg-[#FFB480] rounded-r-md"
                                 />
                                 <div className="ms-3">
-                                    <p className="text-sm font-medium text-gray-500">Total Balance</p>
+                                    <p className="text-[16px] font-medium text-[#202224]">Total Balance</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
@@ -366,7 +393,7 @@ const DashboardLayout = () => {
                                 />
 
                                 <div className="ms-3">
-                                    <p className="text-sm font-medium text-gray-500">Total Income</p>
+                                    <p className="text-[16px] font-medium text-[#202224]">Total Income</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 55,000</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
@@ -384,7 +411,7 @@ const DashboardLayout = () => {
                                     className="absolute top-5 left-0 h-[52px] w-2 bg-[#C3CFF9] rounded-r-md"
                                 />
                                 <div className="ms-3">
-                                    <p className="text-sm font-medium text-gray-500">Total Expense</p>
+                                    <p className="text-[16px] font-medium text-[#202224]">Total Expense</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
@@ -403,7 +430,7 @@ const DashboardLayout = () => {
                                 />
 
                                 <div className="ms-3">
-                                    <p className="text-sm font-medium text-gray-500">Total Unit</p>
+                                    <p className="text-[16px] font-medium text-[#202224]">Total Unit</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
@@ -469,9 +496,12 @@ const DashboardLayout = () => {
                                     </div>
                                     <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
                                         {importantNumbers.length === 0 ? (
-                                            <div className="p-4 bg-white rounded-lg border text-center">
-                                                <p className="text-sm text-gray-500">Loading...</p>
+                                            <div className="flex items-center justify-center p-8">
+                                            <div className="text-center">
+                                              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                                      
                                             </div>
+                                          </div>
                                         ) : (
                                             importantNumbers.map((number, i) => (
                                                 <div key={i} className="p-4 bg-white rounded-lg border">
@@ -504,17 +534,21 @@ const DashboardLayout = () => {
                                         <h2 className="text-lg sm:text-xl font-semibold">Pending Maintenances</h2>
                                         <a href="#" className="text-blue-500 hover:underline">View all</a>
                                     </div>
-                                    <div className="grid gap-4 overflow-y-auto h-48 sm:h-72">
-                                        {maintenanceData.map((item, index) => (
-                                            <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border">
-                                                <div className="flex items-center gap-4">
-                                                    <img src={item.img} />
+                                    <div className="grid gap-4 overflow-y-auto ">
+                                        {pendingMaintenances.map((item, index) => (
+                                            <div key={index} className="flex border-b border-gray-200 justify-between items-center p-4 bg-white rounded-lg border">
+                                                <div className="flex gap-4">
+                                                    {item.resident.profilePhoto ? (
+                                                        <img src={item.resident.profilePhoto} className="h-10 w-10 rounded-full object-cover border" />
+                                                    ) : (
+                                                        <img src="/path/to/default-logo.png" alt="Not Found" className="h-10 w-10 rounded-full border" />
+                                                    )}
                                                     <div>
-                                                        <p className="font-medium">{item.name}</p>
-                                                        <p className="text-sm text-gray-500">{item.status}</p>
+                                                        <p className="font-medium">{item.resident.fullName}</p>
+                                                        <p className="text-sm text-gray-500">{"Pending"}</p>
                                                     </div>
                                                 </div>
-                                                <p className="font-medium text-red-500">{item.amount}</p>
+                                                <p className="font-medium text-red-500">{item.totalAmount}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -523,7 +557,7 @@ const DashboardLayout = () => {
                         </div>
 
                         {/* Bottom Sections */}
-                        <div className="p-4 sm:p-6 bg-gray-50">
+                        <div className="pt-4 sm:p-6 bg-gray-50">
                             <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
                                 {/* Complaint List Section */}
                                 <div className="lg:col-span-7 bg-white rounded-lg p-4 sm:p-6 shadow-sm">
@@ -538,86 +572,98 @@ const DashboardLayout = () => {
                                     <div className="overflow-y-auto h-48 sm:h-60">
                                         <div className="overflow-x-auto rounded-lg border bg-white">
                                             <table className="min-w-full divide-y divide-gray-200">
-                                                <thead className="bg-gray-50">
-                                                    <tr>
-                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
+                                                <thead className="bg-[#EEF1FD]">
+                                                    <tr className='text-center'>
+                                                        <th className="px-4 py-3 text-left text-sm font-medium uppercase text-[#202224] font-bold">
                                                             Complainer Name
                                                         </th>
-                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
+                                                        <th className="px-4 py-3 text-left text-sm font-medium uppercase text-[#202224] font-bold">
                                                             Complaint Name
                                                         </th>
-                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
+                                                        <th className="px-4 py-3 text-left text-sm font-medium uppercase text-[#202224] font-bold">
                                                             Description
                                                         </th>
-                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
+                                                        <th className="px-4 py-3 text-left text-sm font-medium uppercase text-[#202224] font-bold">
                                                             Unit Number
                                                         </th>
-                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
+                                                        <th className="px-6 py-3 text-left text-sm font-medium uppercase text-[#202224] font-bold">
                                                             Priority
                                                         </th>
-                                                        <th className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-black">
+                                                        <th className="px-6 py-4 text-left text-sm font-medium uppercase text-[#202224] font-bold">
                                                             Status
                                                         </th>
-                                                        <th className="px-10 py-3  items-center text-right text-xs font-medium uppercase tracking-wider text-black">
+                                                        <th className="px-4 py-3 items-center text-right text-xs font-medium uppercase tracking-wider text-black">
                                                             Action
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                                    {fetchedComplaints.map((complaint) => (
-                                                        <tr key={complaint._id} className="hover:bg-gray-50">
-                                                            <td className="whitespace-nowrap px-6 py-4">
-                                                                <div className="flex items-center">
-                                                                    <img
-                                                                        className="h-8 w-8 rounded-full object-cover"
-                                                                        src={complaint.complainer.avatar}
-                                                                        alt={complaint.complaintName}
-                                                                    />
-                                                                    <span className="ml-2 text-[16px] font-medium text-gray-900">{complaint.complaintName}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td className="whitespace-nowrap px-6 py-4 text-[16px] text-gray-900">{complaint.complaintName}</td>
-                                                            <td className="max-w-xs truncate px-6 py-4 text-[16px] text-gray-500">{complaint.description}</td>
-                                                            <td className="whitespace-nowrap px-6 py-4">
-                                                                <div className="flex items-center gap-1">
-                                                                    <span className="text-[16px] font-medium text-gray-900">{complaint.unitNumber}</span>
-                                                                    <span className="text-[16px] text-gray-500">{complaint.unitId}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td className="whitespace-nowrap px-6 py-4">
-                                                                <span
-                                                                    className={`inline-flex rounded-full px-2.5 py-2  text-xs font-medium ${getPriorityStyles(
-                                                                        complaint.priority
-                                                                    )}`}
-                                                                >
-                                                                    {complaint.priority}
-                                                                </span>
-                                                            </td>
-                                                            <td className="whitespace-nowrap px-6 py-4">
-                                                                <span
-                                                                    className={`inline-flex rounded-full px-2.5 py-2 text-xs font-medium ${getStatusStyles(
-                                                                        complaint.status
-                                                                    )}`}
-                                                                >
-                                                                    {complaint.status}
-                                                                </span>
-                                                            </td>
-                                                            <td className="whitespace-nowrap px-6 py-4 text-right">
-                                                                <div className="flex justify-end space-x-2">
-                                                                    <button onClick={() => handleEditModel(complaint)} className="rounded  text-green-600 hover:bg-green-50">
-                                                                        <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                                                    {isLoading ? ( // Check if loading
+                                                        <tr>
+                                                            <td colSpan="7" className="text-center py-4">
+                                                                <div className="flex items-center justify-center p-8">
+                                                                    <div className="text-center">
+                                                                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
 
-                                                                    </button>
-                                                                    <button onClick={() => handleViewModel(complaint._id)} className="rounded  text-blue-600 hover:bg-blue-50">
-                                                                        <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
-                                                                    </button>
-                                                                    <button onClick={() => handleDeleteModel(complaint._id)} className="rounded  text-red-600 hover:bg-red-50">
-                                                                        <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
-                                                                    </button>
-                                                                </div>
+                                                                    </div>
+                                                                </div>{/* Loading text */}
                                                             </td>
                                                         </tr>
-                                                    ))}
+                                                    ) : (
+                                                        fetchedComplaints.map((complaint) => (
+                                                            <tr key={complaint._id} className="">
+                                                                <td className="whitespace-nowrap px-6 py-4">
+                                                                    <div className="flex items-center">
+                                                                        <img
+                                                                            className="h-8 w-8 rounded-full object-cover"
+                                                                            src={complaint.complainer.avatar}
+                                                                            alt={complaint.complaintName}
+                                                                        />
+                                                                        <span className="ml-2 text-[16px] font-medium text-[#4F4F4F]">{complaint.complaintName}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="whitespace-nowrap px-6 py-4 text-[16px] text-[#4F4F4F]">{complaint.complaintName}</td>
+                                                                <td className="max-w-xs truncate px-6 py-4 text-[16px] text-[#4F4F4F]">{complaint.description}</td>
+                                                                <td className="whitespace-nowrap px-6 py-4">
+                                                                    <div className="flex items-center gap-1">
+                                                                        <span className="text-[16px] font-medium text-[#4F4F4F]">{complaint.unitNumber}</span>
+                                                                        <span className="text-[16px] text-[#4F4F4F]">{complaint.unitId}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="whitespace-nowrap px-6 py-4">
+                                                                    <span
+                                                                        className={`inline-flex rounded-full px-4 py-2  text-sm font-medium ${getPriorityStyles(
+                                                                            complaint.priority
+                                                                        )}`}
+                                                                    >
+                                                                        {complaint.priority}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="whitespace-nowrap px-6 py-4">
+                                                                    <span
+                                                                        className={`inline-flex rounded-full  px-4 py-2  text-sm font-medium ${getStatusStyles(
+                                                                            complaint.status
+                                                                        )}`}
+                                                                    >
+                                                                        {complaint.status}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="whitespace-nowrap px-6 py-4 text-right">
+                                                                    <div className="flex justify-end space-x-2">
+                                                                        <button onClick={() => handleEditModel(complaint)} className="rounded  text-green-600 hover:bg-green-50">
+                                                                            <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                                                                        </button>
+                                                                        <button onClick={() => handleViewModel(complaint._id)} className="rounded  text-blue-600 hover:bg-blue-50">
+                                                                            <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+                                                                        </button>
+                                                                        <button onClick={() => handleDeleteModel(complaint._id)} className="rounded  text-red-600 hover:bg-red-50">
+                                                                            <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    )}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -709,7 +755,7 @@ const DashboardLayout = () => {
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-6 py-2 bg-[#F6F8FB] text-black rounded-md  w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
+                                            className="px-6 py-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] text-white rounded-md  w-[47%] hover:bg-gradient-to-r hover:from-[#FE512E] hover:to-[#F09619] transition-all duration-300 hover:text-white"
                                         >
                                             Save
                                         </button>

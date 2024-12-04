@@ -1,15 +1,30 @@
 import React from "react";
 import { useState } from "react";
 import { ChevronDown, Upload } from "lucide-react";
+import axios from 'axios'; // Import axios for making API calls
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 import { Link } from 'react-router-dom';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, } from 'lucide-react';
 import Aside from "../../../../Common/SideBar/AdminSideBar/Aside";
 import Navbar from "../../../../Common/Navbar/Navbar";
+import { createResident } from "../../../../../utils/api";
 
-
+const InputField = ({ label, type, value, onChange, placeholder }) => (
+  <div>
+    <label className="block text-sm font-medium text-[#202224]">{label}</label>
+    <input
+      type={type}
+      className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
+  </div>
+);
 
 export const Form = () => {
+  const navigate = useNavigate(); // Create navigate function
   const [fullName, setFullName] = useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
@@ -18,14 +33,19 @@ export const Form = () => {
   const [relation, setRelation] = useState('');
   const [activeTab, setActiveTab] = useState("owner");
   const [selectedImage, setSelectedImage] = useState(null);
-
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [memberCount, setMemberCount] = useState(5);
   const [vehicleCount, setVehicleCount] = useState(3);
   const [vehicles, setVehicles] = useState([{}]);
   const [members, setMembers] = useState([{}]); // State to store member details
-
-
+  const [files, setFiles] = useState({
+    aadharFront: null,
+    aadharBack: null,
+    addressProof: null,
+    rentAgreement: null,
+  });
+  const [wing, setWing] = useState(''); // State for wing
+  const [unit, setUnit] = useState(''); // State for unit
 
   const handleMemberCountChange = (event) => {
 
@@ -47,11 +67,6 @@ export const Form = () => {
     newMembers[index] = { ...newMembers[index], [field]: value }; // Update the specific field for the member
     setMembers(newMembers);
   };
-
-
-
-
-
 
   const handleVehicleCountChange = (event) => {
     const count = Number(event.target.value);
@@ -77,18 +92,84 @@ export const Form = () => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setSelectedImage(e.target.result);
+        };
+        reader.readAsDataURL(file);
+        
+        // Update the files state to include the photo
+        setFiles((prevFiles) => ({
+            ...prevFiles,
+            photo: file, // Store the photo in the files state
+        }));
+    }
+  };
+
+  const handleFileChangee = (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFiles((prevFiles) => ({
+        ...prevFiles,
+        [field]: file,
+      }));
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    // Validate required fields
+
+    const ownerData = {
+      photo: files.photo || null, // Ensure photo is set or null
+      fullName,
+      phoneNumber: phoneNo,
+      email,
+      age: Number(age),
+      gender,
+      wing, // Add wing to ownerData
+      unitNumber: unit, // Add unit to ownerData
+      relation,
+      aadhaarFront: files.aadharFront || null, // Ensure files are set or null
+      aadhaarBack: files.aadharBack || null,
+      addressProof: files.addressProof || null,
+      rentAgreement: files.rentAgreement || null,
+      members: members.map(member => ({
+        name: member.fullName || "", // Ensure name is set or empty string
+        phoneNumber: member.phone || "", // Ensure phone is set or empty string
+        email: member.email || "", // Ensure email is set or empty string
+        age: Number(member.age) || 0, // Ensure age is set or default to 0
+        gender: member.gender || "", // Ensure gender is set or empty string
+        relation: member.relation || "", // Ensure relation is set or empty string
+      })),
+      vehicles: vehicles.map(vehicle => ({
+        type: vehicle.type || "", // Ensure type is set or empty string
+        name: vehicle.name || "", // Ensure name is set or empty string
+        number: vehicle.number || "", // Ensure number is set or empty string
+      })),
+      owner: activeTab === "owner", // Set owner based on active tab
+      ownerDetails: activeTab === "tenant" ? { // Include ownerDetails only for tenant
+        fullName: fullName || "", // Ensure fullName is set or empty string
+        phoneNumber: phoneNo || "", // Ensure phoneNumber is set or empty string
+        address: `${wing} ${unit}` || "", // Combine wing and unit for address
+      } : null, // Set to null if owner
+    }
+    
+    try {
+      const response = await createResident(ownerData);
+      console.log('Data saved successfully:', response);
+      navigate('/adminc/residence'); // Navigate to the desired route after successful submission
+    } catch (error) {
+      console.error('Error saving data:', error.response ? error.response.data : error.message);
+      // Log the error response for more details
     }
   };
 
   const renderOwnerForm = () => (
     <div className="">
       {/* Owner/Tenant Details */}
-      <div className="flex  sm:grid-cols-1 md:grid-cols-2 items-start space-x-4 bg-white px-3 pt-3 pb-4 rounded-lg">
+      <div className="flex sm:grid-cols-1 md:grid-cols-2 items-start space-x-4 bg-white px-3 pt-3 pb-4 rounded-lg">
         <div className="flex-shrink-0">
           <div className="relative w-20 h-20 ">
             {selectedImage ? (
@@ -121,69 +202,113 @@ export const Form = () => {
         </div>
 
         {/* Form Fields */}
-        <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Full Name
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Name"
-            />
+        <div className="flex-1 grid gap-6">
+            {/* Top Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number*
+                </label>
+                <input
+                  type="tel"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={phoneNo}
+                  onChange={(e) => setPhoneNo(e.target.value)}
+                />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Bottom Row */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Age*
+                </label>
+                <input
+                  type="number"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender*
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Wing*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={wing}
+                  onChange={(e) => setWing(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unit*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Relation*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={relation}
+                  onChange={(e) => setRelation(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Phone No
-            </label>
-            <input
-              type="tel"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="+91 "
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Email Address
-            </label>
-            <input
-              type="email"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Age
-            </label>
-            <input
-              type="number"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Age"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Gender
-            </label>
-            <select className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1">
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Relation
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Relation"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Common form sections can be added here */}
@@ -267,69 +392,95 @@ export const Form = () => {
         </div>
 
         {/* Form Fields */}
-        <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Full Name
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Name"
-            />
+        <div className="flex-1 grid gap-6 py-2">
+            {/* Top Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number*
+                </label>
+                <input
+                  type="tel"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Bottom Row */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Age*
+                </label>
+                <input
+                  type="number"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender*
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Wing*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unit*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Relation*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Phone No
-            </label>
-            <input
-              type="tel"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="+91 "
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Email Address
-            </label>
-            <input
-              type="email"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Age
-            </label>
-            <input
-              type="number"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Age"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Gender
-            </label>
-            <select className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1">
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Relation
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Relation"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Rest of the form components */}
@@ -356,23 +507,6 @@ export const Form = () => {
           setSelectedImage(e.target.result); // Example: set the uploaded image
         };
         reader.readAsDataURL(file); // Read the file as a data URL
-      }
-    };
-
-    const [files, setFiles] = useState({
-      aadharFront: null,
-      aadharBack: null,
-      addressProof: null,
-      rentAgreement: null,
-    });
-
-    const handleFileChangee = (e, field) => {
-      const file = e.target.files[0];
-      if (file) {
-        setFiles((prevFiles) => ({
-          ...prevFiles,
-          [field]: file,
-        }));
       }
     };
 
@@ -551,7 +685,6 @@ export const Form = () => {
                       type="text"
                       className="mt-1 block w-full border rounded-md bg-transparent text-sm px-4 py-1"
                       placeholder="Enter Name"
-                      value={vehicles[index]?.name || ''}
                       onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                     />
                   </div>
@@ -561,7 +694,6 @@ export const Form = () => {
                       type="text"
                       className="mt-1 block w-full border rounded-md shadow-sm text-sm bg-transparent px-4 py-1"
                       placeholder="Enter Number"
-                      value={vehicles[index]?.number || ''}
                       onChange={(e) => handleInputChange(index, 'number', e.target.value)}
                     />
                   </div>
@@ -591,33 +723,38 @@ export const Form = () => {
         <Navbar />
         <div className="min-h-screen bg-blue-50 p-4 sm:p-6 lg:p-8">
           <div className="w-full max-w-10xl bg-[#f0f5fb] rounded-lg p-4 sm:p-6 lg:p-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center bg-[#f0f5fb]">
-              <div className="flex flex-wrap">
-                <button
-                  className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "owner"
-                      ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
-                      : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
-                    }`}
-                  onClick={() => setActiveTab("owner")}
-                >
-                  Owner
-                </button>
-                <button
-                  className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "tenant"
-                      ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
-                      : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
-                    }`}
-                  onClick={() => setActiveTab("tenant")}
-                >
-                  Tenant
-                </button>
+            <form onSubmit={handleSubmit}> {/* Add form submission handler */}
+              <div className="flex flex-col sm:flex-row justify-between items-center bg-[#f0f5fb]">
+                <div className="flex flex-wrap">
+                  <button
+                    className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "owner"
+                        ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
+                        : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
+                      }`}
+                    onClick={() => setActiveTab("owner")}
+                  >
+                    Owner
+                  </button>
+                  <button
+                    className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "tenant"
+                        ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
+                        : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
+                      }`}
+                    onClick={() => setActiveTab("tenant")}
+                  >
+                    Tenant
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Conditional rendering based on activeTab */}
-            <div className="mt-4">
-              {activeTab === "tenant" ? renderTenantForm() : renderOwnerForm()}
-            </div>
+              {/* Conditional rendering based on activeTab */}
+              <div className="mt-4">
+                {activeTab === "tenant" ? renderTenantForm() : renderOwnerForm()}
+              </div>
+
+              {/* Action Buttons */}
+          
+            </form>
           </div>
         </div>
       </div>

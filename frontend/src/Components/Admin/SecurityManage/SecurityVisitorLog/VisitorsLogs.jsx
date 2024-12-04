@@ -17,15 +17,18 @@ function VisitorsLogs() {
   const [error, setError] = useState(null); // State to manage error messages
   const [successMessage, setSuccessMessage] = useState(null); // State to manage success message
   const [visitors, setVisitors] = useState([]); // State to store the fetched visitor logs
+  const [loading, setLoading] = useState(true); // State to manage loading status
 
 
   const fetchVisitorLogs = async () => {
+    setLoading(true); // Set loading to true when starting the fetch
     const response = await getVisitorLogs();
     if (response.success) {
       setVisitors(response.data.visitorLogs); // Assuming 'visitors' is the key that holds the visitor list
     } else {
       setError(response.message);
     }
+    setLoading(false); // Set loading to false after fetch is complete
   };
   // Fetch visitor logs on component mount
   useEffect(() => {
@@ -53,6 +56,13 @@ function VisitorsLogs() {
             
             </div>
 
+            {loading ? (
+                   <div className="flex items-center justify-center p-8">
+                   <div className="text-center">
+                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                   </div>
+                 </div>
+                ) : (
             <div className="bg-white rounded-lg shadow">
               <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-black font-bold bg-[#EEF1FD] rounded">
                 <div>Visitor Name</div>
@@ -63,7 +73,7 @@ function VisitorsLogs() {
               </div>
 
               <div className="divide-y">
-                {visitors.length > 0 ? (
+               {visitors.length > 0 ? (
                   visitors.map((visitor, index) => (
                     <div
                       key={index}
@@ -88,6 +98,7 @@ function VisitorsLogs() {
                 )}
               </div>
             </div>
+            )}
             </div>
           </div>
         </div>

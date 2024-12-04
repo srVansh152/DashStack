@@ -83,15 +83,18 @@ const ComplaintSubmission = () => {
 
 
   const [complaintList, setComplaintList] = useState([]);
+  const [loading, setLoading] = useState(true); // Step 1: Add loading state
 
   const fetchComplaints = async () => {
+    setLoading(true); // Step 2: Set loading to true before fetching
     const response = await listComplaints();
     if (response.success) {
-      console.log(response.data.complaints)
+      console.log(response.data.complaints);
       setComplaintList(response.data.complaints); // Update complaintList with fetched data
     } else {
       console.error(response.message);
     }
+    setLoading(false); // Step 2: Set loading to false after fetching
   };
   // Fetch complaints data on component mount
   useEffect(() => {
@@ -140,56 +143,66 @@ const ComplaintSubmission = () => {
 
           <h2 className="mb-4 text-xl font-semibold">Complaint</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {complaintList.map((complaint, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="bg-[#5678E9] px-4 py-2 flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-white">{complaint.complaintName}</h2>
-                <div className="relative">
-                  <button
-                    onClick={() => toggleDropdown(index)}
-                    className="text-gray-600 hover:text-gray-800 focus:outline-none"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-6 bg-white rounded"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                    </svg>
-                  </button>
-                  {dropdownOpen === index && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                      <button onClick={() => handleDeleteModel(complaint)}
-                    
-                        className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-100"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="mb-3 flex justify-between">
-                  <span className="font-semibold">Request Date:</span> {new Date(complaint.createdAt).toLocaleDateString()}
-                </div>
-                <div className="mb-3 flex justify-between">
-                  <span className="font-semibold">Status:</span>
-                  <span className="ml-2 px-2 py-2 py-1 bg-[#EEF1FD] text-blue-800 rounded-full text-xs">
-                    {complaint.status}
-                  </span>
-                </div>
-                <div className='flex justify-between'>
-                  <span className="font-semibold">Description:</span>
-                  <p className="mt-1 text-gray-600">{complaint.description}</p>
-                </div>
-              </div>
+          {/* Step 3: Conditionally render loading text */}
+          {loading ? (
+            <div className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+      
             </div>
-          ))}
-        </div>
-    </main>
+          </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {complaintList.map((complaint, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div className="bg-[#5678E9] px-4 py-2 flex justify-between items-center">
+                    <h2 className="text-lg font-semibold text-white">{complaint.complaintName}</h2>
+                    <div className="relative">
+                      <button
+                        onClick={() => toggleDropdown(index)}
+                        className="text-gray-600 hover:text-gray-800 focus:outline-none"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-6 bg-white rounded"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                        </svg>
+                      </button>
+                      {dropdownOpen === index && (
+                        <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                          <button onClick={() => handleDeleteModel(complaint)}
+                        
+                            className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="mb-3 flex justify-between">
+                      <span className="font-semibold">Request Date:</span> {new Date(complaint.createdAt).toLocaleDateString()}
+                    </div>
+                    <div className="mb-3 flex justify-between">
+                      <span className="font-semibold">Status:</span>
+                      <span className="ml-2 px-2 py-2 py-1 bg-[#EEF1FD] text-blue-800 rounded-full text-xs">
+                        {complaint.status}
+                      </span>
+                    </div>
+                    <div className='flex justify-between'>
+                      <span className="font-semibold">Description:</span>
+                      <p className="mt-1 text-gray-600">{complaint.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
             </div>
 
       {openModel && (

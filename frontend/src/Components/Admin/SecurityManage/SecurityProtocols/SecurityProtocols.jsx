@@ -22,9 +22,11 @@ function SecurityProtocols() {
 
 
   const [protocols, setProtocols] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchSecurityProtocols = async () => {
     try {
+      setIsLoading(true);
       const response = await getSecurityProtocols();
       if (!response.success) {
         throw new Error('Failed to fetch security protocols');
@@ -35,6 +37,8 @@ function SecurityProtocols() {
     } catch (error) {
       console.error('Error fetching security protocols:', error);
       return [];
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,63 +170,72 @@ function SecurityProtocols() {
               </div>
 
               <div className="overflow-x-auto rounded-lg border bg-white">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-[#EEF1FD]">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
-                        Title
-                      </th>
-                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
-                        Description
-                      </th>
-                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
-                        Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
-                        Time
-                      </th>
-                      <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 bg-white">
-                    {protocols.map((protocol, index) => (
-                      <tr key={index} className="">
-                        <td className="whitespace-nowrap px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
-                              <span className="text-sm text-[#202224]">
-                                {protocol.title.split(' ').map(n => n[0]).join('')}
-                              </span>
-                            </div>
-                            <span className="ml-2 text-sm font-medium text-[#202224]">{protocol.title}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-[#202224] break-words">{protocol.description}</td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{new Date(protocol.createdAt).toLocaleDateString()}</td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{protocol.time}</td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm flex space-x-2">
-                          <button onClick={() => handleEditModel(protocol._id, protocol)} className="p-1 text-green-600 hover:text-green-800">
-                            <img src="/public/image/Dashborad/edit.png" alt="" />
-                          </button>
-                          <button onClick={() => handleViewModel(protocol._id)}
-                            className="p-1 text-blue-600 hover:text-blue-800">
-                            <img src="/public/image/Dashborad/view.png" alt="" />
-
-                          </button>
-                          <button onClick={() => {
-                            setProtocolToDelete(protocol._id);
-                            setOpenDeleteModel(true);
-                          }} className="p-1 text-red-600 hover:text-red-800">
-                            <img src="/public/image/Dashborad/delete.png" alt="" />
-
-                          </button>
-                        </td>
+                {isLoading ? (
+                   <div className="flex items-center justify-center p-8">
+                   <div className="text-center">
+                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                     
+                   </div>
+                 </div>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-[#EEF1FD]">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                          Title
+                        </th>
+                        <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                          Description
+                        </th>
+                        <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                          Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                          Time
+                        </th>
+                        <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-[#202224]">
+                          Action
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 bg-white">
+                      {protocols.map((protocol, index) => (
+                        <tr key={index} className="">
+                          <td className="whitespace-nowrap px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center">
+                                <span className="text-sm text-[#202224]">
+                                  {protocol.title.split(' ').map(n => n[0]).join('')}
+                                </span>
+                              </div>
+                              <span className="ml-2 text-sm font-medium text-[#202224]">{protocol.title}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-[#202224] break-words">{protocol.description}</td>
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{new Date(protocol.createdAt).toLocaleDateString()}</td>
+                          <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{protocol.time}</td>
+                          <td className="whitespace-nowrap px-6 py-4 text-sm flex space-x-2">
+                            <button onClick={() => handleEditModel(protocol._id, protocol)} className="p-1 text-green-600 hover:text-green-800">
+                              <img src="/public/image/Dashborad/edit.png" alt="" />
+                            </button>
+                            <button onClick={() => handleViewModel(protocol._id)}
+                              className="p-1 text-blue-600 hover:text-blue-800">
+                              <img src="/public/image/Dashborad/view.png" alt="" />
+
+                            </button>
+                            <button onClick={() => {
+                              setProtocolToDelete(protocol._id);
+                              setOpenDeleteModel(true);
+                            }} className="p-1 text-red-600 hover:text-red-800">
+                              <img src="/public/image/Dashborad/delete.png" alt="" />
+
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>

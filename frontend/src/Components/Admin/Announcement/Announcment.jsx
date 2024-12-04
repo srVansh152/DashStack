@@ -169,7 +169,11 @@ function Announcment() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {loading ? (
-                <div className="col-span-4 text-center p-4">Loading announcements...</div>
+                <div className="col-span-full flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                  </div>
+                </div>
               ) : (
                 announcements.map((announcement, index) => (
                   <div key={index} className="bg-white rounded-lg overflow-hidden">
@@ -180,7 +184,7 @@ function Announcment() {
                       </div>
                       {/* Attach dropdown to all cards */}
                       <div className="relative group">
-                        <button className="text-white hover:bg-blue-600 p-1 rounded">
+                        <button className="text-blue-600 bg-white hover:bg-white p-1 rounded">
                           <MoreVertical className="w-5 h-5" />
                         </button>
                         <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all duration-300 ease-in-out">
@@ -201,19 +205,19 @@ function Announcment() {
                     </div>
                     <div className="p-4">
                       <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <div>
-                            <p className="text-sm text-gray-600">Announcement Date</p>
-                            <p className="text-sm font-medium">{announcement.date}</p>
+                        <div className="">
+                          <div className=" flex justify-between mt-2">
+                            <p className="text-md text-gray-600">Announcement Date</p>
+                            <p className="text-md  font-medium">{announcement.date}</p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-600">Announcement Time</p>
-                            <p className="text-sm font-medium">{announcement.time}</p>
+                          <div className=" flex justify-between mt-2">
+                            <p className="text-md text-gray-600">Announcement Time</p>
+                            <p className="text-md font-medium">{announcement.time}</p>
                           </div>
                         </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Description</p>
-                          <p className="text-sm">{announcement.description}</p>
+                        <div className='flex justify-between mt-2'>
+                          <p className="text-md text-gray-600 ">Description</p>
+                          <p className="text-md">{announcement.description}</p>
                         </div>
                       </div>
                     </div>

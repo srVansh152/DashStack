@@ -185,13 +185,13 @@ function Residence() {
   };
 
   return (
-    <div>
+    <div className='bg-[#F0F5FB]'>
       <Aside />
-      <div className="main bg-[#F0F5FB]">
+      <div className="main ">
         <Navbar />
 
 
-        <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
           <div className="px-4 py-6 sm:px-0 ">
             <div className='bg-white px-3 py-4 rounded'>
               <div className="flex justify-between items-center mb-4">
@@ -205,7 +205,12 @@ function Residence() {
               </div>
               <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 {loading ? (
-                  <div className="p-4 text-center text-gray-600">Loading residents...</div>
+                   <div className="flex items-center justify-center p-8">
+                   <div className="text-center">
+                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+             
+                   </div>
+                 </div>
                 ) : error ? (
                   <div className="p-4 text-center text-red-600">{error}</div>
                 ) : (
