@@ -192,69 +192,95 @@ export const Form = () => {
         </div>
 
         {/* Form Fields */}
-        <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Full Name
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Name"
-            />
+        <div className="flex-1 grid gap-6">
+            {/* Top Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number*
+                </label>
+                <input
+                  type="tel"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Bottom Row */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Age*
+                </label>
+                <input
+                  type="number"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender*
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Wing*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unit*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Relation*
+                </label>
+                <input
+                  type="text"
+                  placeholder=""
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Phone No
-            </label>
-            <input
-              type="tel"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="+91 "
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Email Address
-            </label>
-            <input
-              type="email"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Age
-            </label>
-            <input
-              type="number"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Age"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Gender
-            </label>
-            <select className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1">
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#202224]">
-              Relation
-            </label>
-            <input
-              type="text"
-              className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
-              placeholder="Enter Relation"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Common form sections can be added here */}
@@ -338,7 +364,7 @@ export const Form = () => {
         </div>
 
         {/* Form Fields */}
-        <div className="flex-1 grid gap-6">
+        <div className="flex-1 grid gap-6 py-2">
             {/* Top Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="col-span-1">
