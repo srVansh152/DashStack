@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { ChevronDown, Upload } from "lucide-react";
 import axios from 'axios'; // Import axios for making API calls
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 import { Link } from 'react-router-dom';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, } from 'lucide-react';
@@ -23,6 +24,7 @@ const InputField = ({ label, type, value, onChange, placeholder }) => (
 );
 
 export const Form = () => {
+  const navigate = useNavigate(); // Create navigate function
   const [fullName, setFullName] = useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
@@ -42,6 +44,8 @@ export const Form = () => {
     addressProof: null,
     rentAgreement: null,
   });
+  const [wing, setWing] = useState(''); // State for wing
+  const [unit, setUnit] = useState(''); // State for unit
 
   const handleMemberCountChange = (event) => {
 
@@ -88,11 +92,17 @@ export const Form = () => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setSelectedImage(e.target.result);
+        };
+        reader.readAsDataURL(file);
+        
+        // Update the files state to include the photo
+        setFiles((prevFiles) => ({
+            ...prevFiles,
+            photo: file, // Store the photo in the files state
+        }));
     }
   };
 
@@ -110,17 +120,16 @@ export const Form = () => {
     event.preventDefault(); // Prevent default form submission
 
     // Validate required fields
- 
 
     const ownerData = {
-      photo: selectedImage || null, // Ensure photo is set or null
+      photo: files.photo || null, // Ensure photo is set or null
       fullName,
       phoneNumber: phoneNo,
       email,
       age: Number(age),
       gender,
-      wing: "A",
-      unitNumber: "101",
+      wing, // Add wing to ownerData
+      unitNumber: unit, // Add unit to ownerData
       relation,
       aadhaarFront: files.aadharFront || null, // Ensure files are set or null
       aadhaarBack: files.aadharBack || null,
@@ -139,17 +148,18 @@ export const Form = () => {
         name: vehicle.name || "", // Ensure name is set or empty string
         number: vehicle.number || "", // Ensure number is set or empty string
       })),
-      owner: true, // Assuming this is an owner
-      role: "resident", // Assuming the role is resident
-      society: "your_society_id", // Replace with actual society ID
-      createdBy: "your_user_id", // Replace with actual user ID
-    };
-
-    console.log('Data to be sent:', ownerData); // Log the data being sent
-
+      owner: activeTab === "owner", // Set owner based on active tab
+      ownerDetails: activeTab === "tenant" ? { // Include ownerDetails only for tenant
+        fullName: fullName || "", // Ensure fullName is set or empty string
+        phoneNumber: phoneNo || "", // Ensure phoneNumber is set or empty string
+        address: `${wing} ${unit}` || "", // Combine wing and unit for address
+      } : null, // Set to null if owner
+    }
+    
     try {
       const response = await createResident(ownerData);
       console.log('Data saved successfully:', response);
+      navigate('/adminc/residence'); // Navigate to the desired route after successful submission
     } catch (error) {
       console.error('Error saving data:', error.response ? error.response.data : error.message);
       // Log the error response for more details
@@ -203,6 +213,8 @@ export const Form = () => {
                   type="text"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                 />
               </div>
               <div className="col-span-1">
@@ -213,6 +225,8 @@ export const Form = () => {
                   type="tel"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={phoneNo}
+                  onChange={(e) => setPhoneNo(e.target.value)}
                 />
               </div>
               <div className="col-span-1">
@@ -223,6 +237,8 @@ export const Form = () => {
                   type="email"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -237,13 +253,19 @@ export const Form = () => {
                   type="number"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Gender*
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
                   <option>Male</option>
                   <option>Female</option>
                   <option>Other</option>
@@ -257,6 +279,8 @@ export const Form = () => {
                   type="text"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={wing}
+                  onChange={(e) => setWing(e.target.value)}
                 />
               </div>
               <div>
@@ -267,6 +291,8 @@ export const Form = () => {
                   type="text"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
                 />
               </div>
               <div>
@@ -277,6 +303,8 @@ export const Form = () => {
                   type="text"
                   placeholder=""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={relation}
+                  onChange={(e) => setRelation(e.target.value)}
                 />
               </div>
             </div>
