@@ -1,117 +1,92 @@
-const socketIO = require('socket.io');
-const Chat = require('../models/Chat');
-const Message = require('../models/Message');
+// const socketIO = require('socket.io');
+// const Chat = require('../models/Chat');
+// const Message = require('../models/Message');
 
-const initializeSocket = (server) => {
-  const io = socketIO(server, {
-    cors: {
-      origin: "http://localhost:5173",
-      methods: ["GET", "POST"],
-      credentials: true
-    }
-  });
+// const initializeSocket = (server) => {
+//   const io = socketIO(server, {
+//     cors: {
+//       origin: "http://localhost:5173",
+//       methods: ["GET", "POST"],
+//       credentials: true
+//     }
+//   });
 
-  // Track active users
-  const activeUsers = new Map(); // userId -> socketId
+//   // Track active users
+//   const activeUsers = new Map(); // userId -> socketId
 
-  io.on('connection', (socket) => {
-    console.log('New socket connection:', socket.id);
+//   io.on('connection', (socket) => {
+//     console.log('New socket connection:', socket.id);
 
-    socket.on('userConnected', (userId) => {
-      console.log('User connected:', userId);
-      activeUsers.set(userId, socket.id);
-      socket.userId = userId;
-      io.emit('activeUsers', Array.from(activeUsers.keys()));
-    });
+//     // Handle user connection
+//     socket.on('userConnected', (userId) => {
+//       console.log('User connected:', userId);
+//       activeUsers.set(userId, socket.id);
+//       socket.userId = userId;
+      
+//       // Broadcast updated online users list
+//       const onlineUsersList = Array.from(activeUsers.keys());
+//       io.emit('activeUsers', onlineUsersList);
+//     });
 
-    socket.on('joinChat', async ({ chatId, userId }) => {
-      try {
-        // Leave all other rooms first
-        const rooms = [...socket.rooms];
-        rooms.forEach(room => {
-          if (room !== socket.id) {
-            socket.leave(room);
-          }
-        });
+//     // Handle joining chat rooms
+//     socket.on('joinChat', ({ chatId, userId }) => {
+//       if (!chatId) return;
+      
+//       console.log(`User ${userId} joining chat ${chatId}`);
+//       socket.join(chatId);
+//     });
 
-        console.log(`User ${userId} joining chat ${chatId}`);
-        socket.join(chatId);
+//     // Handle new messages
+//     socket.on('sendMessage', async (messageData) => {
+//       try {
+//         const { chatId, text, senderId } = messageData;
         
-        const chat = await Chat.findById(chatId).populate('participants');
-        if (chat) {
-          chat.participants.forEach(participant => {
-            if (participant._id.toString() !== userId) {
-              const participantSocket = activeUsers.get(participant._id.toString());
-              if (participantSocket) {
-                io.to(participantSocket).emit('userJoinedChat', { chatId, userId });
-              }
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error joining chat:', error);
-        socket.emit('error', { message: 'Failed to join chat' });
-      }
-    });
+//         // Create and save message
+//         const newMessage = new Message({
+//           chat: chatId,
+//           sender: senderId,
+//           text: text,
+//           type: 'text'
+//         });
+//         await newMessage.save();
 
-    socket.on('sendMessage', async (messageData) => {
-      try {
-        const { chatId, text, senderId, receiverId } = messageData;
-        console.log(`Processing message in chat ${chatId} from ${senderId}`);
+//         // Populate sender details
+//         const populatedMessage = await Message.findById(newMessage._id)
+//           .populate('sender', 'fullName email photo');
 
-        // Create and save message
-        const newMessage = new Message({
-          chat: chatId,
-          sender: senderId,
-          text: text,
-          type: 'text'
-        });
-        await newMessage.save();
+//         // Update chat with new message
+//         await Chat.findByIdAndUpdate(chatId, {
+//           $push: { messages: newMessage._id }
+//         });
 
-        // Get populated message
-        const populatedMessage = await Message.findById(newMessage._id)
-          .populate('sender', 'fullName email photo');
+//         // Broadcast to chat room
+//         io.to(chatId).emit('newMessage', {
+//           _id: populatedMessage._id,
+//           chat: chatId,
+//           text: populatedMessage.text,
+//           sender: populatedMessage.sender,
+//           createdAt: populatedMessage.createdAt
+//         });
 
-        // Update chat
-        await Chat.findByIdAndUpdate(chatId, {
-          $push: { messages: newMessage._id }
-        });
+//       } catch (error) {
+//         console.error('Error handling message:', error);
+//         socket.emit('messageError', { error: 'Failed to send message' });
+//       }
+//     });
 
-        // Only emit to the specific chat room
-        console.log(`Emitting message to chat room ${chatId}`);
-        socket.to(chatId).emit('newMessage', {
-          _id: populatedMessage._id,
-          chat: chatId,
-          text: populatedMessage.text,
-          sender: populatedMessage.sender,
-          createdAt: populatedMessage.createdAt
-        });
+//     // Handle disconnection
+//     socket.on('disconnect', () => {
+//       if (socket.userId) {
+//         activeUsers.delete(socket.userId);
+//         // Broadcast updated online users list
+//         const onlineUsersList = Array.from(activeUsers.keys());
+//         io.emit('activeUsers', onlineUsersList);
+//       }
+//       console.log('User disconnected:', socket.id);
+//     });
+//   });
 
-        // Also emit back to sender but with a different socket call
-        socket.emit('newMessage', {
-          _id: populatedMessage._id,
-          chat: chatId,
-          text: populatedMessage.text,
-          sender: populatedMessage.sender,
-          createdAt: populatedMessage.createdAt
-        });
+//   return io;
+// };
 
-      } catch (error) {
-        console.error('Error handling message:', error);
-        socket.emit('messageError', { error: 'Failed to send message' });
-      }
-    });
-
-    socket.on('disconnect', () => {
-      if (socket.userId) {
-        activeUsers.delete(socket.userId);
-        io.emit('activeUsers', Array.from(activeUsers.keys()));
-      }
-      console.log('User disconnected:', socket.id);
-    });
-  });
-
-  return io;
-};
-
-module.exports = initializeSocket;
+// module.exports = initializeSocket;
