@@ -1,10 +1,10 @@
 // import io from 'socket.io-client';
 
-class SocketService {
-  constructor() {
-    this.socket = null;
-    this.baseURL = 'http://localhost:5000';
-  }
+// class SocketService {
+//   constructor() {
+//     this.socket = null;
+//     this.baseURL = 'http://localhost:5000';
+//   }
 
 //   connect() {
 //     if (!this.socket) {
