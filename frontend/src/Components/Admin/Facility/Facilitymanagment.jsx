@@ -163,14 +163,15 @@ function Facilitymanagment() {
                       </div>
                     </div>
                     <div className="p-4">
-                      <div className="mb-4">
-                        <p className="text-sm text-gray-600">Upcoming Schedule Service Date</p>
-                        <p className="text-sm font-medium">{facility.scheduleServiceDate}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Description</p>
-                        <p className="text-sm">{facility.description}</p>
-                      </div>
+                          <div className="flex justify-between mt-2">
+                            <p className="text-md text-gray-600 text-left">Upcoming Schedule Service Date</p>
+                            <p className="text-sm font-medium text-right"> {facility.scheduleServiceDate} </p>
+                          </div>
+                         
+                        <div className='flex justify-between mt-2'>
+                          <p className="text-md text-gray-600 text-left">Description</p>
+                          <p className="text-md text-right">{facility.description}</p>
+                    </div>
                     </div>
                   </div>
                 ))}

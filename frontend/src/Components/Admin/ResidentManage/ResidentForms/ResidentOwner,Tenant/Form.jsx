@@ -110,10 +110,7 @@ export const Form = () => {
     event.preventDefault(); // Prevent default form submission
 
     // Validate required fields
-    if (!fullName || !phoneNo || !email || !age || !gender || !relation) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+ 
 
     const ownerData = {
       photo: selectedImage || null, // Ensure photo is set or null

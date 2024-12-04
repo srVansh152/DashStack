@@ -163,12 +163,18 @@ function Note() {
                       </div>
                     </div>
                     <div className="p-4">
-                      <div className="mb-2">
-                        <p className="text-sm font-medium">{note.date}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Description</p>
-                        <p className="text-sm">{note.description}</p>
+                      <div className="space-y-2">
+                        <div className="">
+                          <div className=" flex justify-between mt-2">
+                            <p className="text-md text-gray-600">Announcement Date</p>
+                            <p className="text-md  font-medium">{note.date}</p>
+                          </div>
+                         
+                        </div>
+                        <div className='flex justify-between mt-2'>
+                          <p className="text-md text-gray-600 ">Description</p>
+                          <p className="text-md">{note.description}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
