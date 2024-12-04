@@ -22,32 +22,48 @@ function Login() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form default submission
-    setLoading(true); // Show loading state
+    e.preventDefault();
+    setLoading(true);
 
     try {
-      console.log(formData); // Debug: Check form data
-      const data = await loginUser(formData)
+      console.log(formData);
+      const response = await loginUser(formData)
 
-      if (data.success && data.data.token) {
+
+      if (response.success && response.data.token) {
         // Save the token to local storage
-        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token", response.data?.token);
+        localStorage.setItem("Email", response.data?.email);
+        localStorage.setItem('userId', response.data?._id); // Add this line
 
-        // Navigate to the dashboard
-        navigate("/admin/dashboard");
+        // Get user role from response
+        const userRole = response.data.role;
+
+        // Redirect based on role
+        switch(userRole.toLowerCase()) {
+          case 'resident':
+            navigate("/user/udashboard");
+            break;
+          case 'security':
+            navigate("/security/Semergency");
+            break;
+          case 'admin':
+            navigate("/admin/dashboard");
+            break;
+          default:
+            console.error("Unknown role:", userRole);
+            alert("Invalid user role");
+        }
       } else {
-        // Handle login failure
         alert("Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);
       alert("An error occurred while logging in. Please try again later.");
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
-
-
 
   return (
     <div className="flex min-h-screen">
