@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Unified base URL
-const API_BASE_URL = 'https://socitey-management-system-server.onrender.com/api';
+const API_BASE_URL = 'https://dashstack-90hs.onrender.com/api';
 
 // Create an Axios instance
 const api = axios.create({

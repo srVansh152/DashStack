@@ -518,11 +518,11 @@ const DashboardLayout = () => {
                                         {pendingMaintenances.map((item, index) => (
                                             <div key={index} className="flex border-b border-gray-200 justify-between items-center p-4 bg-white rounded-lg border">
                                                 <div className="flex gap-4">
-                                                        {item.resident.profilePhoto ? (
-                                                            <img src={item.resident.profilePhoto} className="h-10 w-10 rounded-full object-cover border" />
-                                                        ) : (
-                                                            <img src="/path/to/default-logo.png" alt="Not Found" className="h-10 w-10 rounded-full border" />
-                                                        )}
+                                                    {item.resident.profilePhoto ? (
+                                                        <img src={item.resident.profilePhoto} className="h-10 w-10 rounded-full object-cover border" />
+                                                    ) : (
+                                                        <img src="/path/to/default-logo.png" alt="Not Found" className="h-10 w-10 rounded-full border" />
+                                                    )}
                                                     <div>
                                                         <p className="font-medium">{item.resident.fullName}</p>
                                                         <p className="text-sm text-gray-500">{"Pending"}</p>
