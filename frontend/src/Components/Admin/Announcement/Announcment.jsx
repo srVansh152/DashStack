@@ -169,7 +169,11 @@ function Announcment() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {loading ? (
-                <div className="col-span-4 text-center p-4">Loading announcements...</div>
+                <div className="col-span-full flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                  </div>
+                </div>
               ) : (
                 announcements.map((announcement, index) => (
                   <div key={index} className="bg-white rounded-lg overflow-hidden">
