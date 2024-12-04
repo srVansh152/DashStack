@@ -1,241 +1,131 @@
-import {
-  Activity,
-  Shield,
-  LogOut,
-  ChevronDown,
-  ChevronUp,
-  Menu
-} from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+'use client'
 
+import React, { useState, useEffect } from 'react'
+import { ChevronDown, ChevronUp, Menu } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 
-// SidebarItem component
-function SidebarItem({ icon: Icon, label, path, active, hovered, onClick }) {
-  const isLogout = label === 'Logout';
-  
-  return (
-    <div className="relative">
-      {active && !isLogout && (
-        <div 
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
-          style={{ left: '-16px' }}
-        />
-      )}
-      <a
-        href={`/${path}`}
-        onClick={onClick}
-        className={`relative flex w-full items-center gap-3 px-4 py-3 text-sm transition-all duration-200 rounded-lg my-1
-          ${isLogout 
-            ? 'text-red-600 font-bold hover:scale-105' 
-            : active 
-              ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
-              : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
-          ${hovered ? 'shadow-sm' : ''}`}
-      >
-        <Icon className="h-5 w-5" />
-        <span>{label}</span>
-      </a>
-    </div>
-  )
-}
-
-// Dropdown component
-function Dropdown({
-  label,
-  icon: Icon,
-  isOpen,
-  active,
-  hovered,
-  items,
-  onClick,
-  onHoverEnter,
-  onHoverLeave,
-  currentPath,
-  setCurrentPath,
-  setIsSidebarOpen,
-  setOpenDropdown
-}) {
+function SAside() {
   const navigate = useNavigate()
-
-  const isDropdownActive = items.some(item => currentPath === `/security/${item.path}`) || active
-
-  return (
-    <div className="my-1 relative">
-      {isDropdownActive && (
-        <div 
-          className={`absolute left-0 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r
-            ${isOpen 
-              ? 'h-10 top-0' 
-              : 'h-8 top-1/2 -translate-y-1/2'}`}
-          style={{ left: '-16px' }}
-        />
-      )}
-      <button
-        onClick={onClick}
-        onMouseEnter={onHoverEnter}
-        onMouseLeave={onHoverLeave}
-        className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 rounded-lg
-          ${isDropdownActive || isOpen
-            ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
-            : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
-          ${hovered ? 'shadow-sm' : ''}`}
-      >
-        <div className="flex items-center gap-3">
-          <Icon className={`w-5 h-5 transition-transform duration-200 ${hovered ? 'scale-110' : ''}`} />
-          <span>{label}</span>
-        </div>
-        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-      </button>
-
-      {isOpen && (
-        <div className="pl-8 mt-2 space-y-2">
-          {items.map((item) => (
-            <div key={item.id} className="relative">
-              {currentPath === `/security/${item.path}` && (
-                <div 
-                  className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
-                  style={{ left: '-16px' }}
-                />
-              )}
-              <a
-                href={`/security/${item.path}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate(`/security/${item.path}`)
-                  setCurrentPath(`/security/${item.path}`)
-                  setIsSidebarOpen(false)
-                }}
-                className={`w-full flex items-center px-4 py-2 text-sm rounded-lg
-                  ${currentPath === `/security/${item.path}`
-                    ? 'text-[#FF4B1C] font-medium'
-                    : 'text-gray-600 hover:text-[#FF4B1C]'}`}
-              >
-                <span>{item.label}</span>
-              </a>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function SAside() {
-  const navigate = useNavigate()
-  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+  const [isOpen, setIsOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [hoveredMenu, setHoveredMenu] = useState(null)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState('')
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
 
-  // Security menu items
-  const securityMenuItems = [
-    { id: 1, label: 'Emergency', path: 'Semergency' },
-    { id: 2, label: 'Visitors Logs', path: 'Svisitor' }
-  ]
-
-  const handleLogout = (e) => {
-    e.preventDefault()
-    // Clear all localStorage items
-    localStorage.removeItem("token")
-    localStorage.removeItem("Email")
-    localStorage.removeItem("userId")
-    navigate('/')
-    setCurrentPath('/')
-    setIsSidebarOpen(false)
-    setHoveredMenu(null)
-  }
-
+  // Update current path when location changes
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem("token")
-    const userEmail = localStorage.getItem("Email")
-    
-    if (!token || !userEmail) {
-      navigate('/')
-    }
-
     setCurrentPath(window.location.pathname)
-    if (securityMenuItems.some(item => currentPath.includes(item.path))) {
-      setOpenDropdown('Security Management')
-    }
-  }, [currentPath, navigate])
-
-  const handleDropdownToggle = (dropdown) => {
-    setOpenDropdown(openDropdown === dropdown ? '' : dropdown)
-  }
-
-  const isPathActive = (path) => {
-    return currentPath === `/security/${path}` || currentPath.startsWith(`/security/${path}/`)
-  }
+  }, [])
 
   return (
     <>
+      {/* Mobile Menu Button */}
       <button
         className="md:hidden fixed top-0 left-0 z-20 p-4"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        onClick={() => setSidebarOpen(!sidebarOpen)}
       >
-        <Menu className="w-5 h-5 text-orange-500" />
+        <span className="text-2xl font-bold text-orange-500">☰</span>
       </button>
 
-      <div className={`fixed top-0 left-0 h-screen w-[70%] md:w-[17%] bg-white border-r shadow-sm p-4 transition-transform duration-300 z-20 flex flex-col justify-between
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      {/* Sidebar */}
+      <div
+        className={`w-[70%] md:w-[17%] p-4 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 z-30 h-screen
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        <div>
-          <h1 className="hidden text-2xl font-bold text-orange-500 cursor-pointer transition-colors hover:text-orange-600 lg:flex">
-            Dash<span className="text-gray-800">Stack</span>
-          </h1>
+        {/* Main content wrapper */}
+        <div className="flex flex-col h-full justify-between">
+          {/* Top section with logo and nav */}
+          <div>
+            <h1 className="text-2xl font-bold">
+              <span className="text-orange-500">Dash</span>
+              <span className="text-gray-800">Stack</span>
+            </h1>
 
-          <nav className="mt-8 space-y-2">
-            <SidebarItem
-              icon={Activity}
-              label="Dashboard"
-              path="security/sdashboard"
-              active={isPathActive('sdashboard')}
-              hovered={hoveredMenu === 'Dashboard'}
-              onClick={(e) => {
-                e.preventDefault()
-                navigate('/security/sdashboard')
-                setCurrentPath('/security/sdashboard')
-                setIsSidebarOpen(false)
-                setHoveredMenu(null)
-              }}
-            />
+            <nav className="mt-8 space-y-2">
+              {/* Security Dropdown */}
+              <div className="relative my-1">
+                {currentPath.includes('/security') && (
+                  <div 
+                    className={`absolute left-0 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r
+                      ${isOpen ? 'h-10 top-0' : 'h-8 top-1/2 -translate-y-1/2'}`}
+                    style={{ left: '-16px' }}
+                  />
+                )}
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  onMouseEnter={() => setHoveredMenu('Security')}
+                  onMouseLeave={() => setHoveredMenu(null)}
+                  className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 rounded-lg
+                    ${currentPath.includes('/security') || isOpen
+                      ? 'bg-gradient-to-r from-[#FF4B1C] to-[#FF8037] text-white'
+                      : 'text-gray-600 hover:bg-gradient-to-r hover:from-[#FF4B1C] hover:to-[#FF8037] hover:text-white'}
+                    ${hoveredMenu === 'Security' ? 'shadow-sm' : ''}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                      />
+                    </svg>
+                    <span>Security</span>
+                  </div>
+                  {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
 
-            <Dropdown
-              label="Security Management"
-              icon={Shield}
-              isOpen={openDropdown === 'Security Management'}
-              active={securityMenuItems.some(item => isPathActive(item.path))}
-              hovered={hoveredMenu === 'Security Management'}
-              items={securityMenuItems}
-              onClick={() => handleDropdownToggle('Security Management')}
-              onHoverEnter={() => setHoveredMenu('Security Management')}
-              onHoverLeave={() => setHoveredMenu(null)}
-              currentPath={currentPath}
-              setCurrentPath={setCurrentPath}
-              setIsSidebarOpen={setIsSidebarOpen}
-              setOpenDropdown={setOpenDropdown}
-            />
-          </nav>
+                {isOpen && (
+                  <div className="pl-8 mt-2 space-y-2">
+                    {[
+                      { path: '/security/Svisitor', label: 'Visitor Tracking' },
+                      { path: '/security/Semergency', label: 'Emergency Management' }
+                    ].map((item) => (
+                      <div key={item.path} className="relative">
+                        {currentPath === item.path && (
+                          <div 
+                            className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r"
+                            style={{ left: '-16px' }}
+                          />
+                        )}
+                        <Link
+                          to={item.path}
+                          className={`w-full flex items-center px-4 py-2 text-sm rounded-lg
+                            ${currentPath === item.path
+                              ? 'text-[#FF4B1C] font-medium'
+                              : 'text-gray-600 hover:text-[#FF4B1C]'}`}
+                        >
+                          <span>{item.label}</span>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </nav>
+          </div>
+
+          {/* Logout Button */}
+          <button className="mt-auto flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100 rounded-lg font-bold hover:scale-105 transition-all duration-200">
+            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+          </button>
         </div>
-
-        <SidebarItem
-          icon={LogOut}
-          className="mt-40"
-          label="Logout"
-          path="/"
-          active={false}
-          hovered={hoveredMenu === 'Logout'}
-          onClick={handleLogout}
-          onMouseEnter={() => setHoveredMenu('Logout')}
-          onMouseLeave={() => setHoveredMenu(null)}
-        />
       </div>
 
-      {isSidebarOpen && (
-        <div className="fixed inset-0 z-5 bg-black opacity-50 md:hidden" onClick={() => setIsSidebarOpen(false)} />
+      {/* Overlay for mobile menu */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-5 bg-black opacity-50 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
     </>
   )
 }
+
+export default SAside
