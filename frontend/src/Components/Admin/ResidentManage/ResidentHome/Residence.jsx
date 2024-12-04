@@ -185,13 +185,13 @@ function Residence() {
   };
 
   return (
-    <div>
+    <div className='bg-[#F0F5FB]'>
       <Aside />
-      <div className="main bg-[#F0F5FB]">
+      <div className="main ">
         <Navbar />
 
 
-        <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
           <div className="px-4 py-6 sm:px-0 ">
             <div className='bg-white px-3 py-4 rounded'>
               <div className="flex justify-between items-center mb-4">
