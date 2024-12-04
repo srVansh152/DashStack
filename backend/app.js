@@ -4,17 +4,33 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const helmet = require('helmet');
 const cors = require('cors');
-// const cloudinary = require('cloudinary').v2;
 const morgan = require('morgan');
+const { Server } = require("socket.io") 
+const http = require('http'); 
 const errorHandler = require('./middlewares/errorMiddleware'); // Import the error middleware
 const { protect } = require('./middlewares/authMiddleware');
+const initializeSocket = require('./socket/socketServer');
+
+// Import routes
+const chatRoutes = require('./routes/chatRoutes');
+const communityRoutes = require('./routes/communityRoutes');
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+
+// Initialize socket.io
+const io = initializeSocket(server);
+app.set('io', io);
+
 app.use(express.json());
 app.use(helmet());
-app.use(cors({ origin: '*' }));
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true
+}));
 app.use(morgan('dev'));
 
 connectDB();
@@ -80,6 +96,15 @@ app.use('/api/announcements', require("./routes/announcementRoutes"));
 //emergency routes
 app.use('/api/emergency-alerts', require("./routes/emergencyRoutes"));
 
+// polls
+app.use('/api/polls', require('./routes/pollRoutes'));
+
+//chat
+app.use('/api/chat', protect, chatRoutes); 
+
+//community routes
+app.use('/api/community', protect, communityRoutes); 
+
 // Health check routes
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
@@ -88,15 +113,15 @@ app.get('/health', (req, res) => {
 //  commen get api
 app.get('/', (req, res) => {
   res.status(200).send("done bhai bas hogaya 😞 🎉")
-})
+});
+
 
 // Use the error handling middleware after all routes
 app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
-
+server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
 
 // Graceful shutdown
 process.on('SIGINT', () => {

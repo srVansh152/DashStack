@@ -1077,6 +1077,10 @@ const StatsCard = ({ label, value, icon: Icon, color }) => (
 
 
 
+
+
+
+
 const statsCards = [
     { label: 'Total Balance', value: '₹ 2,22,520', icon: DollarSign, color: 'bg-orange-500' },
     { label: 'Total Income', value: '₹ 55,000', icon: DollarSign, color: 'bg-green-500' },
