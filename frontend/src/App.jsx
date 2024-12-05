@@ -23,8 +23,6 @@ import ForgetPassword from './Components/Auth/AuthCommon/ForgetPassword/ForgetPa
 import OtpVerification from './Components/Auth/AuthCommon/OtpVerification/OtpVerification'
 import ResetPassword from './Components/Auth/AuthCommon/ResetPassword/ResetPassword'
 import Update from './Components/Admin/Profile/UpdateProfile/Update'
-import Viewmodel from './Components/Models/Viewmodel'
-import Deletemodel from './Components/Models/Deletemodel'
 import AddMaintain from './Components/Models/AddMaintain'
 import FinanceManagment from './Components/Admin/Finance/FinanceIncome/Income/FinanceManagment'
 import OtherIncome from './Components/Admin/Finance/FinanceIncome/OtherIncome/OtherIncome'
@@ -60,8 +58,7 @@ function App() {
             <Route path='/password' element={<ForgetPassword />} />
             <Route path='/otp' element={<OtpVerification />} />
             <Route path='/reset' element={<ResetPassword />} />
-            <Route path='/viewmodel' element={<Viewmodel />} />
-            <Route path='/deletemodel' element={<Deletemodel />} />
+           
             <Route path='/addmain' element={<AddMaintain />} />
 
             // Admin routes

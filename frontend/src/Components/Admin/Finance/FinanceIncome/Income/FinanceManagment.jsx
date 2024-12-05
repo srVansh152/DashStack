@@ -26,6 +26,7 @@ function FinanceManagment() {
     const getTenants = async () => {
         try {
             const response = await getFinancialIncomes();
+            console.log(response.data[0].financialIncome);
             setTenants(response.data[0].residentStatuses);
         } catch (error) {
             console.error('Error fetching tenants data:', error);
