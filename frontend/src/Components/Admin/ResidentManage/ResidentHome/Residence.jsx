@@ -15,7 +15,9 @@ function Residence() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [openDeleteModel, setOpenDeleteModel] = useState(false);
+  const [openDeleteStatusModel, setopenDeleteStatusModel] = useState(false);
   const [openProfileModel, setOpenProfilModel] = useState(false);
+  const [Statusmodel, setStatusmodel] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   const [status, setStatus] = useState('occupied');
@@ -183,6 +185,16 @@ function Residence() {
       }
     });
   };
+
+  const handleStatusmodel = () =>{
+    setOpenDeleteModel(false)
+    setStatusmodel(true)
+  }
+
+  const handleopenDeleteStatusModel = () =>{
+    setStatusmodel(false)
+    setopenDeleteStatusModel(true)
+  }
 
   return (
     <div className='bg-[#F0F5FB]'>
@@ -400,13 +412,14 @@ function Residence() {
                   >
                     Cancel
                   </button>
-                  <Link to='/viewmodel' className="flex-1">
-                    <button 
-                      className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-colors"
-                    >
-                      Save
-                    </button>
-                  </Link>
+                  
+                  <button 
+                    onClick={handleStatusmodel}
+                    className="flex-1 px-5 py-2 border border-gray-300 rounded-md text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-colors"
+                  >
+                    Save
+                  </button>
+                 
                 </div>
 
 
@@ -588,6 +601,92 @@ function Residence() {
             </div>
           </div>
         )}
+        
+      {Statusmodel && (
+                           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+                           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+                             <div className="p-6">
+                             <h2 className="text-lg font-medium text-gray-900">Residence Status</h2>
+      </div>
+      <div className="px-6 py-4 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label htmlFor="wing" className="text-sm font-medium text-gray-700">
+              Wing
+            </label>
+            <select
+              id=""
+              value=""
+             
+              className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="unit" className="text-sm font-medium text-gray-700">
+              Unit
+            </label>
+            <select
+              id=""
+              value=""
+             
+              className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+             
+            </select>
+          </div>
+        </div>
+      
+        <div className="flex justify-end space-x-4 pt-4">
+      
+          <button onClick={()=>setStatusmodel(false)} className="w-full  px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Cancel
+          </button>
+       
+         
+          <button onClick={handleopenDeleteStatusModel} className="w-full px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+            Create
+          </button>
+         
+        </div>
+       
+                               </div>
+                             </div>
+                           </div>
+                    )}
+
+{openDeleteStatusModel && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-5">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Do you want to vacate the finlay flat?
+              </h2>
+              <p className="text-sm text-gray-500">
+                Are you sure you want to delete all details?
+              </p>
+            </div>
+            <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4 rounded-b-lg">
+             
+                <button
+                 onClick={()=> setopenDeleteStatusModel(false)}
+                  className="w-full px-4 border py-2 rounded text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                >
+                  Cancel
+                </button>
+
+                <button
+
+                  className="w-full px-4 border ml-3 py-2 rounded bg-[#E74C3C] text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                >
+                  Confirm
+                </button>
+            
+            </div>
+          </div>
+        </div>
+      )}
 
 
       </div>
