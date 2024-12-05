@@ -16,9 +16,9 @@ const UMaintenace = () => {
 
 
   return (
-    <div className='flex h-screen bg-gray-50'>
+    <div className='flex'>
       <UAside />
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto bg-[#F0F5FB] min-h-screen ">
         <Navbar />
         <main className="p-6">
           {/* Breadcrumb */}

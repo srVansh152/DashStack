@@ -155,12 +155,12 @@ function SecurityProtocols() {
   return (
     <div>
       <Aside />
-      <div className="main bg-[#F0F5FB]">
+      <div className="main bg-[#F0F5FB] min-h-screen">
         <Navbar />
 
           <div className='container-fulid rounded px-3 py-3'>
           <div className='bg-white'>
-            <div className="min-h-screen overflow-hidden p-6">
+            <div className=" overflow-hidden p-6">
               <div className="mb-6 flex items-center justify-between">
                 <h1 className="text-2xl text-gray-900 font-bold">Security Protocols</h1>
                 <button onClick={handleAddModel} className="rounded-lg bg-gradient-to-r from-[#FE512E] to-[#F09619] px-4 py-2 text-white transition-colors hover:bg-orange-600">

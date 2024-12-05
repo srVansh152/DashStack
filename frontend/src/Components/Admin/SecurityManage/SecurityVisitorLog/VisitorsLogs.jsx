@@ -43,12 +43,12 @@ function VisitorsLogs() {
   return (
     <div className="flex">
       <Aside />
-      <div className="main ">
+      <div className="main bg-[#F0F5FB] min-h-screen">
         {/* Navigation */}
         <Navbar />
 
         {/* Main Content */}
-        <div className='bg-[#F0F5FB]'>
+        <div className=''>
           <div className="p-6">
             <div className='bg-white p-4'>
             <div className="flex justify-between items-center mb-6">

@@ -44,11 +44,11 @@ const UOtherincome = () => {
 
 
   return (
-    <div className='flex h-screen bg-gray-50'>
+    <div className='flex bg-[#F0F5FB] min-h-screen '>
       <UAside />
       <div className="flex-1 overflow-auto">
         <Navbar/>
-        <div className="w-full p-6 space-y-4 bg-gray-100">
+        <div className="w-full p-6 space-y-4 bg-white mx-3 rounded">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Due Event Payment</h2>
             <button onClick={handleAddModel} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">

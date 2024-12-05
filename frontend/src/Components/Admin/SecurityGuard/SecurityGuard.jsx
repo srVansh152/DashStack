@@ -356,7 +356,7 @@ function SecurityGuard() {
     <>
       <Aside />
       <div className="main ">
-        <div className='bg-[#F0F5FB]'>
+        <div className='bg-[#F0F5FB] min-h-screen'>
           <Navbar />
           <div className="p-6 py-3">
             <div className='bg-white p-4 rounded'>

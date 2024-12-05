@@ -117,72 +117,74 @@ function Note() {
   return (
     <div>
       <Aside />
-      <div className="main">
+      <div className="main bg-[#F0F5FB] min-h-screen">
         <Navbar />
         {/* Summary Cards */}
-        <div className="container-fulid">
+     <div className='bg-white mx-4 rounded'>
+     <div className="container-fulid">
 
-          <div className="p-6 bg-gray-50 min-h-screen overflow-hidden">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-semibold text-gray-900">Note</h1>
-              <button onClick={handleAddModel} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
-                Create Note
-              </button>
-            </div>
+<div className="p-6  overflow-hidden">
+  <div className="flex justify-between items-center mb-6">
+    <h1 className="text-2xl font-semibold text-gray-900">Note</h1>
+    <button onClick={handleAddModel} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
+      Create Note
+    </button>
+  </div>
 
-            {loading ? (
-              <div className="flex items-center justify-center p-8">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
-        
-              </div>
-            </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {notes.map((note, index) => (
-                  <div key={index} className="bg-white rounded-lg overflow-hidden">
-                    <div className="bg-[#4F6BF6] text-white p-4 flex justify-between items-center">
-                      <h2 className="font-medium">{note.title}</h2>
-                      <div className="flex items-center gap-2">
-                        {/* New Dropdown Button */}
-                        <div className="relative group">
-                          <button className="text-blue-600 bg-white hover:bg-white p-1 rounded ">
-                            <MoreVertical className=" w-5 h-5  rounded" />
-                          </button>
-                          <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 transform scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100">
-                            <div className="py-1">
-                              <button onClick={() => handleEditModel(note)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Edit
-                              </button>
-                              <button onClick={() => handleDelete(note._id)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="space-y-2">
-                        <div className="">
-                          <div className=" flex justify-between mt-2">
-                            <p className="text-md text-gray-600">Announcement Date</p>
-                            <p className="text-md  font-medium">{note.date}</p>
-                          </div>
-                         
-                        </div>
-                        <div className='flex justify-between mt-2'>
-                          <p className="text-md text-gray-600 ">Description</p>
-                          <p className="text-md">{note.description}</p>
-                        </div>
-                      </div>
-                    </div>
+  {loading ? (
+    <div className="flex items-center justify-center p-8">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+    </div>
+  </div>
+  ) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {notes.map((note, index) => (
+        <div key={index} className="bg-white rounded-lg overflow-hidden">
+          <div className="bg-[#4F6BF6] text-white p-4 flex justify-between items-center">
+            <h2 className="font-medium">{note.title}</h2>
+            <div className="flex items-center gap-2">
+              {/* New Dropdown Button */}
+              <div className="relative group">
+                <button className="text-blue-600 bg-white hover:bg-white p-1 rounded ">
+                  <MoreVertical className=" w-5 h-5  rounded" />
+                </button>
+                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg opacity-0 transform scale-95 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:scale-100">
+                  <div className="py-1">
+                    <button onClick={() => handleEditModel(note)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(note._id)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Delete
+                    </button>
                   </div>
-                ))}
+                </div>
               </div>
-            )}
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="space-y-2">
+              <div className="">
+                <div className=" flex justify-between mt-2">
+                  <p className="text-md text-gray-600">Announcement Date</p>
+                  <p className="text-md  font-medium">{note.date}</p>
+                </div>
+               
+              </div>
+              <div className='flex justify-between mt-2'>
+                <p className="text-md text-gray-600 ">Description</p>
+                <p className="text-md">{note.description}</p>
+              </div>
+            </div>
           </div>
         </div>
+      ))}
+    </div>
+  )}
+</div>
+</div>
+     </div>
       </div>
 
       {openModal && (

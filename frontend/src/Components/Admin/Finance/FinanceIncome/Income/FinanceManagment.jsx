@@ -72,10 +72,11 @@ function FinanceManagment() {
     return (
         <div>
             <Aside />
-            <div className="main">
+            <div className="main bg-[#F0F5FB] min-h-screen">
                 <Navbar />
                 {/* Summary Cards */}
-                <div className="p-8 ">
+             <div className='bg-white mx-3 my-3'>
+             <div className="p-8 ">
                     <div className="flex flex-col gap-4 p-4 bg-white md:flex-row">
                         {/* Maintenance Amount Card */}
                         <div className="flex-1 bg-white rounded-lg p-4 shadow-sm relative">
@@ -215,6 +216,7 @@ function FinanceManagment() {
                         </div>
                     </div>
                 </div>
+             </div>
 
                 {openModel && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
