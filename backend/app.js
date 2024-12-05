@@ -20,9 +20,9 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// // Initialize socket.io
-// const io = initializeSocket(server);
-// app.set('io', io);
+// Initialize socket.io
+const io = initializeSocket(server);
+app.set('io', io);
 
 app.use(express.json());
 app.use(helmet());
@@ -100,7 +100,7 @@ app.use('/api/emergency-alerts', require("./routes/emergencyRoutes"));
 app.use('/api/polls', require('./routes/pollRoutes'));
 
 //chat
-// app.use('/api/chat', protect, chatRoutes); 
+app.use('/api/chat', protect, chatRoutes); 
 
 //community routes
 app.use('/api/community', protect, communityRoutes); 

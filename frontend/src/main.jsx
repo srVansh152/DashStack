@@ -6,8 +6,8 @@ import { ChatProvider } from './context/ChatContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* <ChatProvider> */}
+    <ChatProvider>
       <App />
-    {/* </ChatProvider> */}
+    </ChatProvider>
   </React.StrictMode>,
 )
