@@ -107,15 +107,13 @@ function Residence() {
   };
   const handleDeleteDetails = (resident) => {
     setSelectedResidentId(resident._id);
-    console.log(resident._id);
+    setSelectedWing(resident.wing);
+    setSelectedUnit(resident.unitNumber);
     setOpenDeleteModel(true);
   };
 
   const handleProfileDetails = (resident) => {
     setSelectedResidentId(resident._id);
-    setSelectedWing(resident.wing);
-    setSelectedUnit(resident.unitNumber);
-
     setOpenProfilModel(true);
     setIsClosing(false);
   };
