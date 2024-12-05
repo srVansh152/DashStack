@@ -159,7 +159,7 @@ export const Form = () => {
     try {
       const response = await createResident(ownerData);
       console.log('Data saved successfully:', response);
-      navigate('/adminc/residence'); // Navigate to the desired route after successful submission
+      navigate('/admin/residence'); // Navigate to the desired route after successful submission
     } catch (error) {
       console.error('Error saving data:', error.response ? error.response.data : error.message);
       // Log the error response for more details
