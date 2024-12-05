@@ -235,7 +235,7 @@ export default function ExpenseTracker() {
                        <Navbar/>
 
                         <main className="p-6">
-                           <div className='bg-white p-5'>
+                           <div className='bg-white p-5 '>
                            <div className="flex items-center justify-between mb-6">
                                 <h1 className="text-2xl font-semibold">Add Expenses Details</h1>
                                 <button onClick={handleAddModel} className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50">

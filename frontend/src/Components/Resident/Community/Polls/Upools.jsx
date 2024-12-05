@@ -60,11 +60,11 @@ const Upools = () => {
 
 
     return (
-        <div className='flex h-screen bg-gray-50'>
+        <div className='flex h-screen bg-[#F0F5FB]'>
             <UAside />
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto  min-h-screen">
                <Navbar/>
-                <div className="min-h-screen bg-gray-50 p-4">
+                <div className="bg-white p-4 mx-3">
                     {/* Header Tabs */}
                     <div className="mb-4 flex items-center justify-between">
                         <div className="flex gap-1 border-b border-gray-200">

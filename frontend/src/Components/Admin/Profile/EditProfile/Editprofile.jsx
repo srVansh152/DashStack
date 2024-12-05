@@ -67,7 +67,14 @@ const Editprofile = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div><div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center z-50">
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+        </div>
+      </div>
+    </div></div>;
   }
 
   if (apiError) {

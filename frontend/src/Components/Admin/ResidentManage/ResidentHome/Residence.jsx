@@ -197,7 +197,7 @@ function Residence() {
   }
 
   return (
-    <div className='bg-[#F0F5FB]'>
+    <div className='bg-[#F0F5FB] min-h-screen'>
       <Aside />
       <div className="main ">
         <Navbar />
