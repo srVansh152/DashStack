@@ -190,10 +190,10 @@ const getStatusStyles = (status) => {
   return (
     <>
       <Aside />
-      <div className="main">
+      <div className="main bg-[#F0F5FB] min-h-screen">
         <Navbar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#F0F5FB] p-6 m-2">
-          <div className="container-fluid  px-6 py-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto m-2">
+          <div className="container-fluid  p-2">
             <div className='bg-white p-4'>
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-semibold text-gray-900">Request Tracking</h1>

@@ -127,11 +127,11 @@ const RequestSubmission = () => {
   };
 
   return (
-    <div className='flex h-screen bg-gray-50'>
+    <div className='flex h-screen '>
       <UAside />
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto  bg-[#F0F5FB] min-h-screen">
         <Navbar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 bg-white mx-3 rounded">
           <div className="flex items-center justify-between mb-6">
             <div className="flex space-x-4">
               <button className="px-4 py-2 text-whitebg-gray-100 rounded-lg">

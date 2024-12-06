@@ -1,14 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios';
 
 import { Bell } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import UAside from '../../Common/SideBar/ResidentSideBar/UAside';
 import Navbar from '../../Common/Navbar/Navbar';
+import { getAnnouncements } from '../../../utils/api';
 
 export default function Upersonaldetail() {
     const [activeTab, setActiveTab] = useState('owner')
     const [isOpen, setIsOpen] = useState(false);
+    const [announcements, setAnnouncements] = useState([]);
 
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const response = await getAnnouncements();
+                setAnnouncements(response.data);
+            } catch (error) {
+                console.error('Error fetching announcements:', error);
+            }
+        };
+
+        fetchAnnouncements();
+    }, []);
 
     return (
         <>
@@ -108,8 +123,6 @@ export default function Upersonaldetail() {
                                     </div>
                                 </div>
                             </div>
-
-
 
 
                             {/* Members Section */}
@@ -320,24 +333,24 @@ export default function Upersonaldetail() {
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Announcement Details</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {[1, 2, 3, 4].map((item) => (
-                                            <div key={item} className="bg-white rounded-lg shadow">
-                                                <div className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
-                                                    <span>Community Initiatives</span>
+                                        {announcements.map((announcement, index) => (
+                                            <div key={index} className="bg-white rounded-lg shadow">
+                                                <div className="flex justify-between items-center bg-[#5678E9] text-white px-5 py-3 rounded-t-lg">
+                                                    <span>{announcement.title}</span>
                                                 </div>
-                                                <div className="space-y-3 p-2 ">
+                                                <div className="space-y-3 p-4 ">
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Announcement Date</span>
-                                                        <span>01/02/2024</span>
+                                                        <span>{announcement.date.split('T')[0]}</span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Announcement Time</span>
-                                                        <span>10:15 AM</span>
+                                                        <span>{announcement.time}</span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Description</span>
                                                         <p className="mt-1 text-sm">
-                                                            The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesha in...
+                                                            {announcement.description}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -649,24 +662,24 @@ export default function Upersonaldetail() {
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Announcement Details</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {[1, 2, 3, 4].map((item) => (
-                                            <div key={item} className="bg-white rounded-lg shadow">
-                                                <div className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
-                                                    <span>Community Initiatives</span>
+                                        {announcements.map((announcement, index) => (
+                                            <div key={index} className="bg-white rounded-lg shadow">
+                                                <div className="flex justify-between items-center bg-[#5678E9] text-white px-5 py-2 rounded-t-lg">
+                                                    <span>{announcement.title}</span>
                                                 </div>
                                                 <div className="space-y-3 p-2 ">
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Announcement Date</span>
-                                                        <span>01/02/2024</span>
+                                                        <span>{announcement.date}</span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Announcement Time</span>
-                                                        <span>10:15 AM</span>
+                                                        <span>{announcement.time}</span>
                                                     </div>
                                                     <div>
                                                         <span className="text-gray-600">Description</span>
                                                         <p className="mt-1 text-sm">
-                                                            The celebration of Ganesh Chaturthi involves the installation of clay idols of Ganesha in...
+                                                            {announcement.description}
                                                         </p>
                                                     </div>
                                                 </div>

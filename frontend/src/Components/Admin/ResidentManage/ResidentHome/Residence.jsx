@@ -4,7 +4,7 @@ import { ArrowRight, ArrowLeft, FileText, FileImage, Activity, DollarSign, Packa
 import { Link, useNavigate } from 'react-router-dom';
 import Aside from '../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../Common/Navbar/Navbar';
-import { getResidents, getResidentDetails } from '../../../../utils/api';
+import { getResidents, getResidentDetails, deleteResident } from '../../../../utils/api';
 import { toast } from 'react-hot-toast';
 
 
@@ -19,7 +19,6 @@ function Residence() {
   const [openProfileModel, setOpenProfilModel] = useState(false);
   const [Statusmodel, setStatusmodel] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-
   const [status, setStatus] = useState('occupied');
   const [agreement, setAgreement] = useState(false);
   const [residents, setResidents] = useState([]);
@@ -27,6 +26,8 @@ function Residence() {
   const [error, setError] = useState(null);
   const [residentDetails, setResidentDetails] = useState(null);
   const [selectedResidentId, setSelectedResidentId] = useState(null);
+  const [selectedWing, setSelectedWing] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('');
 
   const navigate = useNavigate();
 
@@ -104,12 +105,17 @@ function Residence() {
       setOpenModel(true);
     }
   };
-  const handleDeleteDetails = () => {
+  const handleDeleteDetails = (resident) => {
+    setSelectedResidentId(resident._id);
+    setSelectedWing(resident.wing);
+    setSelectedUnit(resident.unitNumber);
+    console.log(resident._id);
     setOpenDeleteModel(true);
   };
 
   const handleProfileDetails = (resident) => {
     setSelectedResidentId(resident._id);
+
     setOpenProfilModel(true);
     setIsClosing(false);
   };
@@ -123,10 +129,14 @@ function Residence() {
   };
 
   const fetchResidentDetails = async (id) => {
+    console.log(id);
+
     try {
       const response = await getResidentDetails(id);
+      console.log(response.data);
+
       if (response.success) {
-        setResidentDetails(response.data);
+        setResidentDetails(response.data.resident);
       } else {
         toast.error(response.message || "Failed to fetch resident details");
       }
@@ -186,15 +196,38 @@ function Residence() {
     });
   };
 
-  const handleStatusmodel = () =>{
+  const handleStatusmodel = () => {
     setOpenDeleteModel(false)
     setStatusmodel(true)
   }
 
-  const handleopenDeleteStatusModel = () =>{
+  const handleopenDeleteStatusModel = () => {
     setStatusmodel(false)
     setopenDeleteStatusModel(true)
   }
+
+  const handleDeleteResident = async (id) => {
+    try {
+      const response = await deleteResident(id);
+      if (response.success) {
+        toast.success("Resident deleted successfully");
+        setopenDeleteStatusModel(false);
+        fetchResidents();
+      } else {
+        toast.error(response.message || "Failed to delete resident");
+      }
+    } catch (error) {
+      console.error("Error deleting resident:", error);
+      toast.error("Failed to delete resident");
+    }
+  };
+
+
+  // const filteredResidents = residents.filter(resident => {
+  //   const matchesWing = selectedWing ? resident.wing === selectedWing : true;
+  //   const matchesUnit = selectedUnit ? resident.unitNumber === selectedUnit : true;
+  //   return matchesWing && matchesUnit;
+  // });
 
   return (
     <div className='bg-[#F0F5FB]'>
@@ -202,7 +235,15 @@ function Residence() {
       <div className="main ">
         <Navbar />
 
-
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent"></div>
+              <p className="mt-4 text-lg text-gray-700">Loading...</p>
+            </div>
+          </div>
+        )}
+        
         <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
           <div className="px-4 py-6 sm:px-0 ">
             <div className='bg-white px-3 py-4 rounded'>
@@ -217,12 +258,12 @@ function Residence() {
               </div>
               <div className="bg-white shadow-md rounded-lg overflow-hidden">
                 {loading ? (
-                   <div className="flex items-center justify-center p-8">
-                   <div className="text-center">
-                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
-             
-                   </div>
-                 </div>
+                  <div className="flex items-center justify-center p-8">
+                    <div className="text-center">
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                    </div>
+                  </div>
                 ) : error ? (
                   <div className="p-4 text-center text-red-600">{error}</div>
                 ) : (
@@ -241,98 +282,100 @@ function Residence() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {residents.map((resident) => (
-                          <tr key={resident._id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="flex-shrink-0 h-10 w-10">
-                                  {resident.avatar ? (
-                                    <img
-                                      className="h-10 w-10 rounded-full"
-                                      src={resident.avatar}
-                                      alt={resident.name}
-                                    />
-                                  ) : (
-                                    <div className="h-10 w-10 rounded-full bg-gray-300"></div>
-                                  )}
-                                </div>
-                                <div className="ml-4">
-                                  <div className="text-md font-medium text-gray-900">
-                                    {resident.name || '-'}
+                        {residents.length > 0 ? (
+                          residents.map((resident) => (
+                            <tr key={resident._id}>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <div className="flex-shrink-0 h-10 w-10">
+                                    {resident.avatar ? (
+                                      <img
+                                        className="h-10 w-10 rounded-full"
+                                        src={resident.avatar}
+                                        alt={resident.name}
+                                      />
+                                    ) : (
+                                      <div className="h-10 w-10 rounded-full bg-gray-300"></div>
+                                    )}
+                                  </div>
+                                  <div className="ml-4">
+                                    <div className="text-md font-medium text-gray-900">
+                                      {resident.name || '-'}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-md text-gray-900">
-                              {resident.unitNumber}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span
-                                className={`px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full ${resident.unitStatus === 'Occupied'
-                                  ? 'bg-[#ECFFFF] text-[#14B8A6]'
-                                  : 'bg-[#FFF6FF] text-[#9333EA]'
-                                  }`}
-                              >
-                                <img
-                                  src={
-                                    resident.unitStatus === 'Occupied'
-                                      ? '/public/image/Resident/occu.png'
-                                      : '/public/image/Resident/vacate.png'
-                                  }
-                                  alt={resident.unitStatus}
-                                  className="w-4 h-4 mr-2"
-                                />
-                                {resident.unitStatus}
-                              </span>
-
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span
-                                className={`px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full ${resident.residentStatus === 'Tenant'
-                                  ? 'bg-pink-100 text-pink-800'
-                                  : resident.residentStatus === 'Owner'
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-gray-100 text-gray-800'
-                                  }`}
-                              >
-                                {resident.residentStatus === 'Tenant' && (
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-md text-gray-900">
+                                {resident.unitNumber}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full ${resident.unitStatus === 'Occupied'
+                                    ? 'bg-[#ECFFFF] text-[#14B8A6]'
+                                    : 'bg-[#FFF6FF] text-[#9333EA]'
+                                    }`}
+                                >
                                   <img
-                                    src="/public/image/Resident/user.png"
-                                    alt="Tenant"
+                                    src={
+                                      resident.unitStatus === 'Occupied'
+                                        ? '/public/image/Resident/occu.png'
+                                        : '/public/image/Resident/vacate.png'
+                                    }
+                                    alt={resident.unitStatus}
                                     className="w-4 h-4 mr-2"
                                   />
-                                )}
-                                {resident.residentStatus === 'Owner' && (
-                                  <img
-                                    src="/public/image/Resident/tag-user.png"
-                                    alt="Owner"
-                                    className="w-4 h-4 mr-2"
-                                  />
-                                )}
-                                {resident.residentStatus}
-                              </span>
+                                  {resident.unitStatus}
+                                </span>
 
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.phoneNumber}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.member}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.vehicle}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-md font-medium flex">
-                              <button onClick={() => handleEditModel(resident)} className="rounded p-1 text-green-600 hover:bg-green-50">
-                                <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
-                              </button>
-                              <button onClick={() => handleDeleteDetails(resident)} className="rounded p-1 text-red-600 hover:bg-red-50">
-                                <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full ${resident.residentStatus === 'Tenant'
+                                    ? 'bg-pink-100 text-pink-800'
+                                    : resident.residentStatus === 'Owner'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : 'bg-gray-100 text-gray-800'
+                                    }`}
+                                >
+                                  {resident.residentStatus === 'Tenant' && (
+                                    <img
+                                      src="/public/image/Resident/user.png"
+                                      alt="Tenant"
+                                      className="w-4 h-4 mr-2"
+                                    />
+                                  )}
+                                  {resident.residentStatus === 'Owner' && (
+                                    <img
+                                      src="/public/image/Resident/tag-user.png"
+                                      alt="Owner"
+                                      className="w-4 h-4 mr-2"
+                                    />
+                                  )}
+                                  {resident.residentStatus}
+                                </span>
 
-                              </button>
-                              <button
-                                onClick={handleProfileDetails}
-                                className="rounded p-1 text-blue-600 hover:bg-blue-50"
-                              >
-                                <img src="/public/image/Dashborad/view.png" alt="View" />
-                              </button>
-                            </td>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.phoneNumber}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.member}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.vehicle}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-md font-medium flex">
+                                <button onClick={() => handleEditModel(resident)} className="rounded p-1 text-green-600 hover:bg-green-50">
+                                  <img src="/public/image/Dashborad/edit.png" alt="" />
+                                </button>
+                                <button onClick={() => handleDeleteDetails(resident)} className="rounded p-1 text-red-600 hover:bg-red-50">
+                                  <img src="/public/image/Dashborad/delete.png" alt="" />
+                                </button>
+                                <button onClick={() => { handleProfileDetails(resident); }} className="rounded p-1 text-blue-600 hover:bg-blue-50">
+                                  <img src="/public/image/Dashborad/view.png" alt="View" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" className="text-center py-4">No residents found.</td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -366,14 +409,14 @@ function Residence() {
                   <span className="ml-2">By submitting, you agree to select Occupied</span>
                 </div>
                 <div className="flex justify-between gap-4 mt-6">
-                  <button 
-                    onClick={() => setOpenModel(false)} 
+                  <button
+                    onClick={() => setOpenModel(false)}
                     className="flex-1 px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <Link to="/admin/form" className="flex-1">
-                    <button 
+                    <button
                       className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md hover:from-orange-600 hover:to-orange-700 transition-colors"
                     >
                       Save
@@ -406,20 +449,20 @@ function Residence() {
                 </div>
 
                 <div className="flex justify-between gap-4 mt-6">
-                  <button 
-                    onClick={() => setOpenDeleteModel(false)} 
+                  <button
+                    onClick={() => setOpenDeleteModel(false)}
                     className="flex-1 px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={handleStatusmodel}
                     className="flex-1 px-5 py-2 border border-gray-300 rounded-md text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-colors"
                   >
                     Save
                   </button>
-                 
+
                 </div>
 
 
@@ -427,17 +470,15 @@ function Residence() {
             </div>
           </div>
         )}
-        {openProfileModel && (
+        {openProfileModel && residentDetails && (
           <div
-            className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-end backdrop-blur-sm z-40 transition-all duration-300 ease-in-out ${
-              isClosing ? 'opacity-0' : 'opacity-100'
-            }`}
+            className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-end backdrop-blur-sm z-40 transition-all duration-300 ease-in-out ${isClosing ? 'opacity-0' : 'opacity-100'
+              }`}
             onClick={handleCloseProfileModal}
           >
             <div
-              className={`bg-white h-full w-full max-w-md transform transition-transform duration-300 ease-in-out ${
-                isClosing ? 'translate-x-full' : 'translate-x-0'
-              }`}
+              className={`bg-white h-full w-full max-w-md transform transition-transform duration-300 ease-in-out ${isClosing ? 'translate-x-full' : 'translate-x-0'
+                }`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col h-full">
@@ -446,11 +487,7 @@ function Residence() {
                     onClick={handleCloseProfileModal}
                     className="mr-2 me-3 text-gray-600 hover:text-gray-800"
                   >
-                    {openProfileModel ? (
-                      <ArrowRight className="h-5 w-5" />
-                    ) : (
-                      <ArrowLeft className="h-5 w-5" />
-                    )}
+                    <ArrowLeft className="h-5 w-5" />
                   </button>
                   <h1 className="text-lg font-semibold text-gray-800 mt-1">
                     View Owner Details
@@ -461,22 +498,22 @@ function Residence() {
                   <div className="px-4 py-6">
                     <div className="flex flex-col items-center mb-6">
                       <img
-                        src="/public/image/profile.png"
-                        alt="Roger Lubin"
+                        src={residentDetails.photo || "/public/image/profile.png"}
+                        alt={residentDetails.fullName}
                         className="w-20 h-20 rounded-full mb-2"
                       />
                       <h2 className="text-xl font-semibold text-gray-800">
-                        Roger Lubin
+                        {residentDetails.fullName}
                       </h2>
-                      <p className="text-sm text-gray-600">RogerLubin@gmail.com</p>
+                      <p className="text-sm text-gray-600">{residentDetails.email}</p>
                     </div>
 
                     <div className="space-y-3 mb-6">
                       {[
-                        { label: 'Wing', value: 'A' },
-                        { label: 'Unit', value: '101' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
+                        { label: 'Wing', value: residentDetails.wing },
+                        { label: 'Unit', value: residentDetails.unitNumber },
+                        { label: 'Age', value: residentDetails.age },
+                        { label: 'Gender', value: residentDetails.gender },
                       ].map((item, index) => (
                         <div key={index} className="flex justify-between">
                           <span className="text-sm text-gray-600">{item.label}</span>
@@ -491,36 +528,60 @@ function Residence() {
                       <h3 className="text-sm font-semibold text-gray-800 mb-2">
                         Document
                       </h3>
-                      {[
-                        {
-                          name: 'Adhaarcard Front Side.JPG',
-                          size: '3.5 MB',
-                          icon: FileImage,
-                        },
-                        {
-                          name: 'Address Proof Front Side.PDF',
-                          size: '3.5 MB',
-                          icon: FileText,
-                        },
-                      ].map((doc, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
-                        >
-                          <div className="flex items-center">
-                            <doc.icon className="h-5 w-5 text-blue-500 mr-2" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-800">
-                                {doc.name}
-                              </p>
-                              <p className="text-xs text-gray-500">{doc.size}</p>
+                      {residentDetails.documents && Object.entries(residentDetails.documents).map(([key, value], index) => (
+                        value && (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
+                          >
+                            <div className="flex items-center">
+                              <FileText className="h-5 w-5 text-blue-500 mr-2" />
+                              <div>
+                                <p className="text-sm font-medium text-gray-800">
+                                  {key.replace(/([A-Z])/g, ' $1').trim()}: {value}
+                                </p>
+                              </div>
                             </div>
+                            <button className="text-gray-400 hover:text-gray-600">
+                              <MoreHorizontal className="h-5 w-5" />
+                            </button>
                           </div>
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <MoreHorizontal className="h-5 w-5" />
-                          </button>
-                        </div>
+                        )
                       ))}
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                      <h3 className="text-sm font-semibold text-blue-800 mb-2">
+                        Aadhaar Card
+                      </h3>
+                      <div className="flex flex-col">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Aadhaar Number</span>
+                          <span className="text-sm font-medium text-gray-800">
+                            {residentDetails.aadhaarNumber || 'N/A'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between mt-2">
+                          <span className="text-sm text-gray-600">Front Side</span>
+                          <span className="text-sm font-medium text-gray-800">
+                            {residentDetails.aadhaarFront ? (
+                              <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
+                                View Document
+                              </a>
+                            ) : 'N/A'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between mt-2">
+                          <span className="text-sm text-gray-600">Back Side</span>
+                          <span className="text-sm font-medium text-gray-800">
+                            {residentDetails.aadhaarBack ? (
+                              <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
+                                View Document
+                              </a>
+                            ) : 'N/A'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="bg-blue-50 rounded-lg p-4 mb-6">
@@ -529,68 +590,20 @@ function Residence() {
                           Member Counting
                         </h3>
                         <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          02
+                          {residentDetails.members.length}
                         </span>
                       </div>
-                      {[
-                        { label: 'First Name', value: 'Roger Lubin' },
-                        { label: 'Phone No', value: '9123455555' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
-                        { label: 'Relation', value: 'Brother' },
-                      ].map((item, index) => (
+                      {residentDetails.members.map((member, index) => (
                         <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{item.label}</span>
+                          <span className="text-sm text-gray-600">{member.name}</span>
                           <span className="text-sm font-medium text-gray-800">
-                            {item.value}
+                            {member.phoneNumber}
                           </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-sm font-semibold text-blue-800">
-                          Member Counting
-                        </h3>
-                        <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          02
-                        </span>
-                      </div>
-                      {[
-                        { label: 'First Name', value: 'Roger Lubin' },
-                        { label: 'Phone No', value: '9123455555' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
-                        { label: 'Relation', value: 'Brother' },
-                      ].map((item, index) => (
-                        <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{item.label}</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {item.value}
+                          <span className="block text-sm font-medium text-gray-800">
+                            {member.phoneNumber}
                           </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-sm font-semibold text-blue-800">
-                          Member Counting
-                        </h3>
-                        <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          02
-                        </span>
-                      </div>
-                      {[
-                        { label: 'First Name', value: 'Roger Lubin' },
-                        { label: 'Phone No', value: '9123455555' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
-                        { label: 'Relation', value: 'Brother' },
-                      ].map((item, index) => (
-                        <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{item.label}</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {item.value}
+                          <span className="block text-sm font-medium text-gray-800">
+                            {member.phoneNumber}
                           </span>
                         </div>
                       ))}
@@ -601,92 +614,85 @@ function Residence() {
             </div>
           </div>
         )}
-        
-      {Statusmodel && (
-                           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-                           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                             <div className="p-6">
-                             <h2 className="text-lg font-medium text-gray-900">Residence Status</h2>
-      </div>
-      <div className="px-6 py-4 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label htmlFor="wing" className="text-sm font-medium text-gray-700">
-              Wing
-            </label>
-            <select
-              id=""
-              value=""
-             
-              className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="unit" className="text-sm font-medium text-gray-700">
-              Unit
-            </label>
-            <select
-              id=""
-              value=""
-             
-              className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-             
-            </select>
-          </div>
-        </div>
-      
-        <div className="flex justify-end space-x-4 pt-4">
-      
-          <button onClick={()=>setStatusmodel(false)} className="w-full  px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            Cancel
-          </button>
-       
-         
-          <button onClick={handleopenDeleteStatusModel} className="w-full px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-            Create
-          </button>
-         
-        </div>
-       
-                               </div>
-                             </div>
-                           </div>
-                    )}
 
-{openDeleteStatusModel && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <div className="p-5">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Do you want to vacate the finlay flat?
-              </h2>
-              <p className="text-sm text-gray-500">
-                Are you sure you want to delete all details?
-              </p>
+        {Statusmodel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+              <div className="p-6">
+                <h2 className="text-lg font-medium text-gray-900">Residence Status</h2>
+              </div>
+              <div className="px-6 py-4 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="wing" className="text-sm font-medium text-gray-700">
+                      Wing
+                    </label>
+                    <input
+                      id="wing"
+                      value={selectedWing}
+                      readOnly
+                      className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="unit" className="text-sm font-medium text-gray-700">
+                      Unit
+                    </label>
+                    <input
+                      id="unit"
+                      value={selectedUnit}
+                      readOnly
+                      className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-4 pt-4">
+                  <button onClick={() => setStatusmodel(false)} className="w-full  px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                  </button>
+                  <button onClick={handleopenDeleteStatusModel} className="w-full px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    Create
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4 rounded-b-lg">
-             
+          </div>
+        )}
+
+        {openDeleteStatusModel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+              <div className="p-5">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  Do you want to vacate the finlay flat?
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Are you sure you want to delete all details?
+                </p>
+              </div>
+              <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4 rounded-b-lg">
+
                 <button
-                 onClick={()=> setopenDeleteStatusModel(false)}
+                  onClick={() => setopenDeleteStatusModel(false)}
                   className="w-full px-4 border py-2 rounded text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
                   Cancel
                 </button>
 
                 <button
-
+                  onClick={() => {
+                    handleDeleteResident(selectedResidentId);
+                    setOpenDeleteModel(false);
+                  }}
                   className="w-full px-4 border ml-3 py-2 rounded bg-[#E74C3C] text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
                 >
                   Confirm
                 </button>
-            
+
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
 
       </div>

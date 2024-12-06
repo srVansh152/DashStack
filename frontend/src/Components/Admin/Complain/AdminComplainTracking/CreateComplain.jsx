@@ -176,10 +176,11 @@ function CreateComplain() {
   return (
     <div>
       <Aside />
-      <div className="main">
+      <div className="main bg-[#F0F5FB] min-h-screen">
         <Navbar/>
-        <div className="container-fulid p-2">
-          <div className="min-h-screen overflow-hidden bg-gray-50 p-6">
+        <div className='container-fulid p-2'>
+        <div className="bg-white mx-3 rounded">
+          <div className=" overflow-hidden  p-6">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Create Complaint</h1>
               <button onClick={handleAddModel} className="rounded-lg bg-orange-500 px-4 py-2 text-white transition-colors hover:bg-orange-600">
@@ -283,6 +284,7 @@ function CreateComplain() {
               )}
             </div>
           </div>
+        </div>
         </div>
       </div>
 

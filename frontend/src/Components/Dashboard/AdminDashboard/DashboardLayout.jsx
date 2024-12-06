@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint, getFinancialIncomes } from '../../../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint, getFinancialIncomes, getAnnouncements } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
 import { IoMdAddCircle } from "react-icons/io";
 
@@ -22,7 +22,7 @@ const DashboardLayout = () => {
     const [importantNumbers, setImportantNumbers] = useState([]); // State for important numbers
     const [deleteId, setDeleteId] = useState(null);
     const [editId, seteditId] = useState(null);
-    const [facilities, setFacilities] = useState([])
+    const [Announcements, setAnnouncements] = useState([])
     const [fetchedComplaints, setFetchedComplaints] = useState([]);
     const [complaintIdToDelete, setComplaintIdToDelete] = useState(null);
     const [complaintIdToEdit, setcomplaintIdToEdit] = useState(null);
@@ -37,8 +37,6 @@ const DashboardLayout = () => {
     const [timeframe, setTimeframe] = useState('Month');
     const [pendingMaintenances, setPendingMaintenances] = useState([]); // State for pending maintenances
     const [isLoading, setIsLoading] = useState(true); // New loading state
-
-
 
 
 
@@ -59,7 +57,7 @@ const DashboardLayout = () => {
 
     useEffect(() => {
         fetchComplaints();
-        fetchFacilities();
+        fetchAnnouncements();
         loadImportantNumbers();
         fetchPendingMaintenancesData(); // Call the new function
     }, []);
@@ -83,23 +81,23 @@ const DashboardLayout = () => {
         }
     };
 
-    const fetchFacilities = async () => {
-        setIsLoading(true); // Set loading to true
+    const fetchAnnouncements = async () => {
+
         try {
-            const response = await getFacilities();
-            console.log(response);
+            const response = await getAnnouncements()
+            console.log(response.data);
 
             if (response.success) {
-                setFacilities(response.data);
+                setAnnouncements(response.data);
             } else {
-                throw new Error("Failed to fetch facilities");
+                throw new Error('Failed to fetch announcements');
             }
         } catch (error) {
-            console.error("Error fetching facilities:", error);
-        } finally {
-            setIsLoading(false); // Set loading to false after fetching
+            console.error('Error fetching announcements:', error);
         }
     };
+
+
 
 
     const handleViewComplaint = async (complaintId) => {
@@ -347,15 +345,20 @@ const DashboardLayout = () => {
         setOpenImpDeleteModel(true); // Open the delete modal
     };
 
+    const getRandomColor = () => {
+        const colors = ['bg-blue-500', 'bg-green-500', 'bg-red-500', 'bg-yellow-500', 'bg-purple-500'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    };
+
     return (<>
         {isLoading && (
             <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center z-50">
-                 <div className="flex items-center justify-center p-8">
-                     <div className="text-center">
-                       <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
-               
-                     </div>
-                   </div>
+                <div className="flex items-center justify-center p-8">
+                    <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                    </div>
+                </div>
             </div>
         )}
         <Aside />
@@ -368,7 +371,7 @@ const DashboardLayout = () => {
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
                             {/* Card 1 */}
-                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+                            <div className="box relative flex items-center justify-between p-4 bg-white rounded-lg ">
                                 <div
                                     className="absolute top-5 left-0 h-[52px] w-2 bg-[#FFB480] rounded-r-md"
                                 />
@@ -376,6 +379,7 @@ const DashboardLayout = () => {
                                     <p className="text-[16px] font-medium text-[#202224]">Total Balance</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
                                 </div>
+                               
                                 <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
                                     <img
                                         src="/public/image/Dashborad/balance.png"
@@ -497,11 +501,11 @@ const DashboardLayout = () => {
                                     <div className="space-y-4 overflow-y-auto h-48 sm:h-72">
                                         {importantNumbers.length === 0 ? (
                                             <div className="flex items-center justify-center p-8">
-                                            <div className="text-center">
-                                              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
-                                      
+                                                <div className="text-center">
+                                                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                                                </div>
                                             </div>
-                                          </div>
                                         ) : (
                                             importantNumbers.map((number, i) => (
                                                 <div key={i} className="p-4 bg-white rounded-lg border">
@@ -679,16 +683,27 @@ const DashboardLayout = () => {
                                             <ChevronDown size={16} />
                                         </button>
                                     </div>
-                                    <div className="space-y-4 overflow-y-auto h-48 sm:h-60">
-                                        {facilities.map((facility, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-center gap-4 p-4 bg-white rounded-lg border"
-                                            >
-                                                <div className="w-10 h-10 bg-gray-100 rounded-full" />
-                                                <div>
-                                                    <p className="font-medium">{facility.facilityName}</p>
-                                                    <p className="text-sm text-gray-500">{facility.scheduleServiceDate}</p>
+                                    <div className="grid gap-4 overflow-y-auto h-48">
+                                        {Announcements.map((item, index) => (
+                                            <div key={index} className=" border-b mx-3 border-gray-200 justify-between items-center p-4 bg-white rounded-lg border">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex gap-4">
+
+                                                        <div className={`h-10 w-10 rounded-full border border-gray-300 flex items-center justify-center bg-gray-100`}>
+                                                            <span className="text-gray-700 font-bold text-sm">
+                                                                {item.title ? item.title.charAt(0) : "?"}
+                                                            </span>
+                                                        </div>
+                                                        <div >
+                                                            <p className="font-medium">{item.title || "Unnamed Facility"}</p>
+                                                            <p className="font-medium text-[#A7A7A7] text-right">{new Date(item.createdAt).toLocaleTimeString() || "No Time Available"}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-[#A7A7A7]">
+                                                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "No Date Available"}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}

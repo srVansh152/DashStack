@@ -154,12 +154,12 @@ function Announcment() {
   return (
     <div>
       <Aside />
-      <div className="main">
+      <div className="main bg-[#F0F5FB] min-h-screen">
       <Navbar/>
         {/* Summary Cards */}
         <div className="container-fulid p-2">
 
-          <div className="p-6 bg-gray-50 min-h-screen">
+          <div className="p-6 bg-white my-3 mx-3 rounded">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-semibold text-gray-900">Announcement</h1>
               <button onClick={handleAddModel} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
