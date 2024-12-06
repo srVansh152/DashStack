@@ -39,14 +39,6 @@ const DashboardLayout = () => {
     const [isLoading, setIsLoading] = useState(true); // New loading state
 
 
-    console.log(Announcements);
-
-
-
-
-
-
-
 
     const fetchComplaints = async () => {
         setIsLoading(true); // Set loading to true

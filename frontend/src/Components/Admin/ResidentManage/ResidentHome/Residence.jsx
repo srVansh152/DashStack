@@ -109,11 +109,13 @@ function Residence() {
     setSelectedResidentId(resident._id);
     setSelectedWing(resident.wing);
     setSelectedUnit(resident.unitNumber);
+    console.log(resident._id);
     setOpenDeleteModel(true);
   };
 
   const handleProfileDetails = (resident) => {
     setSelectedResidentId(resident._id);
+
     setOpenProfilModel(true);
     setIsClosing(false);
   };
@@ -127,10 +129,14 @@ function Residence() {
   };
 
   const fetchResidentDetails = async (id) => {
+    console.log(id);
+
     try {
       const response = await getResidentDetails(id);
+      console.log(response.data);
+
       if (response.success) {
-        setResidentDetails(response.data);
+        setResidentDetails(response.data.resident);
       } else {
         toast.error(response.message || "Failed to fetch resident details");
       }
@@ -224,7 +230,7 @@ function Residence() {
   // });
 
   return (
-    <div className='bg-[#F0F5FB] min-h-screen'>
+    <div className='bg-[#F0F5FB]'>
       <Aside />
       <div className="main ">
         <Navbar />
@@ -359,7 +365,7 @@ function Residence() {
                                 <button onClick={() => handleDeleteDetails(resident)} className="rounded p-1 text-red-600 hover:bg-red-50">
                                   <img src="/public/image/Dashborad/delete.png" alt="" />
                                 </button>
-                                <button onClick={() => { handleProfileDetails(resident);}} className="rounded p-1 text-blue-600 hover:bg-blue-50">
+                                <button onClick={() => { handleProfileDetails(resident); }} className="rounded p-1 text-blue-600 hover:bg-blue-50">
                                   <img src="/public/image/Dashborad/view.png" alt="View" />
                                 </button>
                               </td>
@@ -464,7 +470,7 @@ function Residence() {
             </div>
           </div>
         )}
-        {openProfileModel && (
+        {openProfileModel && residentDetails && (
           <div
             className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-end backdrop-blur-sm z-40 transition-all duration-300 ease-in-out ${isClosing ? 'opacity-0' : 'opacity-100'
               }`}
@@ -481,11 +487,7 @@ function Residence() {
                     onClick={handleCloseProfileModal}
                     className="mr-2 me-3 text-gray-600 hover:text-gray-800"
                   >
-                    {openProfileModel ? (
-                      <ArrowRight className="h-5 w-5" />
-                    ) : (
-                      <ArrowLeft className="h-5 w-5" />
-                    )}
+                    <ArrowLeft className="h-5 w-5" />
                   </button>
                   <h1 className="text-lg font-semibold text-gray-800 mt-1">
                     View Owner Details
@@ -496,22 +498,22 @@ function Residence() {
                   <div className="px-4 py-6">
                     <div className="flex flex-col items-center mb-6">
                       <img
-                        src="/public/image/profile.png"
-                        alt="Roger Lubin"
+                        src={residentDetails.photo || "/public/image/profile.png"}
+                        alt={residentDetails.fullName}
                         className="w-20 h-20 rounded-full mb-2"
                       />
                       <h2 className="text-xl font-semibold text-gray-800">
-                        Roger Lubin
+                        {residentDetails.fullName}
                       </h2>
-                      <p className="text-sm text-gray-600">RogerLubin@gmail.com</p>
+                      <p className="text-sm text-gray-600">{residentDetails.email}</p>
                     </div>
 
                     <div className="space-y-3 mb-6">
                       {[
-                        { label: 'Wing', value: 'A' },
-                        { label: 'Unit', value: '101' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
+                        { label: 'Wing', value: residentDetails.wing },
+                        { label: 'Unit', value: residentDetails.unitNumber },
+                        { label: 'Age', value: residentDetails.age },
+                        { label: 'Gender', value: residentDetails.gender },
                       ].map((item, index) => (
                         <div key={index} className="flex justify-between">
                           <span className="text-sm text-gray-600">{item.label}</span>
@@ -526,36 +528,60 @@ function Residence() {
                       <h3 className="text-sm font-semibold text-gray-800 mb-2">
                         Document
                       </h3>
-                      {[
-                        {
-                          name: 'Adhaarcard Front Side.JPG',
-                          size: '3.5 MB',
-                          icon: FileImage,
-                        },
-                        {
-                          name: 'Address Proof Front Side.PDF',
-                          size: '3.5 MB',
-                          icon: FileText,
-                        },
-                      ].map((doc, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
-                        >
-                          <div className="flex items-center">
-                            <doc.icon className="h-5 w-5 text-blue-500 mr-2" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-800">
-                                {doc.name}
-                              </p>
-                              <p className="text-xs text-gray-500">{doc.size}</p>
+                      {residentDetails.documents && Object.entries(residentDetails.documents).map(([key, value], index) => (
+                        value && (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
+                          >
+                            <div className="flex items-center">
+                              <FileText className="h-5 w-5 text-blue-500 mr-2" />
+                              <div>
+                                <p className="text-sm font-medium text-gray-800">
+                                  {key.replace(/([A-Z])/g, ' $1').trim()}: {value}
+                                </p>
+                              </div>
                             </div>
+                            <button className="text-gray-400 hover:text-gray-600">
+                              <MoreHorizontal className="h-5 w-5" />
+                            </button>
                           </div>
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <MoreHorizontal className="h-5 w-5" />
-                          </button>
-                        </div>
+                        )
                       ))}
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                      <h3 className="text-sm font-semibold text-blue-800 mb-2">
+                        Aadhaar Card
+                      </h3>
+                      <div className="flex flex-col">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Aadhaar Number</span>
+                          <span className="text-sm font-medium text-gray-800">
+                            {residentDetails.aadhaarNumber || 'N/A'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between mt-2">
+                          <span className="text-sm text-gray-600">Front Side</span>
+                          <span className="text-sm font-medium text-gray-800">
+                            {residentDetails.aadhaarFront ? (
+                              <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
+                                View Document
+                              </a>
+                            ) : 'N/A'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between mt-2">
+                          <span className="text-sm text-gray-600">Back Side</span>
+                          <span className="text-sm font-medium text-gray-800">
+                            {residentDetails.aadhaarBack ? (
+                              <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
+                                View Document
+                              </a>
+                            ) : 'N/A'}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="bg-blue-50 rounded-lg p-4 mb-6">
@@ -564,68 +590,20 @@ function Residence() {
                           Member Counting
                         </h3>
                         <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          02
+                          {residentDetails.members.length}
                         </span>
                       </div>
-                      {[
-                        { label: 'First Name', value: 'Roger Lubin' },
-                        { label: 'Phone No', value: '9123455555' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
-                        { label: 'Relation', value: 'Brother' },
-                      ].map((item, index) => (
+                      {residentDetails.members.map((member, index) => (
                         <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{item.label}</span>
+                          <span className="text-sm text-gray-600">{member.name}</span>
                           <span className="text-sm font-medium text-gray-800">
-                            {item.value}
+                            {member.phoneNumber}
                           </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-sm font-semibold text-blue-800">
-                          Member Counting
-                        </h3>
-                        <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          02
-                        </span>
-                      </div>
-                      {[
-                        { label: 'First Name', value: 'Roger Lubin' },
-                        { label: 'Phone No', value: '9123455555' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
-                        { label: 'Relation', value: 'Brother' },
-                      ].map((item, index) => (
-                        <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{item.label}</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {item.value}
+                          <span className="block text-sm font-medium text-gray-800">
+                            {member.phoneNumber}
                           </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-sm font-semibold text-blue-800">
-                          Member Counting
-                        </h3>
-                        <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          02
-                        </span>
-                      </div>
-                      {[
-                        { label: 'First Name', value: 'Roger Lubin' },
-                        { label: 'Phone No', value: '9123455555' },
-                        { label: 'Age', value: '20' },
-                        { label: 'Gender', value: 'Male' },
-                        { label: 'Relation', value: 'Brother' },
-                      ].map((item, index) => (
-                        <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{item.label}</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {item.value}
+                          <span className="block text-sm font-medium text-gray-800">
+                            {member.phoneNumber}
                           </span>
                         </div>
                       ))}
