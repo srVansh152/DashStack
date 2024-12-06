@@ -379,7 +379,7 @@ const DashboardLayout = () => {
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
                             {/* Card 1 */}
-                            <div className="relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+                            <div className="box relative flex items-center justify-between p-4 bg-white rounded-lg ">
                                 <div
                                     className="absolute top-5 left-0 h-[52px] w-2 bg-[#FFB480] rounded-r-md"
                                 />
@@ -387,6 +387,7 @@ const DashboardLayout = () => {
                                     <p className="text-[16px] font-medium text-[#202224]">Total Balance</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
                                 </div>
+                               
                                 <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
                                     <img
                                         src="/public/image/Dashborad/balance.png"

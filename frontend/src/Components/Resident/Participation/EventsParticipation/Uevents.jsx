@@ -13,23 +13,30 @@ const Uevents = () => {
     const [activeTab, setActiveTab] = useState('events')
     const [events, setEvents] = useState([]);
     const [eventssecond, setEventsSecond] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fetchEvents = async () => {
+        setLoading(true);
         try {
             const response = await getAnnouncements();
             setEvents(response.data);
             console.log(response.data);
         } catch (error) {
             console.error('Error fetching events:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const fetchActivities = async () => {
+        setLoading(true);
         try {
             const response = await getAnnouncements();
             setEventsSecond(response.data);
         } catch (error) {
             console.error('Error fetching activities:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -62,17 +69,28 @@ const Uevents = () => {
                             Activity Participate
                         </button>
                     </div>
+                   
                     {activeTab === 'events' && (
                         <div className="bg-white rounded-lg shadow">
                             <div className="p-8">
                                 <h2 className="text-xl font-semibold mb-6">Events Participation</h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-2 bg-[#EEF1FD] rounded-t-lg">
-                                    <div className="font-medium text-gray-700 p-2">Participator Name</div>
-                                    <div className="font-medium text-gray-700 p-2">Description</div>
-                                    <div className="font-medium text-gray-700 p-2">Event Time</div>
-                                    <div className="font-medium text-gray-700 p-2">Event Date</div>
-                                    <div className="font-medium text-gray-700 p-2">Event Name</div>
-                                </div>
+                                
+                                {loading ? (
+                                   <div className="flex items-center justify-center p-8">
+                                     <div className="text-center">
+                                       <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                                       
+                                     </div>
+                                   </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-2 bg-[#EEF1FD] rounded-t-lg">
+                                        <div className="font-medium text-gray-700 p-2">Participator Name</div>
+                                        <div className="font-medium text-gray-700 p-2">Description</div>
+                                        <div className="font-medium text-gray-700 p-2">Event Time</div>
+                                        <div className="font-medium text-gray-700 p-2">Event Date</div>
+                                        <div className="font-medium text-gray-700 p-2">Event Name</div>
+                                    </div>
+                                )}
                                 <div className="divide-y">
                                     {events.map((event, index) => (
                                         <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-5 items-center  transition-colors">
@@ -95,14 +113,24 @@ const Uevents = () => {
                             <div className="bg-white rounded-lg shadow-sm">
                                 <div className="p-8">
                                     <h2 className="text-xl font-semibold mb-6">Activity Participation</h2>
-                                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-3 bg-[#EEF1FD] rounded-t-lg">
-                                        <div className="font-medium text-gray-700 p-2">Participator Name</div>
-                                        <div className="font-medium text-gray-700 p-2">Description</div>
-                                        <div className="font-medium text-gray-700 p-2">Activity Time</div>
-                                        <div className="font-medium text-gray-700 p-2">Activity Date</div>
-                                        <div className="font-medium text-gray-700 p-2">Activity Name</div>
-                                    </div>
+                                    
                                     <div className="divide-y divide-gray-200">
+                                        {loading ? (
+                                            <div className="flex items-center justify-center p-8">
+                                            <div className="text-center">
+                                              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+                                              
+                                            </div>
+                                          </div>
+                                        ) : (
+                                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-3 bg-[#EEF1FD] rounded-t-lg">
+                                                <div className="font-medium text-gray-700 p-2">Participator Name</div>
+                                                <div className="font-medium text-gray-700 p-2">Description</div>
+                                                <div className="font-medium text-gray-700 p-2">Activity Time</div>
+                                                <div className="font-medium text-gray-700 p-2">Activity Date</div>
+                                                <div className="font-medium text-gray-700 p-2">Activity Name</div>
+                                            </div>
+                                        )}
                                         {eventssecond.map((event, index) => (
                                             <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-5 items-center">
                                                 <div className="flex items-center gap-2">

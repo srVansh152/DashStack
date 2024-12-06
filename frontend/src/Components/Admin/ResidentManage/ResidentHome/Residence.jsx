@@ -229,7 +229,15 @@ function Residence() {
       <div className="main ">
         <Navbar />
 
-
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent"></div>
+              <p className="mt-4 text-lg text-gray-700">Loading...</p>
+            </div>
+          </div>
+        )}
+        
         <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
           <div className="px-4 py-6 sm:px-0 ">
             <div className='bg-white px-3 py-4 rounded'>
