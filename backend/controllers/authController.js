@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const Resident = require('../models/Resident');
+const SecurityGuard = require('../models/SecurityGuardModel');
 const { generateToken } = require('../utils/token');
 const cloudinary = require('../config/cloudinaryConfig');
 
@@ -99,6 +100,18 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         token: generateToken(user),
+      });
+    }
+
+    // Check for security guard in SecurityGuard model
+    const securityGuard = await SecurityGuard.findOne({ email });
+    if (securityGuard && (await securityGuard.comparePassword(password))) {
+      return res.json({
+        _id: securityGuard._id,
+        fullName: securityGuard.fullName,
+        email: securityGuard.email,
+        role: 'security', // Setting role for security guards
+        token: generateToken(securityGuard),
       });
     }
 

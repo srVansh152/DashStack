@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Society = require('../models/Society'); // Make sure to import your Society model
+const Society = require('../models/Society');
 const Resident = require('../models/Resident');
+const SecurityGuard = require('../models/SecurityGuardModel'); // Import SecurityGuard model
 
 const protect = async (req, res, next) => {
   let token;
@@ -9,7 +10,6 @@ const protect = async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // Identify if the user is an admin or resident based on the token role
       const userId = decoded.id; // Extract user ID from token
       let user;
       let role;
@@ -25,8 +25,15 @@ const protect = async (req, res, next) => {
           role = 'resident'; // Default role for residents
           req.adminId = user.createdBy?._id; // Attach admin ID
         } else {
-          // If user is not found in either collection, return an error
-          return res.status(401).json({ message: 'Not authorized, user not found' });
+          // If not found in Resident, search in the SecurityGuard collection
+          user = await SecurityGuard.findById(userId).populate('society');
+          if (user) {
+            role = 'security'; // Default role for security guards
+            req.adminId = user.adminId; // Attach admin ID
+          } else {
+            // If user is not found in any collection, return an error
+            return res.status(401).json({ message: 'Not authorized, user not found' });
+          }
         }
       }
 
@@ -37,7 +44,6 @@ const protect = async (req, res, next) => {
         const society = await Society.findById(user.society).populate('residents');
         req.residents = society.residents || [];
         req.user.society = society; // Attach full society object to user
-
       } else {
         req.residents = [];
       }
@@ -54,7 +60,7 @@ const protect = async (req, res, next) => {
 // Middleware to restrict access to specific roles
 const restrictTo = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.userRole)) {
       return res.status(403).json({ message: 'Access denied' });
     }
     next();
