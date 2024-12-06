@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-
 import { Bell } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import UAside from '../../Common/SideBar/ResidentSideBar/UAside';
 import Navbar from '../../Common/Navbar/Navbar';
-import { getAnnouncements } from '../../../utils/api';
+import { getAnnouncements, getResidentDetails, getResidents } from '../../../utils/api';
 
 export default function Upersonaldetail() {
     const [activeTab, setActiveTab] = useState('owner')
     const [isOpen, setIsOpen] = useState(false);
     const [announcements, setAnnouncements] = useState([]);
+    const [ownerDetails, setOwnerDetails] = useState();
+    
 
     useEffect(() => {
         const fetchAnnouncements = async () => {
@@ -23,6 +24,23 @@ export default function Upersonaldetail() {
         };
 
         fetchAnnouncements();
+    }, []);
+
+    const fetchOwnerDetails = async () => {
+        try {
+            const residentId = localStorage.getItem('userId');
+            console.log(residentId);   
+            const response = await getResidentDetails(residentId);
+            console.log(response.data.resident);
+            setOwnerDetails(response.data.resident); // Set the owner details in state
+            console.log(ownerDetails)
+        } catch (error) {
+            console.error('Error fetching owner details:', error);
+        }
+    };
+
+    useEffect(() => {      
+    fetchOwnerDetails();
     }, []);
 
     return (
@@ -57,7 +75,7 @@ export default function Upersonaldetail() {
                                     {/* Left Side - Profile Image */}
                                     <div className="lg:w-2/12 w-full flex flex-col items-center mb-4 lg:mb-0">
                                         <img
-                                            src="/image/profile.png"
+                                            src={ownerDetails.photo}
                                             alt="Profile"
                                             className="w-28 h-28 rounded-full mb-2"
                                         />
@@ -67,39 +85,55 @@ export default function Upersonaldetail() {
                                     <div className="lg:w-7/12 w-full">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                                             <div>
+                                                <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Rent Agreement</h6>
+                                                <a href={ownerDetails.rentAgreement} download className="text-[#A7A7A7] font-semibold text-[16px]">Download</a>
+                                            </div>
+                                            <div>
+                                                <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">AADHAAR Back</h6>
+                                                <a href={ownerDetails.aadhaarBack} download className="text-[#A7A7A7] font-semibold text-[16px]">Download</a>
+                                            </div>
+                                            <div>
+                                                <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Society</h6>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.society}</p>
+                                            </div>
+                                            <div>
+                                                <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Role</h6>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.role}</p>
+                                            </div>
+                                            <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Full Name</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">Arlene McCoy</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.fullName}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Phone Number</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">+91 99130 44537</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.phoneNumber}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Email Address</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px] break-words">ArleneMcCoy25@gmail.com</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px] break-words">{ownerDetails.email}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Gender</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">Male</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.gender}</p>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Wing</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">A</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.wing}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Age</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">20</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.age}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Unit</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">1001</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.unitNumber}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Relation</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">Father</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.relation}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -107,16 +141,20 @@ export default function Upersonaldetail() {
                                     {/* File Attachments */}
                                     <div className="lg:w-3/12 w-full mt-4 lg:mt-0">
                                         <div className="border rounded p-2 mb-2 flex items-center">
-                                            <img src="/image/gallery.png" alt="" className="w-6 h-6 mr-2" />
+                                            <a href={ownerDetails.aadhaarFront} download>
+                                                <img src={ownerDetails.aadhaarFront} alt="" className="w-6 h-6 mr-2" />
+                                            </a>
                                             <div>
-                                                <p className="text-sm">Syncfusion Adharcard Front Side.JPG</p>
+                                                <p className="text-sm">{ownerDetails.aadhaarFront.split('/').pop()}</p>
                                                 <span className="text-gray-500 text-xs">3.5 MB</span>
                                             </div>
                                         </div>
                                         <div className="border rounded p-2 mb-2 flex items-center">
-                                            <img src="/image/gallery.png" alt="" className="w-6 h-6 mr-2" />
+                                            <a href={ownerDetails.addressProof} download>
+                                                <img src={ownerDetails.addressProof} alt="" className="w-6 h-6 mr-2" />
+                                            </a>
                                             <div>
-                                                <p className="text-sm">Address Proof Front Side.PDF</p>
+                                                <p className="text-sm">{ownerDetails.addressProof.split('/').pop()}</p>
                                                 <span className="text-gray-500 text-xs">3.5 MB</span>
                                             </div>
                                         </div>
@@ -127,42 +165,9 @@ export default function Upersonaldetail() {
 
                             {/* Members Section */}
                             <div className="mb-8">
-                                <h2 className="text-lg font-semibold mb-4">Member : (04)</h2>
+                                <h2 className="text-lg font-semibold mb-4">Member : ({ownerDetails.members.length})</h2>
                                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {[
-                                        {
-                                            name: "Arlene McCoy",
-                                            email: "Arlenemccoy@gmail.com",
-                                            phone: "+91 99130 52221",
-                                            age: "22",
-                                            gender: "Male",
-                                            relation: "Brother"
-                                        },
-                                        {
-                                            name: "Arlene McCoy",
-                                            email: "BrooklynSimmons@gmail.com",
-                                            phone: "+91 99233 66134",
-                                            age: "22",
-                                            gender: "Male",
-                                            relation: "Uncle"
-                                        },
-                                        {
-                                            name: "Arlene McCoy",
-                                            email: "JennyWilson@gmail.com",
-                                            phone: "+91 99130 52221",
-                                            age: "22",
-                                            gender: "Male",
-                                            relation: "Sister"
-                                        },
-                                        {
-                                            name: "Arlene McCoy",
-                                            email: "JaneCooper@gmail.com",
-                                            phone: "+91 99130 52221",
-                                            age: "22",
-                                            gender: "Male",
-                                            relation: "Mother"
-                                        }
-                                    ].map((member, index) => (
+                                    {ownerDetails.members.map((member, index) => (
                                         <div key={index} className="bg-white rounded-lg shadow">
                                             <h3 className="font-semibold flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">{member.name}</h3>
                                             <div className="space-y-2 p-4">
@@ -172,7 +177,7 @@ export default function Upersonaldetail() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <p className="text-sm text-gray-500">Phone Number</p>
-                                                    <p className="text-sm">{member.phone}</p>
+                                                    <p className="text-sm">{member.phoneNumber}</p>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <p className="text-sm text-gray-500">Age</p>
@@ -196,34 +201,13 @@ export default function Upersonaldetail() {
                             <div className="mb-8">
                                 <h2 className="text-lg font-semibold mb-4">Vehicle : (04)</h2>
                                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {[
-                                        {
-                                            type: "Two Wheelers",
-                                            name: "Splendor",
-                                            number: "GJ-5216"
-                                        },
-                                        {
-                                            type: "Four Wheelers",
-                                            name: "Fortuner",
-                                            number: "GJ-5216"
-                                        },
-                                        {
-                                            type: "Two Wheelers",
-                                            name: "Splendor",
-                                            number: "GJ-5216"
-                                        },
-                                        {
-                                            type: "Two Wheelers",
-                                            name: "Splendor",
-                                            number: "GJ-5216"
-                                        }
-                                    ].map((vehicle, index) => (
+                                    {ownerDetails.map((vehicle, index) => (
                                         <div key={index} className="bg-white rounded-lg shadow">
-                                            <h3 className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">{vehicle.type}</h3>
+                                            <h3 className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">{ownerDetails.vehicles.length}</h3>
                                             <div className="space-y-2 p-3">
                                                 <div className="flex justify-between">
                                                     <p className="text-sm text-gray-500">Vehicle Name</p>
-                                                    <p className="text-sm">{vehicle.name}</p>
+                                                    <p className="text-sm">{vehicle.type}</p>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <p className="text-sm text-gray-500">Vehicle Number</p>
