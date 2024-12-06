@@ -42,7 +42,7 @@ router.put('/:id',
     }
 );
 
-router.delete('/:id', protect, async (req, res) => {
+router.delete('/:id', protect, async (req, res) => { // Protect the route
     try {
         await residentController.deleteResident(req, res);
     } catch (error) {
@@ -50,7 +50,7 @@ router.delete('/:id', protect, async (req, res) => {
     }
 });
 
-router.get('/', protect, async (req, res) => {
+router.get('/', protect, async (req, res) => { // Protect the route
     try {
         await residentController.getResidents(req, res);
     } catch (error) {
@@ -58,7 +58,7 @@ router.get('/', protect, async (req, res) => {
     }
 });
 
-router.get('/:id', protect, async (req, res) => {
+router.get('/:id', protect, async (req, res) => { // Protect the route
     try {
         await residentController.getResidentDetails(req, res);
     } catch (error) {
