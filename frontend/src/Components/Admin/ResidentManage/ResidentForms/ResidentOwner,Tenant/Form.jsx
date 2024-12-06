@@ -120,6 +120,7 @@ export const Form = () => {
     event.preventDefault(); // Prevent default form submission
 
     // Validate required fields
+    console.log(vehicles);
 
     const ownerData = {
       photo: files.photo || null, // Ensure photo is set or null
@@ -136,17 +137,17 @@ export const Form = () => {
       addressProof: files.addressProof || null,
       rentAgreement: files.rentAgreement || null,
       members: members.map(member => ({
-        name: member.fullName || "", // Ensure name is set or empty string
-        phoneNumber: member.phone || "", // Ensure phone is set or empty string
-        email: member.email || "", // Ensure email is set or empty string
+        name: member.fullName , // Ensure name is set or empty string
+        phoneNumber: member.phone , // Ensure phone is set or empty string
+        email: member.email , // Ensure email is set or empty string
         age: Number(member.age) || 0, // Ensure age is set or default to 0
-        gender: member.gender || "", // Ensure gender is set or empty string
-        relation: member.relation || "", // Ensure relation is set or empty string
+        gender: member.gender,  // Ensure gender is set or empty string
+        relation: member.relation , // Ensure relation is set or empty string
       })),
       vehicles: vehicles.map(vehicle => ({
-        type: vehicle.type || "", // Ensure type is set or empty string
-        name: vehicle.name || "", // Ensure name is set or empty string
-        number: vehicle.number || "", // Ensure number is set or empty string
+        type: vehicle.type , // Ensure type is set or empty string
+        name: vehicle.name , // Ensure name is set or empty string
+        number: vehicle.number , // Ensure number is set or empty string
       })),
       owner: activeTab === "owner", // Set owner based on active tab
       ownerDetails: activeTab === "tenant" ? { // Include ownerDetails only for tenant
@@ -685,7 +686,7 @@ export const Form = () => {
                       type="text"
                       className="mt-1 block w-full border rounded-md bg-transparent text-sm px-4 py-1"
                       placeholder="Enter Name"
-                      onChange={(e) => handleInputChange(index, 'name', e.target.value)}
+                      onChange={(e) => handleInputVecChange(index, 'name', e.target.value)}
                     />
                   </div>
                   <div>
@@ -694,7 +695,7 @@ export const Form = () => {
                       type="text"
                       className="mt-1 block w-full border rounded-md shadow-sm text-sm bg-transparent px-4 py-1"
                       placeholder="Enter Number"
-                      onChange={(e) => handleInputChange(index, 'number', e.target.value)}
+                      onChange={(e) => handleInputVecChange(index, 'number', e.target.value)}
                     />
                   </div>
                 </div>

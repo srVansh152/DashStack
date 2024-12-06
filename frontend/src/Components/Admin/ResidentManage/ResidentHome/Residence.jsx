@@ -28,6 +28,12 @@ function Residence() {
   const [selectedResidentId, setSelectedResidentId] = useState(null);
   const [selectedWing, setSelectedWing] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
+  const [loadingProfile, setLoadingProfile] = useState(false);
+
+
+  
+  
+  
 
   const navigate = useNavigate();
 
@@ -129,12 +135,9 @@ function Residence() {
   };
 
   const fetchResidentDetails = async (id) => {
-    console.log(id);
-
+    setLoadingProfile(true);
     try {
       const response = await getResidentDetails(id);
-      console.log(response.data);
-
       if (response.success) {
         setResidentDetails(response.data.resident);
       } else {
@@ -143,6 +146,8 @@ function Residence() {
     } catch (error) {
       console.error("Error fetching resident details:", error);
       toast.error("Failed to fetch resident details");
+    } finally {
+      setLoadingProfile(false);
     }
   };
 
@@ -230,19 +235,12 @@ function Residence() {
   // });
 
   return (
-    <div className='bg-[#F0F5FB]'>
+    <div className='bg-[#F0F5FB] min-h-screen'>
       <Aside />
       <div className="main ">
         <Navbar />
 
-        {loading && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent"></div>
-              <p className="mt-4 text-lg text-gray-700">Loading...</p>
-            </div>
-          </div>
-        )}
+     
         
         <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
           <div className="px-4 py-6 sm:px-0 ">
@@ -495,120 +493,180 @@ function Residence() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto">
-                  <div className="px-4 py-6">
-                    <div className="flex flex-col items-center mb-6">
-                      <img
-                        src={residentDetails.photo || "/public/image/profile.png"}
-                        alt={residentDetails.fullName}
-                        className="w-20 h-20 rounded-full mb-2"
-                      />
-                      <h2 className="text-xl font-semibold text-gray-800">
-                        {residentDetails.fullName}
-                      </h2>
-                      <p className="text-sm text-gray-600">{residentDetails.email}</p>
-                    </div>
+                  {loadingProfile ? (
+                    <div className="flex items-center justify-center h-full">
+                       
+                    <div className="text-center">
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
 
-                    <div className="space-y-3 mb-6">
-                      {[
-                        { label: 'Wing', value: residentDetails.wing },
-                        { label: 'Unit', value: residentDetails.unitNumber },
-                        { label: 'Age', value: residentDetails.age },
-                        { label: 'Gender', value: residentDetails.gender },
-                      ].map((item, index) => (
-                        <div key={index} className="flex justify-between">
-                          <span className="text-sm text-gray-600">{item.label}</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {item.value}
-                          </span>
-                        </div>
-                      ))}
                     </div>
+                  
+                    </div>
+                  ) : (
+                    <div className="px-4 py-6">
+                      <div className="flex flex-col items-center mb-6">
+                        <img
+                          src={residentDetails.photo || "/public/image/profile.png"}
+                          alt={residentDetails.fullName}
+                          className="w-20 h-20 rounded-full mb-2"
+                        />
+                        <h2 className="text-xl font-semibold text-gray-800">
+                          {residentDetails.fullName}
+                        </h2>
+                        <p className="text-sm text-gray-600">{residentDetails.email}</p>
+                      </div>
 
-                    <div className="mb-6">
-                      <h3 className="text-sm font-semibold text-gray-800 mb-2">
-                        Document
-                      </h3>
-                      {residentDetails.documents && Object.entries(residentDetails.documents).map(([key, value], index) => (
-                        value && (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
-                          >
-                            <div className="flex items-center">
-                              <FileText className="h-5 w-5 text-blue-500 mr-2" />
-                              <div>
-                                <p className="text-sm font-medium text-gray-800">
-                                  {key.replace(/([A-Z])/g, ' $1').trim()}: {value}
-                                </p>
-                              </div>
-                            </div>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <MoreHorizontal className="h-5 w-5" />
-                            </button>
+                      <div className="space-y-3 mb-6 px-4 bg-white rounded-lg p-4 shadow-sm">
+                        {[
+                          { label: 'Wing', value: residentDetails.wing },
+                          { label: 'Unit', value: residentDetails.unitNumber },
+                          { label: 'Age', value: residentDetails.age },
+                          { label: 'Gender', value: residentDetails.gender },
+                        ].map((item, index) => (
+                          <div key={index} className="flex justify-between">
+                            <span className="text-sm text-gray-600">{item.label}</span>
+                            <span className="text-sm font-medium text-gray-800">
+                              {item.value}
+                            </span>
                           </div>
-                        )
-                      ))}
-                    </div>
-
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <h3 className="text-sm font-semibold text-blue-800 mb-2">
-                        Aadhaar Card
-                      </h3>
-                      <div className="flex flex-col">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Aadhaar Number</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {residentDetails.aadhaarNumber || 'N/A'}
-                          </span>
-                        </div>
-                        <div className="flex justify-between mt-2">
-                          <span className="text-sm text-gray-600">Front Side</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {residentDetails.aadhaarFront ? (
-                              <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
-                                View Document
-                              </a>
-                            ) : 'N/A'}
-                          </span>
-                        </div>
-                        <div className="flex justify-between mt-2">
-                          <span className="text-sm text-gray-600">Back Side</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {residentDetails.aadhaarBack ? (
-                              <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
-                                View Document
-                              </a>
-                            ) : 'N/A'}
-                          </span>
-                        </div>
+                        ))}
                       </div>
-                    </div>
 
-                    <div className="bg-blue-50 rounded-lg p-4 mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-sm font-semibold text-blue-800">
-                          Member Counting
+                     <div className='bg-white rounded-lg bg-white rounded-lg p-4 shadow-sm'>
+                     <div className="mb-2">
+                        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+                          Document
                         </h3>
-                        <span className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                          {residentDetails.members.length}
-                        </span>
+                        {residentDetails.documents && Object.entries(residentDetails.documents).map(([key, value], index) => (
+                          value && (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
+                            >
+                              <div className="flex items-center">
+                                <FileText className="h-5 w-5 text-blue-500 mr-2" />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {key.replace(/([A-Z])/g, ' $1').trim()}: {value}
+                                  </p>
+                                </div>
+                              </div>
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <MoreHorizontal className="h-5 w-5" />
+                              </button>
+                            </div>
+                          )
+                        ))}
                       </div>
-                      {residentDetails.members.map((member, index) => (
-                        <div key={index} className="flex justify-between py-1">
-                          <span className="text-sm text-gray-600">{member.name}</span>
-                          <span className="text-sm font-medium text-gray-800">
-                            {member.phoneNumber}
-                          </span>
-                          <span className="block text-sm font-medium text-gray-800">
-                            {member.phoneNumber}
-                          </span>
-                          <span className="block text-sm font-medium text-gray-800">
-                            {member.phoneNumber}
-                          </span>
+
+                     
+                     
+
+                      <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
+                            <img src="/public/image/Resident/Component54.png" alt="" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-700">Adharcard Front Side.JPG</p>
+                            <p className="text-sm text-gray-500">3.5 MB</p>
+                          </div>
                         </div>
-                      ))}
+                        <button className="rounded-md p-2 hover:bg-gray-100">
+                        {residentDetails.aadhaarFront ? (
+                                <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
+                                  <img src="/public/image/Resident/eye.png" alt="" />
+                                </a>
+                              ) : 'N/A'}
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
+                            <img src="/public/image/Resident/Component55.png" alt="" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-700">Address Proof Front Side.PDF</p>
+                            <p className="text-sm text-gray-500">3.5 MB</p>
+                          </div>
+                        </div>
+                        <button className="rounded-md p-2 hover:bg-gray-100">
+                        {residentDetails.aadhaarBack ? (
+                                <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
+                                    <img src="/public/image/Resident/eye.png" alt="" />
+                                </a>
+                              ) : 'N/A'}
+                        </button>
+                      </div>
+                     </div>
+
+                      <div className="overflow-hidden rounded-xl bg-white shadow-lg">
+                        <div className="bg-[#5678E9] p-4">
+                          <div className="flex items-center justify-between text-white">
+                            <h2 className="text-1xl font-medium">Member Counting</h2>
+                            <span className="text-1xl font-semibold">0{residentDetails.members.length}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-4 p-6">
+                          {residentDetails.members.map((member, index) => (
+                            <>
+                            <div key={index} className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">First Name</span>
+                              <span className="text-base text-gray-600">{member.name}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">Phone No</span>
+                              <span className="text-base text-gray-600">{member.phoneNumber}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">Age</span>
+                              <span className="text-base text-gray-600">{member.age}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">Gender</span>
+                              <span className="text-base text-gray-600">{member.gender}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">Relation</span>
+                              <span className="text-base text-gray-600">{member.relation}</span>
+                            </div>
+                            <div className='border-b border-gray-200'></div>
+                            </>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="overflow-hidden rounded-xl bg-white shadow-lg mt-4">
+                        <div className="bg-[#5678E9] p-4">
+                          <div className="flex items-center justify-between text-white">
+                            <h2 className="text-1xl font-medium">vehicles Counting</h2>
+                            <span className="text-1xl font-semibold">0{residentDetails.vehicles.length}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-4 p-6">
+                          {residentDetails.vehicles.map((vehicles, index) => (
+                            <>
+                            <div key={index} className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">vehicles type</span>
+                              <span className="text-base text-gray-600">{vehicles.type}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">vehicles Name</span>
+                              <span className="text-base text-gray-600">{vehicles.name}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-medium text-gray-700">vehicles Number</span>
+                              <span className="text-base text-gray-600">{vehicles.number}</span>
+                            </div>
+                            
+                            <div className='border-b border-gray-200'></div>
+                            </>
+                          ))}
+                        </div>
+                      </div>
+                     
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
