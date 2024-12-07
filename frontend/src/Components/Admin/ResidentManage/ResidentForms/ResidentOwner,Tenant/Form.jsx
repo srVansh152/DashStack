@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Upload } from "lucide-react";
 import axios from 'axios'; // Import axios for making API calls
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
@@ -46,6 +46,7 @@ export const Form = () => {
   });
   const [wing, setWing] = useState(''); // State for wing
   const [unit, setUnit] = useState(''); // State for unit
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
 
   const handleMemberCountChange = (event) => {
 
@@ -118,6 +119,7 @@ export const Form = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
+    setIsLoading(true); // Set loading state to true
 
     // Validate required fields
     console.log(vehicles);
@@ -164,6 +166,8 @@ export const Form = () => {
     } catch (error) {
       console.error('Error saving data:', error.response ? error.response.data : error.message);
       // Log the error response for more details
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
@@ -752,6 +756,16 @@ export const Form = () => {
               <div className="mt-4">
                 {activeTab === "tenant" ? renderTenantForm() : renderOwnerForm()}
               </div>
+
+              {/* Conditional rendering for loading text */}
+              {isLoading &&   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center z-50">
+                <div className="flex items-center justify-center p-8">
+                    <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                    </div>
+                </div>
+            </div>}
 
               {/* Action Buttons */}
           
