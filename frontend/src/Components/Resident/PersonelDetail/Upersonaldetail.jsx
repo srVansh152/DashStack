@@ -7,11 +7,12 @@ import Navbar from '../../Common/Navbar/Navbar';
 import { getAnnouncements, getResidentDetails, getResidents } from '../../../utils/api';
 
 export default function Upersonaldetail() {
-    const [activeTab, setActiveTab] = useState('owner')
+    const [activeTab, setActiveTab] = useState('owner');
     const [isOpen, setIsOpen] = useState(false);
     const [announcements, setAnnouncements] = useState([]);
     const [ownerDetails, setOwnerDetails] = useState();
-    
+    const [loadingAnnouncements, setLoadingAnnouncements] = useState(true);
+    const [loadingOwnerDetails, setLoadingOwnerDetails] = useState(true);
 
     useEffect(() => {
         const fetchAnnouncements = async () => {
@@ -20,6 +21,8 @@ export default function Upersonaldetail() {
                 setAnnouncements(response.data);
             } catch (error) {
                 console.error('Error fetching announcements:', error);
+            } finally {
+                setLoadingAnnouncements(false);
             }
         };
 
@@ -29,18 +32,19 @@ export default function Upersonaldetail() {
     const fetchOwnerDetails = async () => {
         try {
             const residentId = localStorage.getItem('userId');
-            console.log(residentId);   
             const response = await getResidentDetails(residentId);
-            console.log(response);
+            console.log(response.data.resident);
             setOwnerDetails(response.data.resident); // Set the owner details in state
             console.log(ownerDetails)
         } catch (error) {
             console.error('Error fetching owner details:', error);
+        } finally {
+            setLoadingOwnerDetails(false);
         }
     };
 
-    useEffect(() => {      
-    fetchOwnerDetails();
+    useEffect(() => {
+        fetchOwnerDetails();
     }, []);
 
     return (
@@ -51,95 +55,93 @@ export default function Upersonaldetail() {
                     <Navbar />
                     {/* Tabs */}
                     <div className="flex mb-4 mt-5">
-                        <button
-                            className={`px-4 py-2 font-semibold rounded-tl-lg rounded-bl-lg ${activeTab === 'owner' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
-                                }`}
-                            onClick={() => setActiveTab('owner')}
-                        >
-                            Owner
-                        </button>
-                        <button
-                            className={`px-4 py-2 font-semibold rounded-tr-lg rounded-br-lg ${activeTab === 'tenant' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
-                                }`}
-                            onClick={() => setActiveTab('tenant')}
-                        >
-                            Tenant
-                        </button>
+                        {ownerDetails?.resident?.owner ? (
+                            <button
+                                className={`px-4 py-2 font-semibold rounded-tl-lg rounded-bl-lg ${activeTab === 'owner' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                                    }`}
+                                onClick={() => setActiveTab('owner')}
+                            >
+                                Owner
+                            </button>
+                        ) : (
+                            <button
+                                className={`px-4 py-2 font-semibold rounded-tr-lg rounded-br-lg ${activeTab === 'tenant' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                                    }`}
+                                onClick={() => setActiveTab('tenant')}
+                            >
+                                Tenant
+                            </button>
+                        )}
                     </div>
 
-                    {activeTab === 'owner' && (
+                    {loadingOwnerDetails ? (
+                        <p>Loading owner details...</p>
+                    ) : activeTab === 'owner' && ownerDetails && (
                         <>
                             {/* Profile Section */}
                             <div className="border rounded shadow bg-white p-5 mb-3">
                                 <div className="flex flex-wrap items-center">
                                     {/* Left Side - Profile Image */}
                                     <div className="lg:w-2/12 w-full flex flex-col items-center mb-4 lg:mb-0">
-                                        {ownerDetails && ownerDetails.photo ? (
-                                            <img
-                                                src={ownerDetails.photo}
-                                                alt="Profile"
-                                                className="w-28 h-28 rounded-full mb-2"
-                                            />
-                                        ) : (
-                                            <div className="w-28 h-28 rounded-fullbg-gray-200 mb-2 flex items-center justify-center">
-                                                <span>No Image</span>
-                                            </div>
-                                        )}
+                                        <img
+                                            src={ownerDetails.photo}
+                                            alt="Profile"
+                                            className="w-28 h-28 rounded-full mb-2"
+                                        />
                                     </div>
-
                                     {/* Right Side - Form Details */}
                                     <div className="lg:w-7/12 w-full">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Rent Agreement</h6>
-                                                <a href={ownerDetails.rentAgreement} download className="text-[#A7A7A7] font-semibold text-[16px]">Download</a>
+                                                <a href={ownerDetails.resident.rentAgreement} download className="text-[#A7A7A7] font-semibold text-[16px]">Download</a>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">AADHAAR Back</h6>
-                                                <a href={ownerDetails.aadhaarBack} download className="text-[#A7A7A7] font-semibold text-[16px]">Download</a>
+                                                <a href={ownerDetails.resident.aadhaarBack} download className="text-[#A7A7A7] font-semibold text-[16px]">Download</a>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Society</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.society}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.society}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Role</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.role}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.role}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Full Name</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.fullName}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.fullName}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Phone Number</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.phoneNumber}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.phoneNumber}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Email Address</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px] break-words">{ownerDetails.email}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px] break-words">{ownerDetails.resident.email}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Gender</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.gender}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.gender}</p>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Wing</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.wing}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.wing}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Age</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.age}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.age}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Unit</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.unitNumber}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.unitNumber}</p>
                                             </div>
                                             <div>
                                                 <h6 className="text-[#202224] mb-1 font-semibold text-[16px]">Relation</h6>
-                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.relation}</p>
+                                                <p className="text-[#A7A7A7] font-semibold text-[16px]">{ownerDetails.resident.relation}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -147,20 +149,20 @@ export default function Upersonaldetail() {
                                     {/* File Attachments */}
                                     <div className="lg:w-3/12 w-full mt-4 lg:mt-0">
                                         <div className="border rounded p-2 mb-2 flex items-center">
-                                            <a href={ownerDetails.aadhaarFront} download>
-                                                <img src={ownerDetails.aadhaarFront} alt="" className="w-6 h-6 mr-2" />
+                                            <a href={ownerDetails.resident.aadhaarFront} download>
+                                                <img src={ownerDetails.resident.aadhaarFront} alt="" className="w-6 h-6 mr-2" />
                                             </a>
                                             <div>
-                                                <p className="text-sm">{ownerDetails.aadhaarFront.split('/').pop()}</p>
+                                                <p className="text-sm">{ownerDetails.resident.aadhaarFront.split('/').pop()}</p>
                                                 <span className="text-gray-500 text-xs">3.5 MB</span>
                                             </div>
                                         </div>
                                         <div className="border rounded p-2 mb-2 flex items-center">
-                                            <a href={ownerDetails.addressProof} download>
-                                                <img src={ownerDetails.addressProof} alt="" className="w-6 h-6 mr-2" />
+                                            <a href={ownerDetails.resident.addressProof} download>
+                                                <img src={ownerDetails.resident.addressProof} alt="" className="w-6 h-6 mr-2" />
                                             </a>
                                             <div>
-                                                <p className="text-sm">{ownerDetails.addressProof.split('/').pop()}</p>
+                                                <p className="text-sm">{ownerDetails.resident.addressProof.split('/').pop()}</p>
                                                 <span className="text-gray-500 text-xs">3.5 MB</span>
                                             </div>
                                         </div>
@@ -168,12 +170,11 @@ export default function Upersonaldetail() {
                                 </div>
                             </div>
 
-
                             {/* Members Section */}
                             <div className="mb-8">
-                                <h2 className="text-lg font-semibold mb-4">Member : ({ownerDetails.members.length})</h2>
+                                <h2 className="text-lg font-semibold mb-4">Member : ({ownerDetails.resident.members.length})</h2>
                                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {ownerDetails.members.map((member, index) => (
+                                    {ownerDetails.resident.members.map((member, index) => (
                                         <div key={index} className="bg-white rounded-lg shadow">
                                             <h3 className="font-semibold flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">{member.name}</h3>
                                             <div className="space-y-2 p-4">
@@ -207,13 +208,13 @@ export default function Upersonaldetail() {
                             <div className="mb-8">
                                 <h2 className="text-lg font-semibold mb-4">Vehicle : (04)</h2>
                                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {ownerDetails.map((vehicle, index) => (
+                                    {ownerDetails.resident.vehicles.map((vehicle, index) => (
                                         <div key={index} className="bg-white rounded-lg shadow">
-                                            <h3 className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">{ownerDetails.vehicles.length}</h3>
+                                            <h3 className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">{vehicle.type}</h3>
                                             <div className="space-y-2 p-3">
                                                 <div className="flex justify-between">
                                                     <p className="text-sm text-gray-500">Vehicle Name</p>
-                                                    <p className="text-sm">{vehicle.type}</p>
+                                                    <p className="text-sm">{vehicle.name}</p>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <p className="text-sm text-gray-500">Vehicle Number</p>
@@ -323,29 +324,33 @@ export default function Upersonaldetail() {
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Announcement Details</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {announcements.map((announcement, index) => (
-                                            <div key={index} className="bg-white rounded-lg shadow">
-                                                <div className="flex justify-between items-center bg-[#5678E9] text-white px-5 py-3 rounded-t-lg">
-                                                    <span>{announcement.title}</span>
+                                        {loadingAnnouncements ? (
+                                            <p>Loading announcements...</p>
+                                        ) : (
+                                            announcements.map((announcement, index) => (
+                                                <div key={index} className="bg-white rounded-lg shadow">
+                                                    <div className="flex justify-between items-center bg-[#5678E9] text-white px-5 py-2 rounded-t-lg">
+                                                        <span>{announcement.title}</span>
+                                                    </div>
+                                                    <div className="space-y-3 p-4 ">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-gray-600">Announcement Date</span>
+                                                            <span>{announcement.date.split('T')[0]}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-gray-600">Announcement Time</span>
+                                                            <span>{announcement.time}</span>
+                                                        </div>
+                                                        <div>
+                                                            <span className="text-gray-600">Description</span>
+                                                            <p className="mt-1 text-sm">
+                                                                {announcement.description}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="space-y-3 p-4 ">
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Announcement Date</span>
-                                                        <span>{announcement.date.split('T')[0]}</span>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Announcement Time</span>
-                                                        <span>{announcement.time}</span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">Description</span>
-                                                        <p className="mt-1 text-sm">
-                                                            {announcement.description}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            ))
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -652,42 +657,41 @@ export default function Upersonaldetail() {
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Announcement Details</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {announcements.map((announcement, index) => (
-                                            <div key={index} className="bg-white rounded-lg shadow">
-                                                <div className="flex justify-between items-center bg-[#5678E9] text-white px-5 py-2 rounded-t-lg">
-                                                    <span>{announcement.title}</span>
+                                        {loadingAnnouncements ? (
+                                            <p>Loading announcements...</p>
+                                        ) : (
+                                            announcements.map((announcement, index) => (
+                                                <div key={index} className="bg-white rounded-lg shadow">
+                                                    <div className="flex justify-between items-center bg-[#5678E9] text-white px-5 py-2 rounded-t-lg">
+                                                        <span>{announcement.title}</span>
+                                                    </div>
+                                                    <div className="space-y-3 p-2 ">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-gray-600">Announcement Date</span>
+                                                            <span>{announcement.date}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-gray-600">Announcement Time</span>
+                                                            <span>{announcement.time}</span>
+                                                        </div>
+                                                        <div>
+                                                            <span className="text-gray-600">Description</span>
+                                                            <p className="mt-1 text-sm">
+                                                                {announcement.description}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="space-y-3 p-2 ">
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Announcement Date</span>
-                                                        <span>{announcement.date}</span>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Announcement Time</span>
-                                                        <span>{announcement.time}</span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">Description</span>
-                                                        <p className="mt-1 text-sm">
-                                                            {announcement.description}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            ))
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
                         </>
                     )}
-
-
                 </div>
-
-
             </div>
-
         </>
-    )
+    );
 }

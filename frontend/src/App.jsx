@@ -13,7 +13,7 @@ import UpaymentCard from './Components/Models/UpaymentCard'
 
 import SemergencyManagment from './Components/Security/SecurityEmergencyManagement/SemergencyManagment'
 import Svisitor from './Components/Security/SecurityVisitor/Svisitor'
-// import Uchat from './Components/Resident/Community/AccessForums/Uchat'
+import Uchat from './Components/Resident/Community/AccessForums/Uchat'
 import Upools from './Components/Resident/Community/Polls/Upools'
 import Uevents from './Components/Resident/Participation/EventsParticipation/Uevents'
 
@@ -96,7 +96,7 @@ function App() {
               <Route path='Upaymentcard' element={<UpaymentCard />} />
               <Route path='otherincome' element={<UOtherincome />} />
               <Route path='usecurityprotocol' element={<UsecurityProtocol />} />
-              {/* <Route path='uchat' element={<Uchat />} /> */}
+              <Route path='uchat' element={<Uchat />} />
               <Route path='upools' element={<Upools />} />
               <Route path='uevents' element={<Uevents />} />
               <Route path='ucommunity' element={<Ucommunity />} />

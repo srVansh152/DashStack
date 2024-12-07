@@ -6,6 +6,7 @@ import Aside from '../../../../Common/SideBar/AdminSideBar/Aside';
 import Navbar from '../../../../Common/Navbar/Navbar';
 import axios from 'axios';
 import { createFinancialIncome, getFinancialIncomes } from '../../../../../utils/api';
+import CryptoJS from 'crypto-js';
 
 function FinanceManagment() {
 
@@ -22,10 +23,14 @@ function FinanceManagment() {
     const [tenants, setTenants] = useState([]);
     const [selectedTenant, setSelectedTenant] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [inputPassword, setInputPassword] = useState('');
+    const [error, setError] = useState('');
+    const [decryptedPassword, setDecryptedPassword] = useState('');
 
     const getTenants = async () => {
         try {
             const response = await getFinancialIncomes();
+            console.log(response.data[0].financialIncome);
             setTenants(response.data[0].residentStatuses);
         } catch (error) {
             console.error('Error fetching tenants data:', error);
@@ -36,6 +41,15 @@ function FinanceManagment() {
 
     useEffect(() => {
         getTenants();
+        // Retrieve and decrypt the password when the component mounts
+        const encryptedPassword = localStorage.getItem('adminPassword');
+        if (encryptedPassword) {
+            const bytes = CryptoJS.AES.decrypt(encryptedPassword, 'secret-key');
+            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+            setDecryptedPassword(decrypted);
+        } else {
+            console.log('No admin password found.');
+        }
     }, []);
 
     const handleAddDetails = () => {
@@ -43,9 +57,14 @@ function FinanceManagment() {
     };
 
     const handleAdd = () => {
-        setOpenModel(false);
-        setOpenAddModel(true);
-    }
+        if (inputPassword === decryptedPassword) {
+            // Proceed to the next popup
+            setError('');
+            setOpenAddModel(true);
+        } else {
+            setError('The password is incorrect. Please try again.');
+        }
+    };
 
     const handleViewDetails = (tenant) => {
         setSelectedTenant(tenant);
@@ -232,7 +251,8 @@ function FinanceManagment() {
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                                            defaultValue="password123"
+                                            value={inputPassword}
+                                            onChange={(e) => setInputPassword(e.target.value)}
                                         />
                                         <button
                                             onClick={() => setShowPassword(!showPassword)}
@@ -241,6 +261,7 @@ function FinanceManagment() {
                                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                         </button>
                                     </div>
+                                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                                 </div>
 
                                 <div className="flex gap-3">
