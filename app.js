@@ -5,8 +5,8 @@ const connectDB = require('./config/db');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
-const { Server } = require("socket.io") 
-const http = require('http'); 
+const { Server } = require("socket.io")
+const http = require('http');
 const errorHandler = require('./middlewares/errorMiddleware'); // Import the error middleware
 const { protect } = require('./middlewares/authMiddleware');
 const initializeSocket = require('./socket/socketServer');
@@ -27,15 +27,15 @@ app.set('io', io);
 app.use(express.json());
 app.use(helmet());
 app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  credentials: true
 }));
 app.use(morgan('dev'));
 
 connectDB();
 
-// Sample Route to test the protect middlewar
+// Sample Route to test the protect middleware
 app.get('/protected', protect, (req, res) => {
   res.json({
     message: 'Access granted!',
@@ -100,10 +100,10 @@ app.use('/api/emergency-alerts', require("./routes/emergencyRoutes"));
 app.use('/api/polls', require('./routes/pollRoutes'));
 
 //chat
-app.use('/api/chat', protect, chatRoutes); 
+app.use('/api/chat', protect, chatRoutes);
 
 //community routes
-app.use('/api/community', protect, communityRoutes); 
+app.use('/api/community', protect, communityRoutes);
 
 // Health check routes
 app.get('/health', (req, res) => {
@@ -121,7 +121,8 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`))
+// server.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
 
 // Graceful shutdown
 process.on('SIGINT', () => {
