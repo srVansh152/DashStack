@@ -31,7 +31,7 @@ export default function Upersonaldetail() {
             const residentId = localStorage.getItem('userId');
             console.log(residentId);   
             const response = await getResidentDetails(residentId);
-            console.log(response.data.resident);
+            console.log(response);
             setOwnerDetails(response.data.resident); // Set the owner details in state
             console.log(ownerDetails)
         } catch (error) {
@@ -74,11 +74,17 @@ export default function Upersonaldetail() {
                                 <div className="flex flex-wrap items-center">
                                     {/* Left Side - Profile Image */}
                                     <div className="lg:w-2/12 w-full flex flex-col items-center mb-4 lg:mb-0">
-                                        <img
-                                            src={ownerDetails.photo}
-                                            alt="Profile"
-                                            className="w-28 h-28 rounded-full mb-2"
-                                        />
+                                        {ownerDetails && ownerDetails.photo ? (
+                                            <img
+                                                src={ownerDetails.photo}
+                                                alt="Profile"
+                                                className="w-28 h-28 rounded-full mb-2"
+                                            />
+                                        ) : (
+                                            <div className="w-28 h-28 rounded-fullbg-gray-200 mb-2 flex items-center justify-center">
+                                                <span>No Image</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Right Side - Form Details */}
