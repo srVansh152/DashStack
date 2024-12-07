@@ -31,6 +31,19 @@ exports.createResident = async (req, res) => {
             return res.status(400).json({ message: "Society ID not found in admin's data." });
         }
 
+        // Check if a resident with the same email, phone number, or full name already exists
+        const existingResident = await Resident.findOne({
+            $or: [
+                { email: req.body.email },
+                { phoneNumber: req.body.phoneNumber },
+                { fullName: req.body.fullName }
+            ]
+        });
+
+        if (existingResident) {
+            return res.status(400).json({ message: "A resident with the same email, phone number, or name already exists." });
+        }
+
         // Check for required files
         const photo = files.photo?.[0]?.path || req.body.photo;
         const aadhaarFront = files.aadhaarFront?.[0]?.path || req.body.aadhaarFront;

@@ -23,13 +23,13 @@ const protect = async (req, res, next) => {
         user = await Resident.findById(userId).populate('society createdBy');
         if (user) {
           role = 'resident'; // Default role for residents
-          req.adminId = user.createdBy?._id; // Attach admin ID
+          req.adminId = user.createdBy?._id; 
         } else {
           // If not found in Resident, search in the SecurityGuard collection
           user = await SecurityGuard.findById(userId).populate('society');
           if (user) {
             role = 'security'; // Default role for security guards
-            req.adminId = user.adminId; // Attach admin ID
+            req.adminId = user.adminId; 
           } else {
             // If user is not found in any collection, return an error
             return res.status(401).json({ message: 'Not authorized, user not found' });
@@ -68,3 +68,6 @@ const restrictTo = (...roles) => {
 };
 
 module.exports = { protect, restrictTo };
+
+
+

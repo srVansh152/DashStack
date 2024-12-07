@@ -1,9 +1,9 @@
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const Resident = require('../models/Resident');
-const SecurityGuard = require('../models/SecurityGuardModel');
 const { generateToken } = require('../utils/token');
 const cloudinary = require('../config/cloudinaryConfig');
+const SecurityGuardModel = require('../models/SecurityGuardModel');
 
 
 // Email sending utility function
@@ -104,7 +104,7 @@ exports.login = async (req, res) => {
     }
 
     // Check for security guard in SecurityGuard model
-    const securityGuard = await SecurityGuard.findOne({ email });
+    const securityGuard = await SecurityGuardModel.findOne({ email });
     if (securityGuard && (await securityGuard.comparePassword(password))) {
       return res.json({
         _id: securityGuard._id,
@@ -128,7 +128,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // If no matching user or resident found
+    // If no matching user, security guard, or resident found
     res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
     res.status(500).json({ message: 'Server error during login', error: error.message });
@@ -236,16 +236,27 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+//get 
 exports.getProfile = async (req, res) => {
   try {
-    console.log(req.user); // Debugging: Check if req.user is populated
-    const user = await User.findById(req.user._id).select('-password').populate('society');
-    if (!user) {
+    const { userRole, user } = req;
+    let profile;
+
+    if (userRole === 'admin') {
+      profile = await User.findById(user._id).select('-password').populate('society');
+    } else if (userRole === 'resident') {
+      profile = await Resident.findById(user._id).populate('society createdBy');
+    } else if (userRole === 'security') {
+      profile = await SecurityGuard.findById(user._id).populate('society');
+    }
+
+    if (!profile) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json({ user });
+
+    res.json({ profile });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch user data', error: error.message });
+    res.status(500).json({ message: 'Failed to fetch profile', error: error.message });
   }
 };
 
