@@ -33,11 +33,9 @@ export default function Upersonaldetail() {
         try {
             const residentId = localStorage.getItem('userId');
             const response = await getResidentDetails(residentId);
-            console.log(response.data);
-            setOwnerDetails(response.data);
-
-            // Set the initial active tab based on the owner status
-            setActiveTab(response.data.resident.owner ? 'owner' : 'tenant');
+            console.log(response.data.resident);
+            setOwnerDetails(response.data.resident); // Set the owner details in state
+            console.log(ownerDetails)
         } catch (error) {
             console.error('Error fetching owner details:', error);
         } finally {
@@ -93,7 +91,7 @@ export default function Upersonaldetail() {
                                     {/* Left Side - Profile Image */}
                                     <div className="lg:w-2/12 w-full flex flex-col items-center mb-4 lg:mb-0">
                                         <img
-                                            src={ownerDetails.resident.photo}
+                                            src={ownerDetails.photo}
                                             alt="Profile"
                                             className="w-28 h-28 rounded-full mb-2"
                                         />
