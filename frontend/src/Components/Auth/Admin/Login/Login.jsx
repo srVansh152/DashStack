@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { loginUser } from '../../../../utils/api'
 import socketService from '../../../../services/socketService'
+import CryptoJS from 'crypto-js'
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false)
@@ -13,6 +14,16 @@ function Login() {
   })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // Retrieve and decrypt the password when the component mounts
+    const encryptedPassword = localStorage.getItem('adminPassword');
+    if (encryptedPassword) {
+      const bytes = CryptoJS.AES.decrypt(encryptedPassword, 'secret-key');
+      const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+      console.log('Decrypted Admin Password:', decryptedPassword);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -42,6 +53,12 @@ function Login() {
 
         // Get user role from response
         const userRole = response.data.role;
+
+        // Encrypt and store the password if the user is an admin
+        if (userRole.toLowerCase() === 'admin') {
+          const encryptedPassword = CryptoJS.AES.encrypt(formData.password, 'secret-key').toString();
+          localStorage.setItem('adminPassword', encryptedPassword);
+        }
 
         // Redirect based on role
         switch(userRole.toLowerCase()) {
