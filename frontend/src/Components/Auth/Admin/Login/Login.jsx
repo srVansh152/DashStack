@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { loginUser } from '../../../../utils/api'
+import socketService from '../../../../services/socketService'
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false)
@@ -29,12 +30,15 @@ function Login() {
       console.log(formData);
       const response = await loginUser(formData)
 
-
       if (response.success && response.data.token) {
         // Save the token to local storage
         localStorage.setItem("token", response.data?.token);
         localStorage.setItem("Email", response.data?.email);
-        localStorage.setItem('userId', response.data?._id); // Add this line
+        localStorage.setItem('userId', response.data?._id);
+
+        // Emit userConnected event
+        const socket = socketService.connect();
+        socket.emit('userConnected', response.data._id);
 
         // Get user role from response
         const userRole = response.data.role;

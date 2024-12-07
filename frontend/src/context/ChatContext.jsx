@@ -30,10 +30,25 @@ export const ChatProvider = ({ children }) => {
                 setOnlineUsers(usersMap);
             });
 
+            newSocket.on('userConnected', (userId) => {
+                setOnlineUsers(prev => {
+                    const updatedUsers = new Map(prev);
+                    updatedUsers.set(userId, { status: 'online' });
+                    return updatedUsers;
+                });
+            });
+
+            newSocket.on('userDisconnected', (userId) => {
+                setOnlineUsers(prev => {
+                    const updatedUsers = new Map(prev);
+                    updatedUsers.delete(userId);
+                    return updatedUsers;
+                });
+            });
+
             newSocket.on('newMessage', (newMessage) => {
                 console.log('New message received in context:', newMessage);
                 setMessages(prev => {
-                    // Prevent duplicate messages
                     if (prev.some(msg => msg.id === newMessage._id)) {
                         return prev;
                     }
@@ -56,6 +71,8 @@ export const ChatProvider = ({ children }) => {
             return () => {
                 newSocket.off('connect');
                 newSocket.off('activeUsers');
+                newSocket.off('userConnected');
+                newSocket.off('userDisconnected');
                 newSocket.off('newMessage');
                 socketService.disconnect();
             };
@@ -68,7 +85,6 @@ export const ChatProvider = ({ children }) => {
                 throw new Error('Socket connection not available');
             }
             
-            // Only emit through socket, don't add to state here
             socketService.sendMessage(messageData);
             
         } catch (error) {

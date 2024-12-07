@@ -23,6 +23,9 @@ const initializeSocket = (server) => {
       activeUsers.set(userId, socket.id);
       socket.userId = userId;
       
+      // Broadcast userConnected event to all clients
+      io.emit('userConnected', userId);
+
       // Broadcast updated online users list
       const onlineUsersList = Array.from(activeUsers.keys());
       io.emit('activeUsers', onlineUsersList);
@@ -78,6 +81,10 @@ const initializeSocket = (server) => {
     socket.on('disconnect', () => {
       if (socket.userId) {
         activeUsers.delete(socket.userId);
+
+        // Broadcast userDisconnected event to all clients
+        io.emit('userDisconnected', socket.userId);
+
         // Broadcast updated online users list
         const onlineUsersList = Array.from(activeUsers.keys());
         io.emit('activeUsers', onlineUsersList);
