@@ -18,6 +18,11 @@ const importantNumberSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  society: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Society',
+    required: true,
+  },
 }, {
   timestamps: true,
 });

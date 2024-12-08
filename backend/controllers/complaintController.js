@@ -73,8 +73,7 @@ exports.deleteComplaint = async (req, res) => {
 exports.listComplaintsBySocietyAndAdmin = async (req, res) => {
   try {
     const complaints = await Complaint.find({
-      society: req.user.society._id,
-      complainer: req.user._id
+      society: req.user.society._id
     });
 
     res.status(200).json({ complaints });

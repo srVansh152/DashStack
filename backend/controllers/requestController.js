@@ -72,8 +72,7 @@ exports.deleteRequest = async (req, res) => {
 exports.listRequestsBySocietyAndAdmin = async (req, res) => {
   try {
     const requests = await Request.find({
-      society: req.user.society,
-      requestor: req.user._id,
+      society: req.user.society
     });
 
     res.status(200).json({ requests });
