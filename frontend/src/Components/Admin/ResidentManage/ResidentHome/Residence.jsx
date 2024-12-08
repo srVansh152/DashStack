@@ -156,10 +156,10 @@ function Residence() {
 
   const handleEditModel = (resident) => {
     navigate('/admin/form', {
-        state: {
-            isEditing: true,
-            residentData: resident
-        }
+      state: {
+        isEditing: true,
+        residentData: resident
+      }
     });
   };
 
@@ -202,8 +202,8 @@ function Residence() {
       <div className="main ">
         <Navbar />
 
-     
-        
+
+
         <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
           <div className="px-4 py-6 sm:px-0 ">
             <div className='bg-white px-3 py-4 rounded'>
@@ -269,14 +269,10 @@ function Residence() {
                                 {resident.unitNumber}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span
-                                  className={`px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full ${resident.unitStatus === 'Occupied'
-                                    ? 'bg-[#ECFFFF] text-[#14B8A6]'
-                                    : 'hidden'
-                                    }`}
-                                >
+
+                                <span className="px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full bg-[#ECFFFF] text-[#14B8A6]">
                                   <img
-                                    src='/public/image/Resident/occu.png'
+                                    src='/image/Resident/occu.png' // Corrected path to the image
                                     alt='Occupied'
                                     className='w-4 h-4 mr-2'
                                   />
@@ -453,12 +449,12 @@ function Residence() {
                 <div className="flex-1 overflow-y-auto">
                   {loadingProfile ? (
                     <div className="flex items-center justify-center h-full">
-                       
-                    <div className="text-center">
-                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
 
-                    </div>
-                  
+                      <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                      </div>
+
                     </div>
                   ) : (
                     <div className="px-4 py-6">
@@ -490,73 +486,73 @@ function Residence() {
                         ))}
                       </div>
 
-                     <div className='bg-white rounded-lg bg-white rounded-lg p-4 shadow-sm'>
-                     <div className="mb-2">
-                        <h3 className="text-sm font-semibold text-gray-800 mb-2">
-                          Document
-                        </h3>
-                        {residentDetails.documents && Object.entries(residentDetails.documents).map(([key, value], index) => (
-                          value && (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
-                            >
-                              <div className="flex items-center">
-                                <FileText className="h-5 w-5 text-blue-500 mr-2" />
-                                <div>
-                                  <p className="text-sm font-medium text-gray-800">
-                                    {key.replace(/([A-Z])/g, ' $1').trim()}: {value}
-                                  </p>
+                      <div className='bg-white rounded-lg bg-white rounded-lg p-4 shadow-sm'>
+                        <div className="mb-2">
+                          <h3 className="text-sm font-semibold text-gray-800 mb-2">
+                            Document
+                          </h3>
+                          {residentDetails.documents && Object.entries(residentDetails.documents).map(([key, value], index) => (
+                            value && (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0"
+                              >
+                                <div className="flex items-center">
+                                  <FileText className="h-5 w-5 text-blue-500 mr-2" />
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-800">
+                                      {key.replace(/([A-Z])/g, ' $1').trim()}: {value}
+                                    </p>
+                                  </div>
                                 </div>
+                                <button className="text-gray-400 hover:text-gray-600">
+                                  <MoreHorizontal className="h-5 w-5" />
+                                </button>
                               </div>
-                              <button className="text-gray-400 hover:text-gray-600">
-                                <MoreHorizontal className="h-5 w-5" />
-                              </button>
+                            )
+                          ))}
+                        </div>
+
+
+
+
+                        <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
+                              <img src="/public/image/Resident/Component54.png" alt="" />
                             </div>
-                          )
-                        ))}
-                      </div>
-
-                     
-                     
-
-                      <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
-                            <img src="/public/image/Resident/Component54.png" alt="" />
+                            <div>
+                              <p className="font-medium text-gray-700">Adharcard Front Side.JPG</p>
+                              <p className="text-sm text-gray-500">3.5 MB</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-700">Adharcard Front Side.JPG</p>
-                            <p className="text-sm text-gray-500">3.5 MB</p>
-                          </div>
+                          <button className="rounded-md p-2 hover:bg-gray-100">
+                            {residentDetails.aadhaarFront ? (
+                              <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
+                                <img src="/public/image/Resident/eye.png" alt="" />
+                              </a>
+                            ) : 'N/A'}
+                          </button>
                         </div>
-                        <button className="rounded-md p-2 hover:bg-gray-100">
-                        {residentDetails.aadhaarFront ? (
-                                <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
-                                  <img src="/public/image/Resident/eye.png" alt="" />
-                                </a>
-                              ) : 'N/A'}
-                        </button>
-                      </div>
-                      <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
-                            <img src="/public/image/Resident/Component55.png" alt="" />
+                        <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
+                              <img src="/public/image/Resident/Component55.png" alt="" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-700">Address Proof Front Side.PDF</p>
+                              <p className="text-sm text-gray-500">3.5 MB</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-700">Address Proof Front Side.PDF</p>
-                            <p className="text-sm text-gray-500">3.5 MB</p>
-                          </div>
+                          <button className="rounded-md p-2 hover:bg-gray-100">
+                            {residentDetails.aadhaarBack ? (
+                              <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
+                                <img src="/public/image/Resident/eye.png" alt="" />
+                              </a>
+                            ) : 'N/A'}
+                          </button>
                         </div>
-                        <button className="rounded-md p-2 hover:bg-gray-100">
-                        {residentDetails.aadhaarBack ? (
-                                <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
-                                    <img src="/public/image/Resident/eye.png" alt="" />
-                                </a>
-                              ) : 'N/A'}
-                        </button>
                       </div>
-                     </div>
 
                       <div className="overflow-hidden rounded-xl bg-white shadow-lg">
                         <div className="bg-[#5678E9] p-4">
@@ -568,27 +564,27 @@ function Residence() {
                         <div className="space-y-4 p-6">
                           {residentDetails.members.map((member, index) => (
                             <>
-                            <div key={index} className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">First Name</span>
-                              <span className="text-base text-gray-600">{member.name}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">Phone No</span>
-                              <span className="text-base text-gray-600">{member.phoneNumber}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">Age</span>
-                              <span className="text-base text-gray-600">{member.age}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">Gender</span>
-                              <span className="text-base text-gray-600">{member.gender}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">Relation</span>
-                              <span className="text-base text-gray-600">{member.relation}</span>
-                            </div>
-                            <div className='border-b border-gray-200'></div>
+                              <div key={index} className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">First Name</span>
+                                <span className="text-base text-gray-600">{member.name}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">Phone No</span>
+                                <span className="text-base text-gray-600">{member.phoneNumber}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">Age</span>
+                                <span className="text-base text-gray-600">{member.age}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">Gender</span>
+                                <span className="text-base text-gray-600">{member.gender}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">Relation</span>
+                                <span className="text-base text-gray-600">{member.relation}</span>
+                              </div>
+                              <div className='border-b border-gray-200'></div>
                             </>
                           ))}
                         </div>
@@ -604,25 +600,25 @@ function Residence() {
                         <div className="space-y-4 p-6">
                           {residentDetails.vehicles.map((vehicles, index) => (
                             <>
-                            <div key={index} className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">vehicles type</span>
-                              <span className="text-base text-gray-600">{vehicles.type}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">vehicles Name</span>
-                              <span className="text-base text-gray-600">{vehicles.name}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-base font-medium text-gray-700">vehicles Number</span>
-                              <span className="text-base text-gray-600">{vehicles.number}</span>
-                            </div>
-                            
-                            <div className='border-b border-gray-200'></div>
+                              <div key={index} className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">vehicles type</span>
+                                <span className="text-base text-gray-600">{vehicles.type}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">vehicles Name</span>
+                                <span className="text-base text-gray-600">{vehicles.name}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-base font-medium text-gray-700">vehicles Number</span>
+                                <span className="text-base text-gray-600">{vehicles.number}</span>
+                              </div>
+
+                              <div className='border-b border-gray-200'></div>
                             </>
                           ))}
                         </div>
                       </div>
-                     
+
                     </div>
                   )}
                 </div>
