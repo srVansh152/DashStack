@@ -238,13 +238,14 @@ exports.getProfile = async (req, res) => {
   try {
     const { userRole, user } = req;
     let profile;
+    console.log(user,userRole);
 
     if (userRole === 'admin') {
       profile = await User.findById(user._id).select('-password').populate('society');
     } else if (userRole === 'resident') {
       profile = await Resident.findById(user._id).populate('society createdBy');
     } else if (userRole === 'security') {
-      profile = await SecurityGuard.findById(user._id).populate('society');
+      profile = await SecurityGuardModel.findById(user._id).populate('societyId');
     }
 
     if (!profile) {
