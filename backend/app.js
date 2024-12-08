@@ -35,7 +35,7 @@ app.use(morgan('dev'));
 
 connectDB();
 
-// Sample Route to test the protect middleware
+// Sample Route to test the protect middlewar
 app.get('/protected', protect, (req, res) => {
   res.json({
     message: 'Access granted!',

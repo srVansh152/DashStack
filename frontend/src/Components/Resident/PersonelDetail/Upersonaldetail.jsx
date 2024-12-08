@@ -77,7 +77,14 @@ export default function Upersonaldetail() {
                     </div>
 
                     {loadingOwnerDetails ? (
-                        <p>Loading owner details...</p>
+                        <div className="fixed inset-0   flex items-center justify-center z-50">
+                            <div className="flex items-center justify-center p-8">
+                                <div className="text-center">
+                                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                                </div>
+                            </div>
+                        </div>
                     ) : activeTab === 'owner' && ownerDetails && (
                         <>
                             {/* Profile Section */}

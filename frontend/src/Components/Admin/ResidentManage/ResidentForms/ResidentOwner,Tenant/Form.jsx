@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import { ChevronDown, Upload } from "lucide-react";
 import axios from 'axios'; // Import axios for making API calls
@@ -49,85 +49,6 @@ export const Form = () => {
   });
   const [wing, setWing] = useState(''); // State for wing
   const [unit, setUnit] = useState(''); // State for unit
-  const [ownerFullName, setOwnerFullName] = useState(''); // State for Owner Full Name
-  const [ownerPhone, setOwnerPhone] = useState('+91'); // State for Owner Phone
-  const [ownerAddress, setOwnerAddress] = useState(''); // State for Owner Address
-  const [dataCache, setDataCache] = useState(null); // State to store cached data
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (id) { // Check if id is present
-        try {
-          const response = await getResidentDetails(id); // Fetch resident details
-          if (response.success) {
-            handleEditData(response.data); // Populate form fields with fetched data
-          } else {
-            console.error('No data found in response:', response);
-            // Reset fields if no data found
-            resetFormFields();
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error.response ? error.response.data : error.message);
-          // Reset fields on error
-          resetFormFields();
-        }
-      } else if (residentData) { // Check if residentData is provided for editing
-        handleEditData(residentData); // Populate form fields with provided data
-      } else {
-        resetFormFields(); // Reset fields if no id or residentData
-      }
-    };
-
-    fetchData(); // Call the fetch function
-  }, [id, residentData]); // Add id and residentData to the dependency array
-
-  const handleEditData = (newData) => {
-    // Function to handle editing of data
-    setFullName(newData.fullName || '');
-    setPhoneNo(newData.phoneNumber || '');
-    setEmail(newData.email || '');
-    setAge(newData.age || '');
-    setGender(newData.gender || '');
-    setRelation(newData.relation || '');
-    setWing(newData.wing || '');
-    setUnit(newData.unitNumber || '');
-    setMembers(newData.members || [{}]);
-    setVehicles(newData.vehicles || [{}]);
-    
-    // Set files state with image URLs from backend
-    setFiles({
-      aadharFront: newData.aadhaarFront || null,
-      aadharBack: newData.aadhaarBack || null,
-      addressProof: newData.addressProof || null,
-      rentAgreement: newData.rentAgreement || null,
-      photo: newData.photo || null, // Populate photo if available
-    });
-    
-    // Set selected image for display
-    if (newData.photo) {
-      setSelectedImage(newData.photo); // Set the selected image URL
-    }
-  };
-
-  const resetFormFields = () => {
-    setFullName('');
-    setPhoneNo('');
-    setEmail('');
-    setAge('');
-    setGender('');
-    setRelation('');
-    setWing('');
-    setUnit('');
-    setMembers([{}]);
-    setVehicles([{}]);
-    setFiles({
-      aadharFront: null,
-      aadharBack: null,
-      addressProof: null,
-      rentAgreement: null,
-      photo: null, // Reset photo field
-    });
-  };
 
   const handleMemberCountChange = (event) => {
 
@@ -200,6 +121,7 @@ export const Form = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
+    setIsLoading(true); // Set loading state to true
 
     // Validate required fields
     console.log(vehicles);
@@ -266,6 +188,8 @@ export const Form = () => {
     } catch (error) {
       console.error('Error saving data:', error.response ? error.response.data : error.message);
       // Log the error response for more details
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
@@ -892,6 +816,16 @@ export const Form = () => {
               <div className="mt-4">
                 {activeTab === "tenant" ? renderTenantForm() : renderOwnerForm()}
               </div>
+
+              {/* Conditional rendering for loading text */}
+              {isLoading &&   <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center z-50">
+                <div className="flex items-center justify-center p-8">
+                    <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-500 border-t-transparent"></div>
+
+                    </div>
+                </div>
+            </div>}
 
               {/* Action Buttons */}
 
