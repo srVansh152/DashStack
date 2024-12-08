@@ -27,13 +27,15 @@ const initializeSocket = (server) => {
       io.emit('userConnected', userId);
 
       // Broadcast updated online users list
-      const onlineUsersList = Array.from(activeUsers.keys());
-      io.emit('activeUsers', onlineUsersList);
+      io.emit('activeUsers', Array.from(activeUsers.keys()));
     });
 
     // Handle joining chat rooms
     socket.on('joinChat', ({ chatId, userId }) => {
-      if (!chatId) return;
+      if (!chatId) {
+        console.log('joinChat event received without chatId');
+        return;
+      }
       
       console.log(`User ${userId} joining chat ${chatId}`);
       socket.join(chatId);
@@ -86,8 +88,7 @@ const initializeSocket = (server) => {
         io.emit('userDisconnected', socket.userId);
 
         // Broadcast updated online users list
-        const onlineUsersList = Array.from(activeUsers.keys());
-        io.emit('activeUsers', onlineUsersList);
+        io.emit('activeUsers', Array.from(activeUsers.keys()));
       }
       console.log('User disconnected:', socket.id);
     });

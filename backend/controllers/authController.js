@@ -90,47 +90,42 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check for admin or security guard in User model
-    let user = await User.findOne({ email });
-    if (user && (await user.comparePassword(password))) {
-      return res.json({
-        _id: user._id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user),
-      });
-    }
+    console.log('Login attempt:', email); // Log the email attempting to log in
+
+    const checkCredentials = async (model, role) => {
+      const user = await model.findOne({ email });
+      if (user) {
+        console.log('User found:', user.email); // Log if user is found
+        if (await user.comparePassword(password)) {
+          console.log('Password match for:', user.email); // Log if password matches
+          return res.json({
+            _id: user._id,
+            firstname: user.firstname || user.fullName,
+            lastname: user.lastname || '',
+            email: user.email,
+            role: role,
+            token: generateToken(user),
+          });
+        } else {
+          console.log('Password mismatch for:', user.email); // Log if password does not match
+        }
+      }
+      return null;
+    };
+
+    // Check for admin in User model
+    if (await checkCredentials(User, 'admin')) return;
 
     // Check for security guard in SecurityGuard model
-    const securityGuard = await SecurityGuardModel.findOne({ email });
-    if (securityGuard && (await securityGuard.comparePassword(password))) {
-      return res.json({
-        _id: securityGuard._id,
-        fullName: securityGuard.fullName,
-        email: securityGuard.email,
-        role: 'security', // Setting role for security guards
-        token: generateToken(securityGuard),
-      });
-    }
+    if (await checkCredentials(SecurityGuardModel, 'security')) return;
 
-    // If no admin/security guard found, check in Resident model for resident
-    const resident = await Resident.findOne({ email });
-    if (resident && (await resident.comparePassword(password))) {
-      return res.json({
-        _id: resident._id,
-        firstname: resident.firstname,
-        lastname: resident.lastname,
-        email: resident.email,
-        role: 'resident', // Setting role for residents
-        token: generateToken(resident),
-      });
-    }
+    // Check for resident in Resident model
+    if (await checkCredentials(Resident, 'resident')) return;
 
     // If no matching user, security guard, or resident found
     res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
+    console.error('Error during login:', error); // Log any errors
     res.status(500).json({ message: 'Server error during login', error: error.message });
   }
 };
@@ -138,22 +133,22 @@ exports.login = async (req, res) => {
 
 // Forgot Password - Send OTP required to reset password
 exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
+  const { emailOrPhone } = req.body;
+  const email = emailOrPhone;
   try {
-    // Find user by email or phone in both User and Resident models
-    let user = await User.findOne({
-      email: email
-    });
-
+    // Find user by email in User, Resident, and SecurityGuard models
+    let user = await User.findOne({ email });
+    console.log(user, "uaer not ");
     if (!user) {
-      // If user not found in User model, check in Resident model
-      user = await Resident.findOne({
-        email: email
-      });
+      user = await Resident.findOne({ email });
     }
-
+    console.log(user, "resident not found");
     if (!user) {
-      return res.status(404).json({ message: 'User or Resident not found' });
+      user = await SecurityGuardModel.findOne({ email });
+    }
+    console.log(user, "security not found", email);
+    if (!user) {
+      return res.status(404).json({ message: 'User, Resident, or Security Guard not found' });
     }
 
     // Generate OTP and set expiration
@@ -170,28 +165,29 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-//verify otp 
+// Verify OTP
 exports.verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
-
+  const { emailOrPhone, otp } = req.body;
+  const email = emailOrPhone;
   try {
     // Log the incoming OTP
     console.log(email);
     console.log('Incoming OTP:', otp);
 
-    // Search for user in both User and Resident models
+    // Search for user in User, Resident, and SecurityGuard models
+    
     const user = await User.findOne({
       email: email,
-      resetOtp: otp.toString(), // Ensure consistent type
-      otpExpires: { $gt: Date.now() }, // Check expiration
+      resetOtp: otp.toString() // Check expiration
     }) || await Resident.findOne({
       email: email,
-      resetOtp: otp.toString(), // Ensure consistent type
-      otpExpires: { $gt: Date.now() },
+      resetOtp: otp.toString()
+    }) || await SecurityGuardModel.findOne({
+      email: email,
+      resetOtp: otp.toString()
     });
-
     // Log the retrieved user
-    console.log('User found for OTP verification:', user);
+    // console.log('User found for OTP verification:', user);
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
@@ -213,11 +209,12 @@ exports.resetPassword = async (req, res) => {
     const user = await User.findOne({
       email: emailOrPhone,
       resetOtp: otp,
-      otpExpires: { $gt: Date.now() },
     }) || await Resident.findOne({
       email: emailOrPhone,
       resetOtp: otp,
-      otpExpires: { $gt: Date.now() },
+    }) || await SecurityGuardModel.findOne({
+      email: emailOrPhone,
+      resetOtp: otp,
     });
 
     if (!user) {
@@ -292,4 +289,3 @@ exports.updateMe = async (req, res) => {
     res.status(500).json({ message: 'Failed to update user data', error: error.message });
   }
 };
-
