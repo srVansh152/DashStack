@@ -31,10 +31,6 @@ function Residence() {
   const [loadingProfile, setLoadingProfile] = useState(false);
 
 
-  
-  
-  
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,7 +100,8 @@ function Residence() {
       navigate('/admin/form', {
         state: {
           isEditing: false,
-          residentData: newResidentData
+          residentData: newResidentData,
+          selectedResidentId: null
         }
       });
     } else {
@@ -158,46 +155,11 @@ function Residence() {
   }, [openProfileModel, selectedResidentId]);
 
   const handleEditModel = (resident) => {
-    const formattedResident = {
-      _id: resident._id,
-      fullName: resident.name,
-      phoneNumber: resident.phoneNumber,
-      email: resident.email,
-      age: resident.age,
-      gender: resident.gender,
-      unitNumber: resident.unitNumber,
-      wing: resident.wing,
-      photo: resident.avatar,
-      owner: resident.residentStatus === 'Owner',
-      relation: 'self',
-      members: resident.members.map(member => ({
-        _id: member._id,
-        name: member.name,
-        phoneNumber: member.phoneNumber,
-        email: member.email,
-        age: member.age,
-        gender: member.gender,
-        relation: member.relation
-      })),
-      vehicles: resident.vehicles?.map(vehicle => ({
-        _id: vehicle._id,
-        type: vehicle.type,
-        name: vehicle.name,
-        number: vehicle.number
-      })) || [],
-      documents: {
-        aadhaarFront: resident.documents?.aadhaarFront,
-        aadhaarBack: resident.documents?.aadhaarBack,
-        addressProof: resident.documents?.addressProof,
-        rentAgreement: resident.documents?.rentAgreement
-      }
-    };
-
     navigate('/admin/form', {
-      state: {
-        isEditing: true,
-        residentData: formattedResident
-      }
+        state: {
+            isEditing: true,
+            residentData: resident
+        }
     });
   };
 
@@ -310,19 +272,15 @@ function Residence() {
                                 <span
                                   className={`px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full ${resident.unitStatus === 'Occupied'
                                     ? 'bg-[#ECFFFF] text-[#14B8A6]'
-                                    : 'bg-[#FFF6FF] text-[#9333EA]'
+                                    : 'hidden'
                                     }`}
                                 >
                                   <img
-                                    src={
-                                      resident.unitStatus === 'Occupied'
-                                        ? '/public/image/Resident/occu.png'
-                                        : '/public/image/Resident/vacate.png'
-                                    }
-                                    alt={resident.unitStatus}
-                                    className="w-4 h-4 mr-2"
+                                    src='/public/image/Resident/occu.png'
+                                    alt='Occupied'
+                                    className='w-4 h-4 mr-2'
                                   />
-                                  {resident.unitStatus}
+                                  Occupied
                                 </span>
 
                               </td>
@@ -349,7 +307,7 @@ function Residence() {
                                       className="w-4 h-4 mr-2"
                                     />
                                   )}
-                                  {resident.residentStatus}
+                                  {resident.residentStatus === 'Tenant' ? 'Tenant' : 'Owner'}
                                 </span>
 
                               </td>
