@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { updatePenalties } = require('../controllers/financialController');  // Path to your controller
+// const { updatePenalties } = require('../controllers/financialController');  // Path to your controller
 
 // Cron job to update penalties once every day at midnight
 cron.schedule('0 0 * * *', async () => {
