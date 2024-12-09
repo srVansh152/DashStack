@@ -7,7 +7,7 @@ let io; // Declare io at the top to make it accessible in getIO
 const initializeSocket = (server) => {
   io = socketIO(server, {
     cors: {
-      origin: "https://dashstack-9bcbc.web.app'",
+      origin: "https://dashstack-9bcbc.web.app",
       methods: ["GET", "POST"],
       credentials: true
     }
