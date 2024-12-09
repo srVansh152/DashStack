@@ -512,7 +512,7 @@ const DashboardLayout = () => {
                                                     <div className="flex justify-between items-start">
                                                         <div className="space-y-2">
                                                             <p className="text-md text-black">Name : <span className="text-[#A7A7A7] text-md">{number.name}</span></p>
-                                                            <p className="text-md text-black">Ph Number : <span className="text-[#A7A7A7] text-md">{number.phoneNumber}</span></p>
+                                                            <p className="text-md text-black">Number : <span className="text-[#A7A7A7] text-md">{number.phoneNumber}</span></p>
                                                             <p className="text-md text-black">Work : <span className="text-[#A7A7A7] text-md">{number.work}</span></p>
                                                         </div>
                                                         <div className="flex gap-2">
