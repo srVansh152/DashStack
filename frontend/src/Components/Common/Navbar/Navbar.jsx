@@ -102,7 +102,7 @@ const Navbar = () => {
                 className="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-orange-500 flex items-center justify-center"
                 style={{ backgroundColor: user ? user.color : "gray" }}
               >
-                {(user ? user.firstname.charAt(0) || user.fullName.charAt(0) || "?" : "?")}
+                {user ? (user.firstname ? user.firstname.charAt(0) : (user.fullName ? user.fullName.charAt(0) : "?")) : "?"}
               </span>
               <div className="hidden md:block">
                 <p className="text-sm font-medium">
