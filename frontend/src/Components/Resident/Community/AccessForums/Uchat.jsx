@@ -9,6 +9,7 @@ import { getResidents } from '../../../../utils/api.js';
 import { chatApi } from '../../../../services/chatApi.js';
 
 const Uchat = () => {
+    
     const {
         socket,
         messages: contextMessages,
