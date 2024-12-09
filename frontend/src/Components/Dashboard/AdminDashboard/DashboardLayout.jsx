@@ -367,7 +367,7 @@ const DashboardLayout = () => {
 
                 <div className="flex-1 overflow-auto">
                     <Navbar />
-                    <main className="p-4 sm:p-6">
+                    <main className="p-4 sm:p-4">
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
                             {/* Card 1 */}
@@ -379,7 +379,7 @@ const DashboardLayout = () => {
                                     <p className="text-[16px] font-medium text-[#202224]">Total Balance</p>
                                     <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
                                 </div>
-                               
+
                                 <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
                                     <img
                                         src="/public/image/Dashborad/balance.png"
@@ -778,10 +778,7 @@ const DashboardLayout = () => {
                                 </form>
                             </div>
 
-                            <div
-                                className="onsite-modal-overlay"
-
-                            ></div>
+                            <div className="onsite-modal-overlay"></div>
 
                         </div>
                     </div>

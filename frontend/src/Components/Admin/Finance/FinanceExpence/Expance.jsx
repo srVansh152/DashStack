@@ -234,7 +234,7 @@ export default function ExpenseTracker() {
                     <div className="flex-1">
                        <Navbar/>
 
-                        <main className="p-6">
+                        <main className="py-6 px-4">
                            <div className='bg-white p-5 '>
                            <div className="flex items-center justify-between mb-6">
                                 <h1 className="text-2xl font-semibold">Add Expenses Details</h1>

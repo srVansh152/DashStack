@@ -49,7 +49,7 @@ function VisitorsLogs() {
 
         {/* Main Content */}
         <div className=''>
-          <div className="p-6">
+          <div className="py-6 px-4">
             <div className='bg-white p-4'>
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-xl font-semibold">Visitor Logs</h1>

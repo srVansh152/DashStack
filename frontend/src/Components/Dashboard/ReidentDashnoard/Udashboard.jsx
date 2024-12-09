@@ -349,7 +349,7 @@ const udashboard = () => {
 
                 <div className="flex-1 overflow-auto">
                     <Navbar />
-                    <main className="p-4 sm:p-6">
+                    <main className="sm:p-6 lg:p-4 px-0">
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
                             {/* Card 1 */}

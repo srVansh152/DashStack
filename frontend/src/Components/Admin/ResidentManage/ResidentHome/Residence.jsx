@@ -204,8 +204,8 @@ function Residence() {
 
 
 
-        <div className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8 bg-[#F0F5FB]">
-          <div className="px-4 py-6 sm:px-0 ">
+        <div className="max-w-8xl mx-auto py-6 sm:px-4 lg:px-4 bg-[#F0F5FB]">
+          <div className="px-2 py-6 sm:px-0 ">
             <div className='bg-white px-3 py-4 rounded'>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">Resident Tenant and Owner Details</h2>
