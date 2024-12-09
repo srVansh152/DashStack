@@ -13,6 +13,7 @@ export default function Upersonaldetail() {
     const [ownerDetails, setOwnerDetails] = useState();
     const [loadingAnnouncements, setLoadingAnnouncements] = useState(true);
     const [loadingOwnerDetails, setLoadingOwnerDetails] = useState(true);
+    const [paymentStats, setPaymentStats] = useState({ completedPayments: [], pendingPayments: [] });
 
     useEffect(() => {
         const fetchAnnouncements = async () => {
@@ -35,6 +36,7 @@ export default function Upersonaldetail() {
             const response = await getResidentDetails(residentId);
             console.log(response.data);
             setOwnerDetails(response.data);
+            setPaymentStats(response.data.paymentStats);
 
             // Set the initial active tab based on the owner status
             setActiveTab(response.data.resident.owner ? 'owner' : 'tenant');
@@ -242,14 +244,14 @@ export default function Upersonaldetail() {
                                             <div className="w-1 h-12 bg-green-500 rounded-full"></div>
                                             <div>
                                                 <p className="text-sm text-gray-500">Maintenance Amount</p>
-                                                <p className="text-xl font-semibold text-green-600">₹ 1,500</p>
+                                                <p className="text-xl font-semibold text-green-600">₹ {paymentStats.completedPayments.reduce((total, payment) => total + payment.amount, 0)}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <div className="w-1 h-12 bg-red-500 rounded-full"></div>
                                             <div>
                                                 <p className="text-sm text-gray-500">Penalty Amount</p>
-                                                <p className="text-xl font-semibold text-red-600">₹ 500</p>
+                                                <p className="text-xl font-semibold text-red-600">₹ {paymentStats.pendingPayments.reduce((total, payment) => total + payment.penaltyAmount, 0)}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -260,65 +262,52 @@ export default function Upersonaldetail() {
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Pending Maintenance</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 rounded-lg overflow-hidden">
-                                        {[1, 2, 3].map((item) => (
-                                            <div key={item} className="bg-white shadow rounded-lg">
+                                        {paymentStats.pendingPayments.map((payment, index) => (
+                                            <div key={index} className="bg-white shadow rounded-lg">
                                                 <div className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
-                                                    <span>Maintenance</span>
-                                                    <span className=" bg-[#6786EB] text-white px-4 py-1 rounded-full">Pending</span>
+                                                    <span>{payment.title || 'Maintenance'}</span>
+                                                    <span className="bg-[#6786EB] text-white px-4 py-1 rounded-full">Pending</span>
                                                 </div>
                                                 <div className="space-y-3 p-3">
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Bill Date</span>
-                                                        <span>11/01/2024</span>
+                                                        <span>{payment.dueDate.split('T')[0] || 'N/A'}</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Pending Date</span>
-                                                        <span>11/01/2024</span>
+                                                        <span className="text-gray-600">Amount</span>
+                                                        <span className="text-red-500">{payment.amount}</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Maintenance Amount</span>
-                                                        <span className="text-red-500">1000.00</span>
+                                                        <span className="text-gray-600">Penalty Amount</span>
+                                                        <span className="text-red-500">{payment.penaltyAmount || 0}</span>
                                                     </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Maintenance Penalty Amount</span>
-                                                        <span className="text-red-500">250.00</span>
-                                                    </div>
-                                                    <div className="flex justify-between font-semibold">
-                                                        <span>Grand Total</span>
-                                                        <span className="text-green-600">₹ 1,250</span>
-                                                    </div>
-                                                    <button className="w-full  bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors">
+                                                    <button className="w-full bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors">
                                                         Pay Now
                                                     </button>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
-
                                 </div>
 
                                 {/* Due Maintenance */}
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Due Maintenance</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {[1, 2].map((item) => (
-                                            <div key={item} className="bg-white rounded-lg shadow">
+                                        {paymentStats.completedPayments.map((payment, index) => (
+                                            <div key={index} className="bg-white rounded-lg shadow">
                                                 <div className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
-                                                    <span>Maintenance</span>
-                                                    <span className="bg-[#6786EB]  text-white px-4 py-1 rounded-full">Pending</span>
+                                                    <span>{payment.title || 'Maintenance'}</span>
+                                                    <span className="bg-[#6786EB] text-white px-4 py-1 rounded-full">Due</span>
                                                 </div>
                                                 <div className="space-y-3 p-3">
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Date</span>
-                                                        <span>11/01/2024</span>
-                                                    </div>
-                                                    <div className="flex justify-between">
                                                         <span className="text-gray-600">Amount</span>
-                                                        <span className="text-red-500">1000.00</span>
+                                                        <span className="text-red-500">{payment.amount}</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Due Maintenance Amount</span>
-                                                        <span className="text-red-500">250.00</span>
+                                                        <span className="text-gray-600">Penalty Amount</span>
+                                                        <span className="text-red-500">{payment.penaltyAmount || 0}</span>
                                                     </div>
                                                     <button className="w-full bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors">
                                                         Pay Now
@@ -522,14 +511,14 @@ export default function Upersonaldetail() {
                                             <div className="w-1 h-12 bg-green-500 rounded-full"></div>
                                             <div>
                                                 <p className="text-sm text-gray-500">Maintenance Amount</p>
-                                                <p className="text-xl font-semibold text-green-600">₹ 1,500</p>
+                                                <p className="text-xl font-semibold text-green-600">₹ {paymentStats.completedPayments.reduce((total, payment) => total + payment.amount, 0)}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <div className="w-1 h-12 bg-red-500 rounded-full"></div>
                                             <div>
                                                 <p className="text-sm text-gray-500">Penalty Amount</p>
-                                                <p className="text-xl font-semibold text-red-600">₹ 500</p>
+                                                <p className="text-xl font-semibold text-red-600">₹ {paymentStats.pendingPayments.reduce((total, payment) => total + payment.penaltyAmount, 0)}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -541,65 +530,52 @@ export default function Upersonaldetail() {
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Pending Maintenance</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 rounded-lg overflow-hidden">
-                                        {[1, 2, 3].map((item) => (
-                                            <div key={item} className="bg-white shadow rounded-lg">
+                                        {paymentStats.pendingPayments.map((payment, index) => (
+                                            <div key={index} className="bg-white shadow rounded-lg">
                                                 <div className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
-                                                    <span>Maintenance</span>
-                                                    <span className=" bg-[#6786EB] text-white px-4 py-1 rounded-full">Pending</span>
+                                                    <span>{payment.title || 'Maintenance'}</span>
+                                                    <span className="bg-[#6786EB] text-white px-4 py-1 rounded-full">Pending</span>
                                                 </div>
                                                 <div className="space-y-3 p-3">
                                                     <div className="flex justify-between">
                                                         <span className="text-gray-600">Bill Date</span>
-                                                        <span>11/01/2024</span>
+                                                        <span>{payment.billDate || 'N/A'}</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Pending Date</span>
-                                                        <span>11/01/2024</span>
+                                                        <span className="text-gray-600">Amount</span>
+                                                        <span className="text-red-500">{payment.amount}</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Maintenance Amount</span>
-                                                        <span className="text-red-500">1000.00</span>
+                                                        <span className="text-gray-600">Penalty Amount</span>
+                                                        <span className="text-red-500">{payment.penaltyAmount || 0}</span>
                                                     </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Maintenance Penalty Amount</span>
-                                                        <span className="text-red-500">250.00</span>
-                                                    </div>
-                                                    <div className="flex justify-between font-semibold">
-                                                        <span>Grand Total</span>
-                                                        <span className="text-green-600">₹ 1,250</span>
-                                                    </div>
-                                                    <button className="w-full  bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors">
+                                                    <button className="w-full bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors">
                                                         Pay Now
                                                     </button>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
-
                                 </div>
 
                                 {/* Due Maintenance */}
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">Due Maintenance</h2>
                                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                        {[1, 2].map((item) => (
-                                            <div key={item} className="bg-white rounded-lg shadow">
+                                        {paymentStats.completedPayments.map((payment, index) => (
+                                            <div key={index} className="bg-white rounded-lg shadow">
                                                 <div className="flex justify-between items-center bg-[#5678E9] text-white px-4 py-2 rounded-t-lg">
-                                                    <span>Maintenance</span>
-                                                    <span className="bg-[#6786EB]  text-white px-4 py-1 rounded-full">Pending</span>
+                                                    <span>{payment.title || 'Maintenance'}</span>
+                                                    <span className="bg-[#6786EB] text-white px-4 py-1 rounded-full">Due</span>
                                                 </div>
                                                 <div className="space-y-3 p-3">
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Date</span>
-                                                        <span>11/01/2024</span>
-                                                    </div>
-                                                    <div className="flex justify-between">
                                                         <span className="text-gray-600">Amount</span>
-                                                        <span className="text-red-500">1000.00</span>
+                                                        <span className="text-red-500">{payment.amount}</span>
                                                     </div>
                                                     <div className="flex justify-between">
-                                                        <span className="text-gray-600">Due Maintenance Amount</span>
-                                                        <span className="text-red-500">250.00</span>
+                                                        <span className="text-gray-600">Penalty Amount</span>
+                                                        <span className="text-red-500">{payment.penaltyAmount || 0}</span>
                                                     </div>
                                                     <button className="w-full bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:bg-orange-600 text-white py-2 rounded-lg transition-colors">
                                                         Pay Now

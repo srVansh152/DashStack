@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Trash, Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, ChevronDown, PencilIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Aside from '../../Common/SideBar/AdminSideBar/Aside';
-import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, getFacilities, listComplaints, deleteComplaint, updateComplaint, viewComplaint, getFinancialIncomes, getAnnouncements } from '../../../utils/api';
+import { createImportantNumber, deleteImportantNumber, fetchImportantNumbers, updateImportantNumber, listComplaints, deleteComplaint, updateComplaint, viewComplaint, getFinancialIncomes, getAnnouncements, getResidents, listExpenses } from '../../../utils/api';
 import Navbar from '../../Common/Navbar/Navbar';
 import { IoMdAddCircle } from "react-icons/io";
 
@@ -37,6 +37,9 @@ const DashboardLayout = () => {
     const [timeframe, setTimeframe] = useState('Month');
     const [pendingMaintenances, setPendingMaintenances] = useState([]); // State for pending maintenances
     const [isLoading, setIsLoading] = useState(true); // New loading state
+    const [totalUnits, setTotalUnits] = useState(0); // State for total units
+    const [totalExpense, setTotalExpense] = useState(0); // State for total expense
+    const [totalIncome, setTotalIncome] = useState("150000"); // State for total expense
 
 
 
@@ -55,11 +58,45 @@ const DashboardLayout = () => {
         }
     };
 
+    // New function to fetch total units
+    const fetchTotalUnits = async () => {
+        try {
+            const response = await getResidents(); // Replace with your API endpoint to get residence data
+            if (response.success) {
+                setTotalUnits(response.data.length); // Assuming the response data is an array of residences
+            } else {
+                throw new Error('Failed to fetch total units');
+            }
+        } catch (error) {
+            console.error('Error fetching total units:', error);
+        }
+    };
+
+    // New function to fetch total expense
+    const fetchTotalExpense = async () => {
+        try {
+            const response = await listExpenses(); // Call the API to get expense data
+            if (response.success && Array.isArray(response.data) && response.data.length > 0) {
+                // Assuming response.data is an array of expense objects
+                const totalAmount = response.data.reduce((acc, expense) => acc + expense.amount, 0);
+                setTotalExpense(totalAmount);
+                console.log('Total Amount:', totalAmount); // Log the total amount
+            } else {
+                console.warn('No expenses found or invalid response structure:', response);
+                setTotalExpense(0); // Set to 0 if no expenses are found
+            }
+        } catch (error) {
+            console.error('Error fetching total expense:', error);
+        }
+    };
+
     useEffect(() => {
         fetchComplaints();
         fetchAnnouncements();
         loadImportantNumbers();
         fetchPendingMaintenancesData(); // Call the new function
+        fetchTotalUnits(); // Call the new function to fetch total units
+        fetchTotalExpense(); // Call the new function to fetch total expense
     }, []);
 
     // New function to fetch pending maintenance data
@@ -350,6 +387,8 @@ const DashboardLayout = () => {
         return colors[Math.floor(Math.random() * colors.length)];
     };
 
+    const totalBalance = totalIncome - totalExpense; // Calculate total balance
+
     return (<>
         {isLoading && (
             <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 flex items-center justify-center z-50">
@@ -371,13 +410,13 @@ const DashboardLayout = () => {
                         {/* Stats Cards Section */}
                         <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
                             {/* Card 1 */}
-                            <div className="box relative flex items-center justify-between p-4 bg-white rounded-lg ">
+                            <div className="box relative flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
                                 <div
                                     className="absolute top-5 left-0 h-[52px] w-2 bg-[#FFB480] rounded-r-md"
                                 />
                                 <div className="ms-3">
                                     <p className="text-[16px] font-medium text-[#202224]">Total Balance</p>
-                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 2,22,520</h2>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ {totalBalance}</h2>
                                 </div>
 
                                 <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
@@ -398,7 +437,7 @@ const DashboardLayout = () => {
 
                                 <div className="ms-3">
                                     <p className="text-[16px] font-medium text-[#202224]">Total Income</p>
-                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 55,000</h2>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ {totalIncome}</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
                                     <span className="text-green-500 text-2xl">
@@ -416,7 +455,7 @@ const DashboardLayout = () => {
                                 />
                                 <div className="ms-3">
                                     <p className="text-[16px] font-medium text-[#202224]">Total Expense</p>
-                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ {totalExpense}</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
                                     <span className="text-blue-500 text-2xl">
@@ -435,7 +474,7 @@ const DashboardLayout = () => {
 
                                 <div className="ms-3">
                                     <p className="text-[16px] font-medium text-[#202224]">Total Unit</p>
-                                    <h2 className="mt-1 text-2xl font-bold text-gray-800">₹ 20,550</h2>
+                                    <h2 className="mt-1 text-2xl font-bold text-gray-800"> {totalUnits}</h2>
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
                                     <span className="text-pink-500 text-2xl">
