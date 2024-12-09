@@ -159,7 +159,7 @@ function Announcment() {
         {/* Summary Cards */}
         <div className="container-fulid p-2">
 
-          <div className="p-6 bg-white my-3 mx-3 rounded">
+          <div className=" bg-white py-3 px-3 rounded">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-semibold text-gray-900">Announcement</h1>
               <button onClick={handleAddModel} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
@@ -230,8 +230,8 @@ function Announcment() {
       </div>
 
       {openModel && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 backdrop-blur-sm z-40 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-y-auto max-h-full">
             <div className="p-6">
               <h1 className="text-xl font-semibold mb-6">Add Announcement</h1>
 
@@ -263,7 +263,6 @@ function Announcment() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    {/* Announcement Date Input */}
                     <div>
                       <label className="block text-sm mb-1">
                         Announcement Date<span className="text-red-500">*</span>
@@ -277,7 +276,6 @@ function Announcment() {
                       />
                     </div>
 
-                    {/* Announcement Time Input */}
                     <div>
                       <label className="block text-sm mb-1">
                         Announcement Time<span className="text-red-500">*</span>

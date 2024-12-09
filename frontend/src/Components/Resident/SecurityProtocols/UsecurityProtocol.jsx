@@ -39,8 +39,8 @@ const UsecurityProtocol = () => {
       <div className="flex-1 overflow-auto">
         <Navbar />
 
-        <div className="container-fulid px-2 py-4">
-          <div className="bg-white mx-3">
+        <div className="container-fulid">
+          <div className="bg-white mx-3 py-4">
           <div className=' overflow-hidden   p-6'>
           <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Security Protocols</h1>

@@ -358,7 +358,7 @@ function SecurityGuard() {
       <div className="main ">
         <div className='bg-[#F0F5FB] min-h-screen'>
           <Navbar />
-          <div className="p-6 py-3">
+          <div className="py-6 px-4">
             <div className='bg-white p-4 rounded'>
               <div className="flex  justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">Security Guard Details</h2>
