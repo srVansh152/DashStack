@@ -714,6 +714,7 @@ export const createResident = async (residentData) => {
 // Update an existing resident
 export const updateResident = async (id, updateData) => {
   try {
+    console.log(id,updateData);
     const response = await api.put(`/residents/${id}`, updateData);
     return { success: true, data: response.data };
   } catch (error) {

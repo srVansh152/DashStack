@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { ChevronDown, Upload } from "lucide-react";
 import axios from 'axios'; // Import axios for making API calls
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useParams, useLocation } from 'react-router-dom'; // Import useNavigate, useParams, and useLocation
 
 import { Link } from 'react-router-dom';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, } from 'lucide-react';
 import Aside from "../../../../Common/SideBar/AdminSideBar/Aside";
 import Navbar from "../../../../Common/Navbar/Navbar";
-import { createResident } from "../../../../../utils/api";
+import { createResident, updateResident } from "../../../../../utils/api";
 
 const InputField = ({ label, type, value, onChange, placeholder }) => (
   <div>
@@ -25,6 +25,9 @@ const InputField = ({ label, type, value, onChange, placeholder }) => (
 
 export const Form = () => {
   const navigate = useNavigate(); // Create navigate function
+  const { id } = useParams(); // Get id from URL parameters
+  const location = useLocation(); // Get location to access state
+  const { residentData } = location.state || {}; // Get resident data from state
   const [fullName, setFullName] = useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [email, setEmail] = useState('');
@@ -46,6 +49,85 @@ export const Form = () => {
   });
   const [wing, setWing] = useState(''); // State for wing
   const [unit, setUnit] = useState(''); // State for unit
+  const [ownerFullName, setOwnerFullName] = useState(''); // State for Owner Full Name
+  const [ownerPhone, setOwnerPhone] = useState('+91'); // State for Owner Phone
+  const [ownerAddress, setOwnerAddress] = useState(''); // State for Owner Address
+  const [dataCache, setDataCache] = useState(null); // State to store cached data
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) { // Check if id is present
+        try {
+          const response = await getResidentDetails(id); // Fetch resident details
+          if (response.success) {
+            handleEditData(response.data); // Populate form fields with fetched data
+          } else {
+            console.error('No data found in response:', response);
+            // Reset fields if no data found
+            resetFormFields();
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error.response ? error.response.data : error.message);
+          // Reset fields on error
+          resetFormFields();
+        }
+      } else if (residentData) { // Check if residentData is provided for editing
+        handleEditData(residentData); // Populate form fields with provided data
+      } else {
+        resetFormFields(); // Reset fields if no id or residentData
+      }
+    };
+
+    fetchData(); // Call the fetch function
+  }, [id, residentData]); // Add id and residentData to the dependency array
+
+  const handleEditData = (newData) => {
+    // Function to handle editing of data
+    setFullName(newData.fullName || '');
+    setPhoneNo(newData.phoneNumber || '');
+    setEmail(newData.email || '');
+    setAge(newData.age || '');
+    setGender(newData.gender || '');
+    setRelation(newData.relation || '');
+    setWing(newData.wing || '');
+    setUnit(newData.unitNumber || '');
+    setMembers(newData.members || [{}]);
+    setVehicles(newData.vehicles || [{}]);
+    
+    // Set files state with image URLs from backend
+    setFiles({
+      aadharFront: newData.aadhaarFront || null,
+      aadharBack: newData.aadhaarBack || null,
+      addressProof: newData.addressProof || null,
+      rentAgreement: newData.rentAgreement || null,
+      photo: newData.photo || null, // Populate photo if available
+    });
+    
+    // Set selected image for display
+    if (newData.photo) {
+      setSelectedImage(newData.photo); // Set the selected image URL
+    }
+  };
+
+  const resetFormFields = () => {
+    setFullName('');
+    setPhoneNo('');
+    setEmail('');
+    setAge('');
+    setGender('');
+    setRelation('');
+    setWing('');
+    setUnit('');
+    setMembers([{}]);
+    setVehicles([{}]);
+    setFiles({
+      aadharFront: null,
+      aadharBack: null,
+      addressProof: null,
+      rentAgreement: null,
+      photo: null, // Reset photo field
+    });
+  };
 
   const handleMemberCountChange = (event) => {
 
@@ -92,17 +174,17 @@ export const Form = () => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setSelectedImage(e.target.result);
-        };
-        reader.readAsDataURL(file);
-        
-        // Update the files state to include the photo
-        setFiles((prevFiles) => ({
-            ...prevFiles,
-            photo: file, // Store the photo in the files state
-        }));
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result); // Set the selected image URL for display
+      };
+      reader.readAsDataURL(file);
+
+      // Update the files state to include the photo
+      setFiles((prevFiles) => ({
+        ...prevFiles,
+        photo: file, // Store the photo in the files state
+      }));
     }
   };
 
@@ -123,43 +205,63 @@ export const Form = () => {
     console.log(vehicles);
 
     const ownerData = {
-      photo: files.photo || null, // Ensure photo is set or null
-      fullName,
-      phoneNumber: phoneNo,
-      email,
-      age: Number(age),
-      gender,
-      wing, // Add wing to ownerData
-      unitNumber: unit, // Add unit to ownerData
-      relation,
+      // Only include fields that have changed
+      ...(residentData && { _id: residentData._id }), // Include ID if updating
+      ...(files.photo && { photo: files.photo }), // Include photo only if it has changed
+      ...(fullName && { fullName }), // Include fullName only if it has changed
+      ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber only if it has changed
+      ...(email && { email }), // Include email only if it has changed
+      ...(age && { age: Number(age) }), // Include age only if it has changed
+      ...(gender && { gender }), // Include gender only if it has changed
+      ...(wing && { wing }), // Include wing only if it has changed
+      ...(unit && { unitNumber: unit }), // Include unit only if it has changed
+      ...(relation && { relation }), // Include relation only if it has changed
       aadhaarFront: files.aadharFront || null, // Ensure files are set or null
       aadhaarBack: files.aadharBack || null,
       addressProof: files.addressProof || null,
       rentAgreement: files.rentAgreement || null,
       members: members.map(member => ({
-        name: member.fullName , // Ensure name is set or empty string
-        phoneNumber: member.phone , // Ensure phone is set or empty string
-        email: member.email , // Ensure email is set or empty string
-        age: Number(member.age) || 0, // Ensure age is set or default to 0
-        gender: member.gender,  // Ensure gender is set or empty string
-        relation: member.relation , // Ensure relation is set or empty string
+        ...(member.fullName && { name: member.fullName }), // Include name only if it has changed
+        ...(member.phone && { phoneNumber: member.phone }), // Include phone only if it has changed
+        ...(member.email && { email: member.email }), // Include email only if it has changed
+        ...(member.age && { age: Number(member.age) }), // Include age only if it has changed
+        ...(member.gender && { gender: member.gender }), // Include gender only if it has changed
+        ...(member.relation && { relation: member.relation }), // Include relation only if it has changed
       })),
       vehicles: vehicles.map(vehicle => ({
-        type: vehicle.type , // Ensure type is set or empty string
-        name: vehicle.name , // Ensure name is set or empty string
-        number: vehicle.number , // Ensure number is set or empty string
+        ...(vehicle.type && { type: vehicle.type }), // Include type only if it has changed
+        ...(vehicle.name && { name: vehicle.name }), // Include name only if it has changed
+        ...(vehicle.number && { number: vehicle.number }), // Include number only if it has changed
       })),
       owner: activeTab === "owner", // Set owner based on active tab
       ownerDetails: activeTab === "tenant" ? { // Include ownerDetails only for tenant
-        fullName: fullName || "", // Ensure fullName is set or empty string
-        phoneNumber: phoneNo || "", // Ensure phoneNumber is set or empty string
-        address: `${wing} ${unit}` || "", // Combine wing and unit for address
+        ...(fullName && { fullName }), // Include fullName only if it has changed
+        ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber only if it has changed
+        ...(wing && { address: `${wing} ${unit}`.trim() }), // Combine wing and unit for address only if they have changed
+      } : null, // Set to null if owner
+      tenantDetails: activeTab === "tenant" ? { // Ensure tenant details are populated
+        ...(fullName && { fullName }), // Include fullName only if it has changed
+        ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber only if it has changed
+        ...(email && { email }), // Include email only if it has changed
+        ...(age && { age: Number(age) }), // Include age only if it has changed
+        ...(gender && { gender }), // Include gender only if it has changed
+        ...(wing && { wing }), // Include wing only if it has changed
+        ...(unit && { unit }), // Include unit only if it has changed
+        ...(relation && { relation }), // Include relation only if it has changed
       } : null, // Set to null if owner
     }
-    
+
     try {
-      const response = await createResident(ownerData);
-      console.log('Data saved successfully:', response);
+      if (residentData) {
+        // If residentData is present, call the update function
+        console.log(residentData._id);
+        const response = await updateResident(residentData._id, ownerData);
+        console.log('Data updated successfully:', response);
+      } else {
+        // If residentData is not present, call the create function
+        const response = await createResident(ownerData);
+        console.log('Data saved successfully:', response);
+      }
       navigate('/admin/residence'); // Navigate to the desired route after successful submission
     } catch (error) {
       console.error('Error saving data:', error.response ? error.response.data : error.message);
@@ -204,112 +306,113 @@ export const Form = () => {
 
         {/* Form Fields */}
         <div className="flex-1 grid gap-6">
-            {/* Top Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </div>
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number*
-                </label>
-                <input
-                  type="tel"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={phoneNo}
-                  onChange={(e) => setPhoneNo(e.target.value)}
-                />
-              </div>
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+          {/* Top Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
             </div>
-
-            {/* Bottom Row */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Age*
-                </label>
-                <input
-                  type="number"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gender*
-                </label>
-                <select
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Wing*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={wing}
-                  onChange={(e) => setWing(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unit*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Relation*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={relation}
-                  onChange={(e) => setRelation(e.target.value)}
-                />
-              </div>
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number*
+              </label>
+              <input
+                type="tel"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={phoneNo}
+                onChange={(e) => setPhoneNo(e.target.value)}
+              />
+            </div>
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
+
+          {/* Bottom Row */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Age*
+              </label>
+              <input
+                type="number"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Gender*
+              </label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Wing*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={wing}
+                onChange={(e) => setWing(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Unit*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Relation*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={relation}
+                onChange={(e) => setRelation(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Common form sections can be added here */}
@@ -331,6 +434,8 @@ export const Form = () => {
               type="text"
               className="border border-neutral-300 rounded-md p-2 mt-1"
               placeholder="Enter Full Name"
+              value={ownerFullName}
+              onChange={(e) => setOwnerFullName(e.target.value)}
             />
           </div>
 
@@ -342,7 +447,8 @@ export const Form = () => {
             <input
               type="text"
               className="border border-neutral-300 rounded-md p-2 mt-1"
-              defaultValue="+91"
+              value={ownerPhone}
+              onChange={(e) => setOwnerPhone(e.target.value)}
             />
           </div>
 
@@ -355,6 +461,8 @@ export const Form = () => {
               type="text"
               className="border border-neutral-300 rounded-md p-2 mt-1"
               placeholder="Enter Address"
+              value={ownerAddress}
+              onChange={(e) => setOwnerAddress(e.target.value)}
             />
           </div>
         </div>
@@ -394,94 +502,108 @@ export const Form = () => {
 
         {/* Form Fields */}
         <div className="flex-1 grid gap-6 py-2">
-            {/* Top Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number*
-                </label>
-                <input
-                  type="tel"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+          {/* Top Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
             </div>
-
-            {/* Bottom Row */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Age*
-                </label>
-                <input
-                  type="number"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Gender*
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Wing*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unit*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Relation*
-                </label>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number*
+              </label>
+              <input
+                type="tel"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={phoneNo}
+                onChange={(e) => setPhoneNo(e.target.value)}
+              />
+            </div>
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
+
+          {/* Bottom Row */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Age*
+              </label>
+              <input
+                type="number"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Gender*
+              </label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white" value={gender} onChange={(e) => setGender(e.target.value)}>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Wing*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={wing}
+                onChange={(e) => setWing(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Unit*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Relation*
+              </label>
+              <input
+                type="text"
+                placeholder=""
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={relation}
+                onChange={(e) => setRelation(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Rest of the form components */}
@@ -706,12 +828,28 @@ export const Form = () => {
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4 mt-3">
-          <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-[#202224] hover:bg-gray-50 w-[10%]">
+          <button
+            type="button"
+            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-[#202224] hover:bg-gray-50 w-[10%]"
+            onClick={() => navigate('/admin/residence')} // Cancel button
+          >
             Cancel
           </button>
-          <button className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-blue-700 hover:bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:text-white transition duration:200 w-[10%]">
-            Create
-          </button>
+          {residentData ? ( // Check if residentData is available
+            <button
+              type="submit"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-blue-700 hover:bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:text-white transition duration:200 w-[10%]"
+            >
+              Edit {/* Show Edit button when residentData is present */}
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-blue-700 hover:bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:text-white transition duration:200 w-[10%]"
+            >
+              Create {/* Show Create button when residentData is not present */}
+            </button>
+          )}
         </div>
       </>
     );
@@ -722,24 +860,26 @@ export const Form = () => {
       <Aside />
       <div className="main">
         <Navbar />
-        <div className="min-h-screen bg-blue-50 p-4 sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-blue-50 sm:p-6 lg:p-8">
           <div className="w-full max-w-10xl bg-[#f0f5fb] rounded-lg p-4 sm:p-6 lg:p-8">
             <form onSubmit={handleSubmit}> {/* Add form submission handler */}
               <div className="flex flex-col sm:flex-row justify-between items-center bg-[#f0f5fb]">
                 <div className="flex flex-wrap">
                   <button
+                    type="button" // Prevents form submission
                     className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "owner"
-                        ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
-                        : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
+                      ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
+                      : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
                       }`}
                     onClick={() => setActiveTab("owner")}
                   >
                     Owner
                   </button>
                   <button
+                    type="button" // Prevents form submission
                     className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "tenant"
-                        ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
-                        : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
+                      ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
+                      : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
                       }`}
                     onClick={() => setActiveTab("tenant")}
                   >
@@ -754,7 +894,7 @@ export const Form = () => {
               </div>
 
               {/* Action Buttons */}
-          
+
             </form>
           </div>
         </div>

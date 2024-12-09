@@ -43,7 +43,6 @@ import Ucommunity from './Components/Resident/Community/Discussion/Ucommunity'
 import DashboardLayout from './Components/Dashboard/AdminDashboard/DashboardLayout'
 import Editprofile from './Components/Admin/Profile/EditProfile/Editprofile'
 import ComplaintSubmission from './Components/Resident/ServiceAndComplaint/ComplaintSubmission/ComplaintSubmission'
-import PrivateRoute from './services/ProtectRoutes'
 import RequestSubmission from './Components/Resident/ServiceAndComplaint/RequestSubmission/RequestSubmission'
 // import ZegoRoom from './ZegoRoom'
 

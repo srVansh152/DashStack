@@ -189,7 +189,7 @@ function CreateComplain() {
               </button>
             </div>
 
-            <div className="overflow-x-auto rounded-lg border bg-white">
+            <div className="overflow-x-auto rounded-lg border shadow bg-white">
               {isLoading ? (
                 <div className="flex items-center justify-center p-8">
                 <div className="text-center">
