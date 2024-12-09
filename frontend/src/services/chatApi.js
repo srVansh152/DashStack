@@ -47,17 +47,23 @@ export const chatApi = {
   },
 
   uploadMedia: async (formData) => {
-    const response = await axios.post(
-      `${API_URL}/chat/upload`,
-      formData,
-      {
-        ...setAuthHeader(),
-        headers: {
-          ...setAuthHeader().headers,
-          'Content-Type': 'multipart/form-data'
+    try {
+      const authHeader = setAuthHeader();
+      const response = await axios.post(
+        `${API_URL}/chat/upload`,
+        formData,
+        {
+          ...authHeader,
+          headers: {
+            ...authHeader.headers,
+            'Content-Type': 'multipart/form-data'
+          }
         }
-      }
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error uploading media:', error);
+      throw error;
+    }
   }
 };

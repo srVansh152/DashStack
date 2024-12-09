@@ -25,7 +25,7 @@ export default function UAside() {
   // Community menu items
   const communityMenuItems = [
     { id: 1, label: 'Access Forums', path: 'uchat' },
-    { id: 2, label: 'Polls', path: 'upools' },
+    // { id: 2, label: 'Polls', path: 'upools' },
     { id: 3, label: 'Communities Discussion', path: 'ucommunity' },
   ]
 
@@ -67,7 +67,9 @@ export default function UAside() {
 
       {/* Sidebar */}
       <div className={`w-[70%] md:w-[17%] p-4 bg-white shadow-lg flex flex-col fixed inset-0 top-0 left-0 sm:relative sm:block transform transition-transform duration-300 z-30 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 sm:static`}>
+        } sm:translate-x-0 sm:static`}
+        style={{ height: '100vh' }}
+      >
 
         <div className='flex flex-col justify-between h-full'>
           <div className='sidebar-content'>
@@ -291,7 +293,7 @@ function Dropdown({
   const isDropdownActive = items.some(item => currentPath === `/user/${item.path}`) || active
 
   return (
-    <div className="my-1 relative">
+    <div className="my-1 relative" style={{ height: 'auto' }}>
       {isDropdownActive && (
         <div
           className={`absolute left-0 w-1 bg-gradient-to-b from-[#FF4B1C] to-[#FF8037] rounded-r

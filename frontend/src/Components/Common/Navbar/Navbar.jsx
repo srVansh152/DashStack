@@ -12,7 +12,7 @@ const Navbar = () => {
         const token = localStorage.getItem('token');
         const response = await getProfile(token);
         console.log(response);
-        setUser(response.data.user);
+        setUser(response.data.profile);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -45,10 +45,10 @@ const Navbar = () => {
                 className="w-8 h-8  rounded-full border-2 border-gray-300 hover:border-orange-500 flex items-center justify-center"
                 style={{ backgroundColor: user ? user.color : 'gray' }}
               >
-                {user ? user.firstname.charAt(0) : '?'}
+                {(user ? (user.firstname || user.fullName || '?') : '?').charAt(0)}
               </span>
               <div className="hidden md:block">
-                <p className="text-sm font-medium">{user ? user.firstname : 'Loading...'}</p>
+                <p className="text-sm font-medium">{user ? (user.firstname || user.fullName || 'Loading...') : 'Loading...'}</p>
                 <p className="text-xs text-gray-500">{user ? user.role : 'Loading...'}</p>
               </div>
             </Link>

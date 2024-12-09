@@ -22,6 +22,15 @@ export const ChatProvider = ({ children }) => {
                 newSocket.emit('userConnected', userId);
             });
 
+            newSocket.on('connect_error', (error) => {
+                console.error('Socket connection error:', error);
+            });
+
+            newSocket.on('disconnect', () => {
+                console.log('Socket disconnected');
+                setSocket(null);
+            });
+
             newSocket.on('activeUsers', (users) => {
                 const usersMap = new Map();
                 users.forEach(userId => {
@@ -70,6 +79,8 @@ export const ChatProvider = ({ children }) => {
 
             return () => {
                 newSocket.off('connect');
+                newSocket.off('connect_error');
+                newSocket.off('disconnect');
                 newSocket.off('activeUsers');
                 newSocket.off('userConnected');
                 newSocket.off('userDisconnected');
@@ -85,7 +96,7 @@ export const ChatProvider = ({ children }) => {
                 throw new Error('Socket connection not available');
             }
             
-            socketService.sendMessage(messageData);
+            socket.emit('sendMessage', messageData);
             
         } catch (error) {
             console.error('Error sending message:', error);
@@ -137,6 +148,32 @@ export const ChatProvider = ({ children }) => {
         isUserOnline,
         getUserLastSeen
     };
+
+    useEffect(() => {
+        if (socket) {
+            socket.on('newMessage', (newMessage) => {
+                console.log('New message received in context:', newMessage);
+                setMessages(prev => {
+                    if (prev.some(msg => msg.id === newMessage._id)) {
+                        return prev;
+                    }
+                    
+                    const formattedMessage = {
+                        id: newMessage._id,
+                        sender: newMessage.sender._id,
+                        content: newMessage.text,
+                        timestamp: new Date(newMessage.createdAt).toLocaleTimeString([], { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        }),
+                        senderId: newMessage.sender._id
+                    };
+                    
+                    return [...prev, formattedMessage];
+                });
+            });
+        }
+    }, [socket]);
 
     return (
         <ChatContext.Provider value={value}>
