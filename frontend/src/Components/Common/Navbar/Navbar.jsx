@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 
 
 
-const socket = io('http://localhost:5000');
+const socket = io('https://dashstack-90hs.onrender.com');
 
 
 const Navbar = () => {
@@ -63,7 +63,7 @@ const Navbar = () => {
     }
   };
 
-  const addNotification = (message = "hello", type = "info") => {
+  const addNotification = (message , type) => {
     const newNotification = {
       id: Date.now(),
       notificationMessage: message,

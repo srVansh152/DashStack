@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { Activity, DollarSign, Package, Users, Bell, Settings, LogOut, Edit, Eye, Trash2, Check, X, CheckCircle, } from 'lucide-react';
 import Aside from "../../../../Common/SideBar/AdminSideBar/Aside";
 import Navbar from "../../../../Common/Navbar/Navbar";
-import { createResident, updateResident } from "../../../../../utils/api";
+import { createResident, updateResident, getResidentDetails } from "../../../../../utils/api";
 
 const InputField = ({ label, type, value, onChange, placeholder }) => (
   <div>
@@ -56,56 +56,51 @@ export const Form = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (id) { // Check if id is present
+      if (id) {
         try {
-          const response = await getResidentDetails(id); // Fetch resident details
+          const response = await getResidentDetails(id);
           if (response.success) {
-            handleEditData(response.data); // Populate form fields with fetched data
+            handleEditData(response.data);
           } else {
             console.error('No data found in response:', response);
-            // Reset fields if no data found
             resetFormFields();
           }
         } catch (error) {
           console.error('Error fetching data:', error.response ? error.response.data : error.message);
-          // Reset fields on error
           resetFormFields();
         }
-      } else if (residentData) { // Check if residentData is provided for editing
-        handleEditData(residentData); // Populate form fields with provided data
+      } else if (residentData) {
+        handleEditData(residentData);
       } else {
-        resetFormFields(); // Reset fields if no id or residentData
+        resetFormFields();
       }
     };
 
-    fetchData(); // Call the fetch function
-  }, [id, residentData]); // Add id and residentData to the dependency array
+    fetchData();
+  }, [id, residentData]);
 
   const handleEditData = (newData) => {
-    // Function to handle editing of data
-    setFullName(newData.fullName || '');
+    setFullName(newData.name || '');
     setPhoneNo(newData.phoneNumber || '');
     setEmail(newData.email || '');
     setAge(newData.age || '');
     setGender(newData.gender || '');
-    setRelation(newData.relation || '');
+    setRelation('');
     setWing(newData.wing || '');
     setUnit(newData.unitNumber || '');
     setMembers(newData.members || [{}]);
     setVehicles(newData.vehicles || [{}]);
     
-    // Set files state with image URLs from backend
     setFiles({
-      aadharFront: newData.aadhaarFront || null,
-      aadharBack: newData.aadhaarBack || null,
-      addressProof: newData.addressProof || null,
-      rentAgreement: newData.rentAgreement || null,
-      photo: newData.photo || null, // Populate photo if available
+      aadharFront: newData.documents?.aadhaarFront || null,
+      aadharBack: newData.documents?.aadhaarBack || null,
+      addressProof: newData.documents?.addressProof || null,
+      rentAgreement: newData.documents?.rentAgreement || null,
+      photo: newData.avatar || null,
     });
     
-    // Set selected image for display
-    if (newData.photo) {
-      setSelectedImage(newData.photo); // Set the selected image URL
+    if (newData.avatar) {
+      setSelectedImage(newData.avatar);
     }
   };
 
@@ -125,28 +120,26 @@ export const Form = () => {
       aadharBack: null,
       addressProof: null,
       rentAgreement: null,
-      photo: null, // Reset photo field
+      photo: null,
     });
   };
 
   const handleMemberCountChange = (event) => {
-
     const count = Number(event.target.value);
     setMemberCount(count);
 
-    // Update members array to have empty objects for new member inputs
     setMembers((prev) => {
       const newMembers = [...prev];
       while (newMembers.length < count) {
-        newMembers.push({}); // Add an empty object for each new member
+        newMembers.push({});
       }
-      return newMembers.slice(0, count); // Ensure we don't have excess objects
+      return newMembers.slice(0, count);
     });
   };
 
   const handleInputChange = (index, field, value) => {
     const newMembers = [...members];
-    newMembers[index] = { ...newMembers[index], [field]: value }; // Update the specific field for the member
+    newMembers[index] = { ...newMembers[index], [field]: value };
     setMembers(newMembers);
   };
 
@@ -154,36 +147,33 @@ export const Form = () => {
     const count = Number(event.target.value);
     setVehicleCount(count);
 
-    // Update vehicles array to have empty objects for new vehicle inputs
     setVehicles((prev) => {
       const newVehicles = [...prev];
       while (newVehicles.length < count) {
-        newVehicles.push({}); // Add an empty object for each new vehicle
+        newVehicles.push({});
       }
-      return newVehicles.slice(0, count); // Ensure we don't have excess objects
+      return newVehicles.slice(0, count);
     });
   };
 
   const handleInputVecChange = (index, field, value) => {
     const newVehicles = [...vehicles];
-    newVehicles[index] = { ...newVehicles[index], [field]: value }; // Update the specific field for the vehicle
+    newVehicles[index] = { ...newVehicles[index], [field]: value };
     setVehicles(newVehicles);
   };
-
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target.result); // Set the selected image URL for display
+        setSelectedImage(e.target.result);
       };
       reader.readAsDataURL(file);
 
-      // Update the files state to include the photo
       setFiles((prevFiles) => ({
         ...prevFiles,
-        photo: file, // Store the photo in the files state
+        photo: file,
       }));
     }
   };
@@ -199,79 +189,72 @@ export const Form = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
-    // Validate required fields
-    console.log(vehicles);
-
+    // Construct the ownerData object  
     const ownerData = {
-      // Only include fields that have changed
-      ...(residentData && { _id: residentData._id }), // Include ID if updating
-      ...(files.photo && { photo: files.photo }), // Include photo only if it has changed
-      ...(fullName && { fullName }), // Include fullName only if it has changed
-      ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber only if it has changed
-      ...(email && { email }), // Include email only if it has changed
-      ...(age && { age: Number(age) }), // Include age only if it has changed
-      ...(gender && { gender }), // Include gender only if it has changed
-      ...(wing && { wing }), // Include wing only if it has changed
-      ...(unit && { unitNumber: unit }), // Include unit only if it has changed
-      ...(relation && { relation }), // Include relation only if it has changed
-      aadhaarFront: files.aadharFront || null, // Ensure files are set or null
-      aadhaarBack: files.aadharBack || null,
-      addressProof: files.addressProof || null,
-      rentAgreement: files.rentAgreement || null,
-      members: members.map(member => ({
-        ...(member.fullName && { name: member.fullName }), // Include name only if it has changed
-        ...(member.phone && { phoneNumber: member.phone }), // Include phone only if it has changed
-        ...(member.email && { email: member.email }), // Include email only if it has changed
-        ...(member.age && { age: Number(member.age) }), // Include age only if it has changed
-        ...(member.gender && { gender: member.gender }), // Include gender only if it has changed
-        ...(member.relation && { relation: member.relation }), // Include relation only if it has changed
-      })),
-      vehicles: vehicles.map(vehicle => ({
-        ...(vehicle.type && { type: vehicle.type }), // Include type only if it has changed
-        ...(vehicle.name && { name: vehicle.name }), // Include name only if it has changed
-        ...(vehicle.number && { number: vehicle.number }), // Include number only if it has changed
-      })),
-      owner: activeTab === "owner", // Set owner based on active tab
-      ownerDetails: activeTab === "tenant" ? { // Include ownerDetails only for tenant
-        ...(fullName && { fullName }), // Include fullName only if it has changed
-        ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber only if it has changed
-        ...(wing && { address: `${wing} ${unit}`.trim() }), // Combine wing and unit for address only if they have changed
-      } : null, // Set to null if owner
-      tenantDetails: activeTab === "tenant" ? { // Ensure tenant details are populated
-        ...(fullName && { fullName }), // Include fullName only if it has changed
-        ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber only if it has changed
-        ...(email && { email }), // Include email only if it has changed
-        ...(age && { age: Number(age) }), // Include age only if it has changed
-        ...(gender && { gender }), // Include gender only if it has changed
-        ...(wing && { wing }), // Include wing only if it has changed
-        ...(unit && { unit }), // Include unit only if it has changed
-        ...(relation && { relation }), // Include relation only if it has changed
-      } : null, // Set to null if owner
-    }
+        ...(residentData && { _id: residentData._id }), // Include ID if updating
+        ...(files.photo && { avatar: files.photo }), // Include avatar if exists
+        ...(fullName && { fullName: fullName }), // Ensure fullName is included
+        ...(phoneNo && { phoneNumber: phoneNo }), // Include phoneNumber if exists
+        ...(email && { email }), // Include email if exists
+        ...(age && { age: Number(age) }), // Include age if exists
+        ...(gender && { gender }), // Include gender if exists
+        ...(wing && { wing }), // Include wing if exists
+        ...(unit && { unitNumber: unit }), // Include unit if exists
+        ...(relation && { relation }), // Include relation if exists
+        documents: {
+            ...(files.aadharFront && { aadhaarFront: files.aadharFront }), // Include aadhaarFront if exists
+            ...(files.aadharBack && { aadhaarBack: files.aadharBack }), // Include aadhaarBack if exists
+            ...(files.addressProof && { addressProof: files.addressProof }), // Include addressProof if exists
+            ...(files.rentAgreement && { rentAgreement: files.rentAgreement }), // Include rentAgreement if exists
+        },
+        members: members.map(member => ({ // Map members to the correct structure
+            ...(member.name && { name: member.name }), // Include name if exists
+            ...(member.phoneNumber && { phoneNumber: member.phoneNumber }), // Include phoneNumber if exists
+            ...(member.email && { email: member.email }), // Include email if exists
+            ...(member.age && { age: Number(member.age) }), // Include age if exists
+            ...(member.gender && { gender: member.gender }), // Include gender if exists
+            ...(member.relation && { relation: member.relation }), // Include relation if exists
+        })),
+        vehicles: vehicles.map(vehicle => ({ // Map vehicles to the correct structure
+            ...(vehicle.type && { type: vehicle.type }), // Include type if exists
+            ...(vehicle.name && { name: vehicle.name }), // Include name if exists
+            ...(vehicle.number && { number: vehicle.number }), // Include number if exists
+        })),
+        residentStatus: activeTab === "owner" ? "Owner" : "Tenant", // Set resident status
+    };
+
+    console.log('Owner Data:', ownerData); // Log the data being sent
 
     try {
-      if (residentData) {
-        // If residentData is present, call the update function
-        console.log(residentData._id);
-        const response = await updateResident(residentData._id, ownerData);
-        console.log('Data updated successfully:', response);
-      } else {
-        // If residentData is not present, call the create function
-        const response = await createResident(ownerData);
-        console.log('Data saved successfully:', response);
-      }
-      navigate('/admin/residence'); // Navigate to the desired route after successful submission
+        let response;
+        if (residentData) {
+            console.log(residentData, "residentData");
+            response = await updateResident(residentData._id, ownerData);
+            console.log('Data updated successfully:', response);
+        } else {
+            response = await createResident(ownerData);
+            console.log('Data saved successfully:', response);
+        }
+
+        // Check if the response indicates success
+        if (response && response.success) {
+            navigate('/admin/residence'); // Navigate after successful operation
+        } else {
+            console.error('Failed to update/create resident:', response);
+        }
     } catch (error) {
-      console.error('Error saving data:', error.response ? error.response.data : error.message);
-      // Log the error response for more details
+        console.error('Error saving data:', error);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        }
     }
   };
 
   const renderOwnerForm = () => (
     <div className="">
-      {/* Owner/Tenant Details */}
       <div className="flex sm:grid-cols-1 md:grid-cols-2 items-start space-x-4 bg-white px-3 pt-3 pb-4 rounded-lg">
         <div className="flex-shrink-0">
           <div className="relative w-20 h-20 ">
@@ -304,9 +287,7 @@ export const Form = () => {
           </div>
         </div>
 
-        {/* Form Fields */}
         <div className="flex-1 grid gap-6">
-          {/* Top Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -346,7 +327,6 @@ export const Form = () => {
             </div>
           </div>
 
-          {/* Bottom Row */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-2">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -415,17 +395,14 @@ export const Form = () => {
         </div>
       </div>
 
-      {/* Common form sections can be added here */}
       {renderCommonFormSections()}
     </div>
   );
-
 
   const renderTenantForm = () => (
     <div className="">
       <div className="bg-white p-4 rounded-lg mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Owner Full Name */}
           <div className="flex flex-col">
             <label className="text-neutral-700 font-semibold">
               Owner Full Name<span className="text-red-500">*</span>
@@ -439,7 +416,6 @@ export const Form = () => {
             />
           </div>
 
-          {/* Owner Phone */}
           <div className="flex flex-col">
             <label className="text-neutral-700 font-semibold">
               Owner Phone<span className="text-red-500">*</span>
@@ -452,7 +428,6 @@ export const Form = () => {
             />
           </div>
 
-          {/* Owner Address */}
           <div className="flex flex-col">
             <label className="text-neutral-700 font-semibold">
               Owner Address<span className="text-red-500">*</span>
@@ -500,9 +475,7 @@ export const Form = () => {
           </div>
         </div>
 
-        {/* Form Fields */}
         <div className="flex-1 grid gap-6 py-2">
-          {/* Top Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -542,7 +515,6 @@ export const Form = () => {
             </div>
           </div>
 
-          {/* Bottom Row */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -606,30 +578,26 @@ export const Form = () => {
         </div>
       </div>
 
-      {/* Rest of the form components */}
       {renderCommonFormSections()}
     </div>
   );
 
-
   const renderCommonFormSections = () => {
     const handleDragOver = (event) => {
-      event.preventDefault(); // Prevent default behavior (Prevent file from being opened)
+      event.preventDefault();
     };
 
     const handleDrop = (event) => {
-      event.preventDefault(); // Prevent default behavior
-      const files = event.dataTransfer.files; // Get the dropped files
+      event.preventDefault();
+      const files = event.dataTransfer.files;
       if (files.length > 0) {
-        const file = files[0]; // Get the first file
+        const file = files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
-          // Handle the file upload (you can call your upload function here)
-          console.log(e.target.result); // For demonstration, log the file data
-          // You can also set the image or file data to state if needed
-          setSelectedImage(e.target.result); // Example: set the uploaded image
+          console.log(e.target.result);
+          setSelectedImage(e.target.result);
         };
-        reader.readAsDataURL(file); // Read the file as a data URL
+        reader.readAsDataURL(file);
       }
     };
 
@@ -675,7 +643,6 @@ export const Form = () => {
 
     return (
       <>
-        {/* Document Uploads */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-white mt-3 p-3 rounded">
           {renderUploadBox("Upload Aadhar Card (Front Side)", "aadharFront")}
           {renderUploadBox("Upload Aadhar Card (Back Side)", "aadharBack")}
@@ -683,7 +650,6 @@ export const Form = () => {
           {renderUploadBox("Rent Agreement", "rentAgreement")}
         </div>
 
-        {/* Member Counting */}
         <div className="bg-white p-3 rounded-lg my-5">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold">Member Counting (Other Members)</h3>
@@ -708,8 +674,8 @@ export const Form = () => {
                     type="text"
                     className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
                     placeholder="Enter Name"
-                    value={members[index]?.fullName || ''}
-                    onChange={(e) => handleInputChange(index, 'fullName', e.target.value)}
+                    value={members[index]?.name || ''}
+                    onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                   />
                 </div>
                 <div>
@@ -718,8 +684,8 @@ export const Form = () => {
                     type="tel"
                     className="mt-1 block w-full border bg-transparent rounded-md shadow-sm text-sm px-4 py-1"
                     placeholder="+91"
-                    value={members[index]?.phone || ''}
-                    onChange={(e) => handleInputChange(index, 'phone', e.target.value)}
+                    value={members[index]?.phoneNumber || ''}
+                    onChange={(e) => handleInputChange(index, 'phoneNumber', e.target.value)}
                   />
                 </div>
                 <div>
@@ -770,7 +736,6 @@ export const Form = () => {
           </div>
         </div>
 
-        {/* Vehicle Counting */}
         <div className="bg-white p-3 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold">Vehicle Counting</h3>
@@ -808,6 +773,7 @@ export const Form = () => {
                       type="text"
                       className="mt-1 block w-full border rounded-md bg-transparent text-sm px-4 py-1"
                       placeholder="Enter Name"
+                      value={vehicles[index]?.name || ''}
                       onChange={(e) => handleInputVecChange(index, 'name', e.target.value)}
                     />
                   </div>
@@ -817,6 +783,7 @@ export const Form = () => {
                       type="text"
                       className="mt-1 block w-full border rounded-md shadow-sm text-sm bg-transparent px-4 py-1"
                       placeholder="Enter Number"
+                      value={vehicles[index]?.number || ''}
                       onChange={(e) => handleInputVecChange(index, 'number', e.target.value)}
                     />
                   </div>
@@ -826,28 +793,27 @@ export const Form = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex justify-end space-x-4 mt-3">
           <button
             type="button"
             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-[#202224] hover:bg-gray-50 w-[10%]"
-            onClick={() => navigate('/admin/residence')} // Cancel button
+            onClick={() => navigate('/admin/residence')}
           >
             Cancel
           </button>
-          {residentData ? ( // Check if residentData is available
+          {residentData ? (
             <button
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-blue-700 hover:bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:text-white transition duration:200 w-[10%]"
             >
-              Edit {/* Show Edit button when residentData is present */}
+              Edit
             </button>
           ) : (
             <button
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-blue-700 hover:bg-gradient-to-r from-[#FE512E] to-[#F09619] hover:text-white transition duration:200 w-[10%]"
             >
-              Create {/* Show Create button when residentData is not present */}
+              Create
             </button>
           )}
         </div>
@@ -862,11 +828,11 @@ export const Form = () => {
         <Navbar />
         <div className="min-h-screen bg-blue-50 sm:p-6 lg:p-8">
           <div className="w-full max-w-10xl bg-[#f0f5fb] rounded-lg p-4 sm:p-6 lg:p-8">
-            <form onSubmit={handleSubmit}> {/* Add form submission handler */}
+            <form onSubmit={handleSubmit}>
               <div className="flex flex-col sm:flex-row justify-between items-center bg-[#f0f5fb]">
                 <div className="flex flex-wrap">
                   <button
-                    type="button" // Prevents form submission
+                    type="button"
                     className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "owner"
                       ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
                       : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
@@ -876,7 +842,7 @@ export const Form = () => {
                     Owner
                   </button>
                   <button
-                    type="button" // Prevents form submission
+                    type="button"
                     className={`text-lg font-semibold px-4 py-2 m-1 ${activeTab === "tenant"
                       ? "text-[#FFFFFF] border-b-2 bg-gradient-to-r from-[#FE512E] to-[#F09619] p-2 rounded-t-lg border-[#FE512E] border-b-2"
                       : "text-[#202224] border-[#FE512E] border-b-2 bg-white p-2 rounded-t-lg"
@@ -888,18 +854,13 @@ export const Form = () => {
                 </div>
               </div>
 
-              {/* Conditional rendering based on activeTab */}
               <div className="mt-4">
                 {activeTab === "tenant" ? renderTenantForm() : renderOwnerForm()}
               </div>
-
-              {/* Action Buttons */}
-
             </form>
           </div>
         </div>
       </div>
-
     </>
   );
 };
