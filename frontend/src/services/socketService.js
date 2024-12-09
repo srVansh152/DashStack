@@ -6,7 +6,8 @@ class SocketService {
     this.baseURL = 'https://dashstack-90hs.onrender.com';
   }
 
-  connect() {
+  connect() { 
+    
     if (!this.socket) {
       this.socket = io(this.baseURL, {
         transports: ['websocket'],

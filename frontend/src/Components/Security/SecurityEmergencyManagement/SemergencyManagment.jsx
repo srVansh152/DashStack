@@ -18,8 +18,9 @@ const SemergencyManagment = () => {
 
             console.log(alertData)
             const response = await axios.post(
-                `http://localhost:5000/api/emergency-alerts`,
+                `https://dashstack-90hs.onrender.com/api/emergency-alerts`,
                 alertData,
+                
                 {
                     headers: {
                         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
