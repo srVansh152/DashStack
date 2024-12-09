@@ -56,12 +56,14 @@ exports.createVisitorLog = async (req, res) => {
 // Get all visitor logs for a specific society
 exports.getVisitorLogs = async (req, res) => {
   try {
-    // Ensure `societyId` is available
-    if (!req.user.societyId) {
+    // Check for societyId or fallback to society
+    const societyId = req.user.societyId || req.user.society;
+
+    if (!societyId) {
       return res.status(400).json({ message: 'Society ID is missing. Please log in again.' });
     }
 
-    const visitorLogs = await VisitorLog.find({ societyId: req.user.societyId })
+    const visitorLogs = await VisitorLog.find({ societyId })
       .populate('securityId', 'fullName') // Populate security guard's full name
       .sort({ date: -1 });
 
