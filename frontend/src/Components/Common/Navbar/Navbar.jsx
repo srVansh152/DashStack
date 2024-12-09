@@ -1,82 +1,78 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Icons } from "../../../constants";
-import { getProfile } from '../../../utils/api';
-import Notification from '../Notifications/Notifications';
-import { io } from 'socket.io-client';
+import { getProfile } from "../../../utils/api";
+import Notification from "../Notifications/Notifications";
+import { io } from "socket.io-client";
 
-
-
-const socket = io('https://dashstack-90hs.onrender.com');
-
+const socket = io("https://dashstack-90hs.onrender.com");
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
-
   useEffect(() => {
     const initializeSocket = async () => {
       await fetchUserData();
 
+      // Listen for new notifications from the socket server
       socket.on("new-notification", (data) => {
         addNotification(data.message, data.type);
       });
-      console.log("in socket ", user);
-      if (socket) {
-        const token = localStorage.getItem('token');
-        const societyId = await getProfile(token);
-        const society = societyId.data.profile.society;
-        const societyIdObj = societyId.data.profile.societyId;
 
-        const id = (society && society._id) ? society._id : (societyIdObj && societyIdObj._id);
+      // Join the society room using society ID
+      const token = localStorage.getItem("token");
+      const profileData = await getProfile(token);
+      const society = profileData.data.profile.society;
+      const societyId = profileData.data.profile.societyId;
 
-        if (id) {
-          console.log("societyId", id);
-          socket.emit('join-society', id);
-        } else {
-          console.error('Society ID not found');
-        }
+      const id = society?._id || societyId?._id;
+
+      if (id) {
+        socket.emit("join-society", id);
+      } else {
+        console.error("Society ID not found.");
       }
     };
 
     initializeSocket();
 
+    // Cleanup socket on component unmount
     return () => {
       socket.off("new-notification");
+      socket.disconnect();
     };
-  }, [socket]);
+  }, []);
 
-  const removeNotification = (id) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
-
-
+  // Fetch user data
   const fetchUserData = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await getProfile(token);
-      console.log(response);
       setUser(response.data.profile);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error("Error fetching user data:", error);
     }
   };
 
-  const addNotification = (message , type) => {
+  // Add new notification
+  const addNotification = (message = "Default notification", type = "info") => {
     const newNotification = {
       id: Date.now(),
       notificationMessage: message,
       notificationType: type,
     };
-    console.log("newNotification",newNotification); 
     setNotifications((prev) => [...prev, newNotification]);
   };
 
+  // Remove a notification
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+  };
+
   return (
-    <div className='sticky  top-0 left-0 z-10'>
-      <header className="bg-white py-2 mb-3 border-b flex justify-between items-center shadow-sm  top-0 z-10">
-        {/* Search Bar - hidden on smaller screens */}
+    <div className="sticky top-0 left-0 z-10">
+      <header className="bg-white py-2 mb-3 border-b flex justify-between items-center shadow-sm z-10">
         <div className="flex items-center flex-1">
           <input
             type="search"
@@ -87,41 +83,39 @@ const Navbar = () => {
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() => addNotification()}
+            onClick={() => addNotification("Sample Notification", "info")}
             className="p-2 border rounded-lg hover:bg-gray-100"
           >
             {Icons.Bell}
           </button>
 
-          {/* Display Notifications */}
-          {notifications.map((notification) => (
-            <Notification
-              key={notification._id}
-              message={notification.notificationMessage}
-              type={notification.notificationType}
-              onClose={() => removeNotification(notification.id)}
-            />
-          ))}
+          {/* Render Notifications */}
+          <Notification notifications={notifications} onClose={removeNotification} />
 
-          {/* Profile Section */}
-          <div className='profile'>
-            <Link to="/admin/editprofile" className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all">
+          {/* User Profile Section */}
+          <div className="profile">
+            <Link
+              to="/admin/editprofile"
+              className="hidden sm:flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-all"
+            >
               <span
-                className="w-8 h-8  rounded-full border-2 border-gray-300 hover:border-orange-500 flex items-center justify-center"
-                style={{ backgroundColor: user ? user.color : 'gray' }}
+                className="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-orange-500 flex items-center justify-center"
+                style={{ backgroundColor: user ? user.color : "gray" }}
               >
-                {(user ? (user.firstname || user.fullName || '?') : '?').charAt(0)}
+                {(user ? user.firstname.charAt(0) || user.fullName.charAt(0) || "?" : "?")}
               </span>
               <div className="hidden md:block">
-                <p className="text-sm font-medium">{user ? (user.firstname || user.fullName || 'Loading...') : 'Loading...'}</p>
-                <p className="text-xs text-gray-500">{user ? user.role : 'Loading...'}</p>
+                <p className="text-sm font-medium">
+                  {user ? user.firstname || user.fullName || "Loading..." : "Loading..."}
+                </p>
+                <p className="text-xs text-gray-500">{user ? user.role : "Loading..."}</p>
               </div>
             </Link>
           </div>
         </div>
       </header>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

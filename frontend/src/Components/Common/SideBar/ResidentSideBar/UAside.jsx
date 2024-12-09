@@ -255,7 +255,13 @@ function SidebarItem({ icon: Icon, label, path, active, hovered, onClick, onMous
       )}
       <a
         href={`/${path}`}
-        onClick={onClick}
+        onClick={(e) => {
+          e.preventDefault();
+          if (isLogout) {
+            localStorage.clear(); // Clear all localStorage data
+          }
+          onClick(e);
+        }}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         className={`relative flex w-full items-center gap-3 px-4 py-3 text-sm transition-all duration-200 rounded-lg my-1

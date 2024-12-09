@@ -238,6 +238,7 @@ export default function Aside() {
           hovered={hoveredMenu === 'Logout'}
           onClick={(e) => {
             e.preventDefault()
+            localStorage.clear()
             navigate('/')
             setCurrentPath('/')
             setIsSidebarOpen(false)

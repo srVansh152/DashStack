@@ -111,7 +111,13 @@ function SAside() {
           </div>
 
           {/* Logout Button */}
-          <button className="mt-auto flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100 rounded-lg font-bold hover:scale-105 transition-all duration-200">
+          <button 
+            className="mt-auto flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100 rounded-lg font-bold hover:scale-105 transition-all duration-200"
+            onClick={() => {
+              localStorage.clear(); // Clear all localStorage data
+              navigate('/login'); // Redirect to login page or any other page
+            }}
+          >
             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
