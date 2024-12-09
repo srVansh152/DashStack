@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 class SocketService {
   constructor() {
     this.socket = null;
-    this.baseURL = 'http://localhost:5000';
+    this.baseURL = 'https://dashstack-90hs.onrender.com';
   }
 
   connect() {
