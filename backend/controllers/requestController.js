@@ -7,7 +7,7 @@ exports.createRequest = async (req, res) => {
 
     const request = new Request({
       requestor: req.user._id,
-      society: req.user.society,
+      society: req.user.society._id,
       requestName,
       description,
       wing,
@@ -72,7 +72,7 @@ exports.deleteRequest = async (req, res) => {
 exports.listRequestsBySocietyAndAdmin = async (req, res) => {
   try {
     const requests = await Request.find({
-      society: req.user.society
+      society: req.user.society._id
     });
 
     res.status(200).json({ requests });

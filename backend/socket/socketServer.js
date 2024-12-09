@@ -2,8 +2,10 @@ const socketIO = require('socket.io');
 const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 
+let io; // Declare io at the top to make it accessible in getIO
+
 const initializeSocket = (server) => {
-  const io = socketIO(server, {
+  io = socketIO(server, {
     cors: {
       origin: "http://localhost:5173",
       methods: ["GET", "POST"],
@@ -17,12 +19,22 @@ const initializeSocket = (server) => {
   io.on('connection', (socket) => {
     console.log('New socket connection:', socket.id);
 
+    // Join society room
+    socket.on('join-society', (societyId) => {
+      socket.join(`society-${societyId}`);
+      console.log(`joined society room: society-${societyId}`);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected:', socket.id);
+    });
+
     // Handle user connection
     socket.on('userConnected', (userId) => {
       console.log('User connected:', userId);
       activeUsers.set(userId, socket.id);
       socket.userId = userId;
-      
+
       // Broadcast userConnected event to all clients
       io.emit('userConnected', userId);
 
@@ -36,7 +48,7 @@ const initializeSocket = (server) => {
         console.log('joinChat event received without chatId');
         return;
       }
-      
+
       console.log(`User ${userId} joining chat ${chatId}`);
       socket.join(chatId);
     });
@@ -45,7 +57,7 @@ const initializeSocket = (server) => {
     socket.on('sendMessage', async (messageData) => {
       try {
         const { chatId, text, senderId } = messageData;
-        
+
         // Create and save message
         const newMessage = new Message({
           chat: chatId,
@@ -97,4 +109,12 @@ const initializeSocket = (server) => {
   return io;
 };
 
-module.exports = initializeSocket;
+// Add getIO function
+const getIO = () => {
+  if (!io) {
+    throw new Error("Socket.IO has not been initialized. Please call init() first.");
+  }
+  return io;
+};
+
+module.exports = { initializeSocket, getIO };

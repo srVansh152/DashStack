@@ -1,4 +1,8 @@
 const Announcement = require('../models/Announcement');
+const notificationService = require('../socket/notificationService');
+const Resident = require('../models/Resident');
+const Security = require('../models/SecurityGuardModel');
+const User = require('../models/User');
 
 exports.createAnnouncement = async (req, res) => {
   try {
@@ -16,8 +20,38 @@ exports.createAnnouncement = async (req, res) => {
       adminId: req.user._id,
       societyId: req.user.society._id,
     });
-
     await announcement.save();
+    
+    // Fetch all users in the society
+    const usersInSociety = await User.find({
+      society: req.user.society._id
+    }).select('_id');
+    
+    console.log("notification sent");
+    // Fetch all residents in the society
+    const residentsInSociety = await Resident.find({
+      society: req.user.society._id
+    }).select('_id');
+
+    // Fetch all security guards in the society
+    const securityInSociety = await Security.find({
+      societyId: req.user.society._id 
+    }).select('_id');
+
+    // Combine all user IDs
+    const targetUserIds = [
+      ...usersInSociety.map(user => user._id),
+      ...residentsInSociety.map(resident => resident._id),
+      ...securityInSociety.map(security => security._id)
+    ];
+
+    await notificationService.sendNotification({
+      type: 'announcement',
+      message: `New announcement created: ${announcement.title}`,
+      societyId: req.user.society._id,
+      targetUsers: targetUserIds,
+    });
+
     res.status(201).json({ message: 'Announcement created successfully', announcement });
   } catch (error) {
     res.status(500).json({ error: error.message });
