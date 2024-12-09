@@ -53,7 +53,7 @@ export default function Upersonaldetail() {
         <>
             <div className="flex">
                 <UAside className="flex-shrink-0 sticky top-0" />
-                <div className="mainn flex-1 min-h-screen bg-gray-50 p-4">
+                <div className="mainn flex-1 min-h-screen bg-gray-50 p-4 pt-0  overflow-y-auto" style={{ maxHeight: 'calc(100vh - 64px)' }}>
                     <Navbar />
                     {/* Tabs */}
                     <div className="flex mb-4 mt-5">

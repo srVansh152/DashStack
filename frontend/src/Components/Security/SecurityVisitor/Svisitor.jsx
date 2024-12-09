@@ -75,15 +75,15 @@ const Svisitor = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <SAside />
-      <div className="flex-1 min-h-screen bg-slate-50">
+      <div className="flex-1 flex flex-col bg-slate-50">
         {/* Navigation */}
         <Navbar />
 
         {/* Main Content */}
-        <div className='bg-white px-4 rounded py-4'>
-          <div className="p-6">
+        <div className='bg-white px-4 rounded py-4 flex-1 overflow-hidden'>
+          <div className="p-6 h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-xl font-semibold">Visitor Tracking</h1>
               <div className="flex gap-4">
@@ -96,7 +96,7 @@ const Svisitor = () => {
               </div>
             </div>
 
-            <div className=" rounded-lg shadow">
+            <div className="rounded-lg shadow flex-1 overflow-y-auto">
               <div className="grid grid-cols-5 gap-4 px-6 py-3 border-b text-sm text-gray-500 bg-[#EEF1FD]">
                 <div>Visitor Name</div>
                 <div>Phone Number</div>

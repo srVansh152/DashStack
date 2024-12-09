@@ -45,7 +45,7 @@ exports.updateNote = async (req, res) => {
 // View all notes for the authenticated user
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ adminId: req.user._id });
+    const notes = await Note.find({ societyId: req.user.society._id });
     res.json(notes);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching notes', error: error.message });

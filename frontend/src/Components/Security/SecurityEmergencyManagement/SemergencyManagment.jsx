@@ -18,7 +18,7 @@ const SemergencyManagment = () => {
 
             console.log(alertData)
             const response = await axios.post(
-                `https://dashstack-90hs.onrender.com/api/emergency-alerts`,
+                `http://localhost:5000/api/emergency-alerts`,
                 alertData,
                 {
                     headers: {

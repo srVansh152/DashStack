@@ -10,6 +10,7 @@ exports.createImportantNumber = async (req, res) => {
       phoneNumber,
       work,
       createdBy: req.user._id,  // user ID from token
+      society: req.user.society.id,
     });
 
     res.status(201).json({
@@ -24,8 +25,8 @@ exports.createImportantNumber = async (req, res) => {
 // Get all important numbers
 exports.getImportantNumbers = async (req, res) => {
   try {
-    const numbers = await ImportantNumber.find({ createdBy: req.user._id });
-
+    const numbers = await ImportantNumber.find({ society: req.user.society.id });
+    console.log("sdasdasd",numbers);
     res.status(200).json({
       status: 'success',
       data: numbers,
