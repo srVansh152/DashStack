@@ -170,7 +170,7 @@ export default function RegistrationPage() {
         </div>
         <div className="flex-grow flex flex-col items-center justify-center">
           <img
-            src="/image/Registration.png"
+            src="assets/image/Registration.png"
             alt="Society Management Illustration"
           />
         </div>
@@ -179,7 +179,7 @@ export default function RegistrationPage() {
       {/* Right side */}
       <div className="lg:w-1/2 p-8 relative">
         <div className="absolute inset-0 z-0">
-          <img src="public/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
+          <img src="/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
         </div>
         <div className="w-3/5 mx-auto shadow-lg p-10 rounded-lg relative z-10 bg-white">
           <h1 className="text-2xl font-bold mb-6">Registration</h1>

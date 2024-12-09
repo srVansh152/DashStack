@@ -286,16 +286,16 @@ const getStatusStyles = (status) => {
                           </td>
                           <td className=" flex py-4 whitespace-nowrap text-right text-md font-medium">
                             <button onClick={() => handleEditIncome(complaint._id)} className="text-green-600 hover:text-green-900 mr-2">
-                              <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                              <img src="/image/Dashborad/edit.png" alt="" srcset="" />
                               <span className="sr-only">Edit</span>
                             </button>
                             <button onClick={() => handleViewIncome(complaint._id)} className="text-blue-600 hover:text-blue-900 mr-2">
-                            <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+                            <img src="/image/Dashborad/view.png" alt="" srcset="" />
 
                               <span className="sr-only">View</span>
                             </button>
                             <button onClick={() => handleDeleteIncome(complaint._id)} className="text-red-600 hover:text-red-900">
-                            <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+                            <img src="/image/Dashborad/delete.png" alt="" srcset="" />
 
                               <span className="sr-only">Delete</span>
                             </button>

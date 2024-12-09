@@ -116,7 +116,7 @@ const handleVerifyOtp = async () => {
       {/* Right side with login form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
         <div className="absolute inset-0 z-0">
-          <img src="public/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
+          <img src="/image/vector.png" className="object-cover w-full h-full" alt="Background Vector" />
         </div>
         <div className="w-full max-w-md shadow-lg p-6 rounded-md bg-white z-10">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">Enter OTP</h2>

@@ -286,17 +286,17 @@ export default function ExpenseTracker() {
                                                         <div className="flex items-center gap-2">
                                                             <button onClick={() => handleEditModel(expense)} className="p-1 text-green-500 hover:text-green-600 focus:outline-none">
                                                                 
-                                                                <img src="/public/image/Dashborad/edit.png" alt="" srcset="" />
+                                                                <img src="/image/Dashborad/edit.png" alt="" srcset="" />
                                                             </button>
                                                             <button onClick={() => handleViewModel(expense._id)} className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                            <img src="/public/image/Dashborad/view.png" alt="" srcset="" />
+                                                            <img src="/image/Dashborad/view.png" alt="" srcset="" />
 
                                                             </button>
                                                             <button onClick={() => {
                                                                 setOpenDeleteModel(true);
                                                                 setExpenseToDelete(expense._id); 
                                                             }} className="p-1 text-red-500 hover:text-red-600 focus:outline-none">
-                                                                                                                       <img src="/public/image/Dashborad/delete.png" alt="" srcset="" />
+                                                                                                                       <img src="/image/Dashborad/delete.png" alt="" srcset="" />
 
                                                             </button>
                                                         </div>
