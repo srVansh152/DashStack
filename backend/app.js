@@ -27,7 +27,7 @@ app.set('io', io);
 app.use(express.json());
 app.use(helmet());
 app.use(cors({
-  origin: "https://dashstack-9bcbc.web.app/",
+  origin: "https://dashstack-9bcbc.web.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true
 }));
