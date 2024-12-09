@@ -1,111 +1,46 @@
-import React, { useState } from 'react'
+import React, { useEffect } from "react";
 
-import { BsBellFill } from "react-icons/bs";
-
-import { Link } from 'react-router-dom';
-
-const Notifications = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-
-    const notifications = [
-    {
-      id: 1,
-      user: 'Evelyn Harper',
-      userCode: 'A- 101',
-      message: 'gave a fund of',
-      amount: '1000 rupees for Navratri.',
-      time: '30 Minutes ago',
-      avatar: '/api/placeholder/40/40',
-      type: 'fund'
-    },
-    {
-      id: 2,
-      user: 'Evelyn Harper',
-      userCode: 'A- 101',
-      message: 'gave a',
-      linkText: 'Maintenance',
-      amount: ' of 1000 rupees.',
-      time: '2 days ago',
-      avatar: '/api/placeholder/40/40',
-      type: 'maintenance'
-    },
-    {
-      id: 3,
-      user: 'Ganesh Chaturthi',
-      userCode: 'A- 101',
-      amount: '₹ 1,500',
-      subtitle: 'Per Person Amount :',
-      description: 'The celebration of Ganesh Chaturthi involves the installation of clay idols of Lord Ganesh in OutResident.',
-      time: '2 days ago',
-      type: 'event'
-    }
-  ];
+const Notification = ({ message, type, onClose }) => {
   return (
-    <div>
-       <div className="flex items-center gap-4">
-            <div className="relative">
-              {/* Notification Bell Button */}
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 rounded-lg border hover:bg-gray-100 transition-colors"
-              >
-                <BsBellFill  className="w-5 h-5 text-black" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-
-              {/* Notification Dropdown Panel */}
-              {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg border overflow-hidden z-20">
-                  <div className="flex justify-between items-center p-4 border-b">
-                    <h2 className="font-semibold text-gray-800">Notifications</h2>
-                    <button
-                      onClick={() => { }}
-                      className="text-sm text-blue-500 hover:text-blue-600 transition-colors"
-                    >
-                      Clear all
-                    </button>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.map((notification) => (
-                      <div key={notification.id} className="p-4 border-b hover:bg-gray-50 transition-colors">
-                        <div className="flex gap-3">
-                          {/* Avatar or Icon */}
-                          {notification.type !== 'event' ? (
-                            <img
-                              src='/image/3504bec22d3fe96515e7c73aeadb9d13.jpg'
-                              alt=""
-                              className="w-10 h-10 rounded-full"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                              <span className="text-blue-500 text-xl">G</span>
-                            </div>
-                          )}
-
-                          {/* Content */}
-                          <div className="flex-1">
-                            <p className="text-sm text-gray-800">
-                              <span className="font-medium">{notification.user}</span> {notification.message}
-                              {notification.linkText && (
-                                <span className="text-blue-500"> {notification.linkText}</span>
-                              )}
-                            </p>
-                            <span className="text-xs text-gray-400">{notification.time}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Profile Section */}
-           
+    <div
+      className={`fixed right-36 top-[6%] p-4 rounded-md shadow-lg w-96 h-96 z-50 transition-all duration-300 ease-in-out
+      ${type === 'success' ? 'bg-green-500 text-white' :
+          type === 'error' ? 'bg-red-500 text-white' :
+            'bg-white text-black'}`}
+    >
+      <div className=" items-center justify-between">
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="ml-4 text-black font-bold hover:text-gray-200"
+            aria-label="Close notification"
+          >
+            &times;
+          </button>
+        </div>
+        <div className=" p-1">
+        <div  className="mb-4 border rounded-lg shadow-md p-3 bg-white">
+          <div>
+            <p className="font-bold text-2xl pb-3">New notification</p>
           </div>
-    </div>
-  )
-}
+          <div className="p-1 bg-slate-200 font-bold">
+            Title
+          </div>
+          <div className="p-1">
+            <span>{message}</span>
+          </div>
+          <div className="p-1 bg-slate-200 font-bold">
+            Type
+          </div>
+          <div className="p-1">
+            <span>{type}</span>
+          </div>
+        </div>
+        </div>
 
-export default Notifications
+      </div>
+    </div>
+  );
+};
+
+export default Notification;
