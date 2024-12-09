@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
 const securityGuardSchema = new mongoose.Schema(
   {
@@ -16,6 +16,8 @@ const securityGuardSchema = new mongoose.Schema(
     societyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Society', required: true },
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     role: { type: String, default: 'security' },
+    resetOtp: String,
+    otpExpires: Date,
   },
   { timestamps: true }
 );
@@ -23,13 +25,20 @@ const securityGuardSchema = new mongoose.Schema(
 // Hash password before saving
 securityGuardSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next(); // Skip if password is not modified
-  this.password = await bcrypt.hash(this.password, 10);
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
 // Method to compare passwords
 securityGuardSchema.methods.comparePassword = async function (enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Function to update password
+securityGuardSchema.methods.updatePassword = async function (newPassword) {
+  this.password = newPassword;
+  await this.save(); // This will trigger the pre('save') middleware
 };
 
 module.exports = mongoose.model('SecurityGuard', securityGuardSchema);

@@ -1,4 +1,8 @@
 const EmergencyAlert = require('../models/EmergencyAlert');
+const User = require('../models/User');
+const Resident = require('../models/Resident');
+const Security = require('../models/SecurityGuardModel');
+const notificationService = require('../socket/notificationService');
 
 // Create a new emergency alert
 exports.createEmergencyAlert = async (req, res) => {
@@ -19,6 +23,36 @@ exports.createEmergencyAlert = async (req, res) => {
     });
 
     await emergencyAlert.save();
+    
+    // Fetch all users in the society
+    const usersInSociety = await User.find({
+      society: req.user.society._id
+    }).select('_id');
+    
+    console.log("notification sent");
+    // Fetch all residents in the society
+    const residentsInSociety = await Resident.find({
+      society: req.user.society._id
+    }).select('_id');
+
+    // Fetch all security guards in the society
+    const securityInSociety = await Security.find({
+      societyId: req.user.society._id 
+    }).select('_id');
+
+    // Combine all user IDs
+    const targetUserIds = [
+      ...usersInSociety.map(user => user._id),
+      ...residentsInSociety.map(resident => resident._id),
+      ...securityInSociety.map(security => security._id)
+    ];
+
+    await notificationService.sendNotification({
+      type: 'emergency',
+      message: `New emergency alert created: ${emergencyAlert.description}`,
+      societyId: req.user.society._id,
+      targetUsers: targetUserIds,
+    });
     res.status(201).json({ message: 'Emergency alert created successfully', alert: emergencyAlert });
   } catch (error) {
     res.status(500).json({ error: error.message });

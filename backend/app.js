@@ -9,7 +9,7 @@ const { Server } = require("socket.io")
 const http = require('http');
 const errorHandler = require('./middlewares/errorMiddleware'); // Import the error middleware
 const { protect } = require('./middlewares/authMiddleware');
-const initializeSocket = require('./socket/socketServer');
+const { initializeSocket } = require('./socket/socketServer');
 
 // Import routes
 const chatRoutes = require('./routes/chatRoutes');
