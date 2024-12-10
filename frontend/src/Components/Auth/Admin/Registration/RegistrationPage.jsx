@@ -170,7 +170,7 @@ export default function RegistrationPage() {
         </div>
         <div className="flex-grow flex flex-col items-center justify-center">
           <img
-            src="assets/image/Registration.png"
+            src="/image/Registration.png"
             alt="Society Management Illustration"
           />
         </div>
