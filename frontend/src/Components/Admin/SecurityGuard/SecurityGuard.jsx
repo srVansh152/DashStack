@@ -412,8 +412,8 @@ function SecurityGuard() {
                             >
                               <img 
                                 src={guard.shift === "day" 
-                                  ? "/image/securityGurad/light.png" 
-                                  : "/image/securityGurad/night.png"
+                                  ? "src/assets/image/securityGurad/light.png" 
+                                  : "src/assets/image/securityGurad/night.png"
                                 } 
                                 alt="" 
                                 className="w-4 h-4"
@@ -433,8 +433,8 @@ function SecurityGuard() {
                             >
                                <img 
                                 src={guard.gender === "male" 
-                                  ? "/image/securityGurad/male.png" 
-                                  : "/image/securityGurad/female.png"
+                                  ? "src/assets/image/securityGurad/male.png" 
+                                  : "src/assets/image/securityGurad/female.png"
                                 } 
                                 alt="" 
                                 className="w-4 h-4"
@@ -445,14 +445,14 @@ function SecurityGuard() {
                           <td className="p-4">
                             <div className="flex gap-2">
                               <button onClick={() => handleEditModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
-                                <img src="/image/Dashborad/edit.png" alt="" srcset="" />
+                                <img src="src/assets/image/Dashborad/edit.png" alt="" srcset="" />
                               </button>
                               <button onClick={() => handleViewModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
-                                <img src="/image/Dashborad/view.png" alt="" srcset="" />
+                                <img src="src/assets/image/Dashborad/view.png" alt="" srcset="" />
 
                               </button>
                               <button onClick={() => handleDeleteModel(guard)} className="p-1 rounded-full hover:bg-gray-100">
-                                <img src="/image/Dashborad/delete.png" alt="" srcset="" />
+                                <img src="src/assets/image/Dashborad/delete.png" alt="" srcset="" />
 
                               </button>
                             </div>

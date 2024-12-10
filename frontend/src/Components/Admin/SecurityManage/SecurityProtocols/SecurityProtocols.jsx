@@ -216,18 +216,18 @@ function SecurityProtocols() {
                           <td className="whitespace-nowrap px-6 py-4 text-sm text-[#202224]">{protocol.time}</td>
                           <td className="whitespace-nowrap px-6 py-4 text-sm flex space-x-2">
                             <button onClick={() => handleEditModel(protocol._id, protocol)} className="p-1 text-green-600 hover:text-green-800">
-                              <img src="/image/Dashborad/edit.png" alt="" />
+                              <img src="src/assets/image/Dashborad/edit.png" alt="" />
                             </button>
                             <button onClick={() => handleViewModel(protocol._id)}
                               className="p-1 text-blue-600 hover:text-blue-800">
-                              <img src="/image/Dashborad/view.png" alt="" />
+                              <img src="src/assets/image/Dashborad/view.png" alt="" />
 
                             </button>
                             <button onClick={() => {
                               setProtocolToDelete(protocol._id);
                               setOpenDeleteModel(true);
                             }} className="p-1 text-red-600 hover:text-red-800">
-                              <img src="/image/Dashborad/delete.png" alt="" />
+                              <img src="src/assets/image/Dashborad/delete.png" alt="" />
 
                             </button>
                           </td>

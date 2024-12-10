@@ -380,7 +380,7 @@ export default function Upersonaldetail() {
                                     {/* Left Side - Profile Image */}
                                     <div className="lg:w-2/12 w-full flex flex-col items-center mb-4 lg:mb-0">
                                         <img
-                                            src={ownerDetails?.resident?.photo || "/image/profile.png"}
+                                            src={ownerDetails?.resident?.photo || "src/assets/image/profile.png"}
                                             alt="Profile"
                                             className="w-28 h-28 rounded-full mb-2"
                                         />

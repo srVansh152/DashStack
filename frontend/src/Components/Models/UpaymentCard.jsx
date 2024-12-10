@@ -160,7 +160,7 @@ const UpaymentCard = () => {
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
             <div className="w-6 h-6 rounded">
-                <img src="/image/master.png" alt="" />
+                <img src="src/assets/image/master.png" alt="" />
             </div>
           </div>
         </div>
