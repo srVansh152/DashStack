@@ -192,7 +192,7 @@ const UOtherincome = () => {
             <label className="flex items-center justify-between p-3 rounded-lg border-2 hover:border-orange-500 bg-orange-50/50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded ">
-                  <img src="src/assets/image/master.png" alt="" />
+                  <img src="/image/master.png" alt="" />
                 </div>
                 <span className="font-medium">Master Card</span>
               </div>
@@ -208,7 +208,7 @@ const UOtherincome = () => {
             <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded">
-                <img src="src/assets/image/visa.png" alt="" />
+                <img src="/image/visa.png" alt="" />
 
                 </div>
                 <span className="text-gray-500">Visa Card</span>
@@ -224,7 +224,7 @@ const UOtherincome = () => {
             <label className="flex items-center justify-between p-3 rounded-lg border  hover:border-orange-500 bg-orange-50/50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded">
-                <img src="src/assets/image/Frame.png" alt="" />
+                <img src="/image/Frame.png" alt="" />
 
                 </div>
                 <span className="text-gray-500">Cash Payment</span>

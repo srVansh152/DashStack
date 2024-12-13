@@ -97,7 +97,7 @@ function Login() {
 
         </div>
         <div className="flex-grow  flex items-center justify-center">
-          <img src="src/assets/image/Group.png.png" alt="Society Management Illustration" className="max-w-full h-auto" />
+          <img src="/image/Group.png.png" alt="Society Management Illustration" className="max-w-full h-auto" />
         </div>
 
 

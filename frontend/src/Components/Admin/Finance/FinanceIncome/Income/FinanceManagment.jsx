@@ -224,7 +224,7 @@ function FinanceManagment() {
                                                 </td>
                                                 <td className="whitespace-nowrap px-4 py-3">
                                                     <button onClick={() => handleViewDetails(tenant)} className="rounded-full p-1 hover:bg-gray-100">
-                                                        <img src="src/assets/image/Dashborad/view.png" alt="" srcset="" />
+                                                        <img src="/image/Dashborad/view.png" alt="" srcset="" />
                                                     </button>
                                                 </td>
                                             </tr>

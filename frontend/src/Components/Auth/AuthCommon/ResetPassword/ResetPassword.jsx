@@ -61,7 +61,7 @@ function ResetPassword() {
         </div>
         <div className="flex-1 flex items-center justify-center">
           <img
-            src="src/assets/image/reset.png"
+            src="/image/reset.png"
             alt="Password reset illustration"
             className="max-w-full object-contain"
           />

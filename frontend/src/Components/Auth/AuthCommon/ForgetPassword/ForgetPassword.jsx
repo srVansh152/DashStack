@@ -47,7 +47,7 @@ function ForgetPassword() {
         </div>
         </div>
         <img
-          src="src/assets/image/forget.jpg"
+          src="/image/forget.jpg"
           alt="Password Reset Illustration"
           className="max-w-full"
         />

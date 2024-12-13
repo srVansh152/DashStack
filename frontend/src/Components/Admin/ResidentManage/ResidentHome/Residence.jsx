@@ -272,7 +272,7 @@ function Residence() {
 
                                 <span className="px-2 py-1 inline-flex items-center text-sm leading-5 font-semibold rounded-full bg-[#ECFFFF] text-[#14B8A6]">
                                   <img
-                                    src='src/assets/image/Resident/occu.png' // Corrected path to the image
+                                    src='/image/Resident/occu.png' // Corrected path to the image
                                     alt='Occupied'
                                     className='w-4 h-4 mr-2'
                                   />
@@ -291,14 +291,14 @@ function Residence() {
                                 >
                                   {resident.residentStatus === 'Tenant' && (
                                     <img
-                                      src="src/assets/image/Resident/user.png"
+                                      src="/image/Resident/user.png"
                                       alt="Tenant"
                                       className="w-4 h-4 mr-2"
                                     />
                                   )}
                                   {resident.residentStatus === 'Owner' && (
                                     <img
-                                      src="src/assets/image/Resident/tag-user.png"
+                                      src="/image/Resident/tag-user.png"
                                       alt="Owner"
                                       className="w-4 h-4 mr-2"
                                     />
@@ -312,13 +312,13 @@ function Residence() {
                               <td className="px-6 py-4 whitespace-nowrap text-md text-[#4F4F4F] font-semibold">{resident.vehicle}</td>
                               <td className="px-6 py-4 whitespace-nowrap text-md font-medium flex">
                                 <button onClick={() => handleEditModel(resident)} className="rounded p-1 text-green-600 hover:bg-green-50">
-                                  <img src="src/assets/image/Dashborad/edit.png" alt="" />
+                                  <img src="/image/Dashborad/edit.png" alt="" />
                                 </button>
                                 <button onClick={() => handleDeleteDetails(resident)} className="rounded p-1 text-red-600 hover:bg-red-50">
-                                  <img src="src/assets/image/Dashborad/delete.png" alt="" />
+                                  <img src="/image/Dashborad/delete.png" alt="" />
                                 </button>
                                 <button onClick={() => { handleProfileDetails(resident); }} className="rounded p-1 text-blue-600 hover:bg-blue-50">
-                                  <img src="src/assets/image/Dashborad/view.png" alt="View" />
+                                  <img src="/image/Dashborad/view.png" alt="View" />
                                 </button>
                               </td>
                             </tr>
@@ -460,7 +460,7 @@ function Residence() {
                     <div className="px-4 py-6">
                       <div className="flex flex-col items-center mb-6">
                         <img
-                          src={residentDetails.photo || "src/assets/image/profile.png"}
+                          src={residentDetails.photo || "/image/profile.png"}
                           alt={residentDetails.fullName}
                           className="w-20 h-20 rounded-full mb-2"
                         />
@@ -519,7 +519,7 @@ function Residence() {
                         <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
                           <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
-                              <img src="src/assets/image/Resident/Component54.png" alt="" />
+                              <img src="/image/Resident/Component54.png" alt="" />
                             </div>
                             <div>
                               <p className="font-medium text-gray-700">Adharcard Front Side.JPG</p>
@@ -529,7 +529,7 @@ function Residence() {
                           <button className="rounded-md p-2 hover:bg-gray-100">
                             {residentDetails.aadhaarFront ? (
                               <a href={residentDetails.aadhaarFront} target="_blank" rel="noopener noreferrer">
-                                <img src="src/assets/image/Resident/eye.png" alt="" />
+                                <img src="/image/Resident/eye.png" alt="" />
                               </a>
                             ) : 'N/A'}
                           </button>
@@ -537,7 +537,7 @@ function Residence() {
                         <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
                           <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
-                              <img src="src/assets/image/Resident/Component55.png" alt="" />
+                              <img src="/image/Resident/Component55.png" alt="" />
                             </div>
                             <div>
                               <p className="font-medium text-gray-700">Address Proof Front Side.PDF</p>
@@ -547,7 +547,7 @@ function Residence() {
                           <button className="rounded-md p-2 hover:bg-gray-100">
                             {residentDetails.aadhaarBack ? (
                               <a href={residentDetails.aadhaarBack} target="_blank" rel="noopener noreferrer">
-                                <img src="src/assets/image/Resident/eye.png" alt="" />
+                                <img src="/image/Resident/eye.png" alt="" />
                               </a>
                             ) : 'N/A'}
                           </button>

@@ -266,14 +266,14 @@ function CreateComplain() {
                         <td className="whitespace-nowrap px-6 py-4 text-right">
                           <div className="flex justify-end space-x-2">
                             <button onClick={() => handleEditModel(complaint)} className="rounded  text-green-600 hover:bg-green-50">
-                              <img src="src/assets/image/Dashborad/edit.png" alt="" srcset="" />
+                              <img src="/image/Dashborad/edit.png" alt="" srcset="" />
 
                             </button>
                             <button onClick={() => handleViewModel(complaint._id)} className="rounded  text-blue-600 hover:bg-blue-50">
-                              <img src="src/assets/image/Dashborad/view.png" alt="" srcset="" />
+                              <img src="/image/Dashborad/view.png" alt="" srcset="" />
                             </button>
                             <button onClick={() => handleDeleteModel(complaint._id)} className="rounded  text-red-600 hover:bg-red-50">
-                              <img src="src/assets/image/Dashborad/delete.png" alt="" srcset="" />
+                              <img src="/image/Dashborad/delete.png" alt="" srcset="" />
                             </button>
                           </div>
                         </td>
