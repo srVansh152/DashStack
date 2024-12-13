@@ -421,7 +421,7 @@ const DashboardLayout = () => {
 
                                 <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
                                     <img
-                                        src="src/assets/image/Dashborad/balance.png"
+                                        src="/image/Dashborad/balance.png"
                                         alt="Balance Icon"
                                         className="text-orange-500 text-2xl"
                                     />
@@ -441,7 +441,7 @@ const DashboardLayout = () => {
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
                                     <span className="text-green-500 text-2xl">
-                                        <img src="src/assets/image/Dashborad/money.png" alt="" srcset="" />
+                                        <img src="/image/Dashborad/money.png" alt="" srcset="" />
 
                                     </span>
                                 </div>
@@ -459,7 +459,7 @@ const DashboardLayout = () => {
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
                                     <span className="text-blue-500 text-2xl">
-                                        <img src="src/assets/image/Dashborad/money-send.png" alt="" srcset="" />
+                                        <img src="/image/Dashborad/money-send.png" alt="" srcset="" />
 
                                     </span>
                                 </div>
@@ -478,7 +478,7 @@ const DashboardLayout = () => {
                                 </div>
                                 <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-lg">
                                     <span className="text-pink-500 text-2xl">
-                                        <img src="src/assets/image/Dashborad/building-4.png" alt="" srcset="" />
+                                        <img src="/image/Dashborad/building-4.png" alt="" srcset="" />
 
                                     </span>
                                 </div>
@@ -558,10 +558,10 @@ const DashboardLayout = () => {
                                                             <button onClick={() => {
                                                                 openImpDeleteModal(number._id)
                                                             }} className="p-1 text-red-500 hover:bg-red-50 rounded">
-                                                                <img src="src/assets/image/Dashborad/delete.png" alt="" srcset="" />
+                                                                <img src="/image/Dashborad/delete.png" alt="" srcset="" />
                                                             </button>
                                                             <button onClick={() => handleEditImpmodel(number)} className="p-1 text-green-500 hover:bg-green-50 rounded">
-                                                                <img src="src/assets/image/Dashborad/edit.png" alt="" srcset="" />
+                                                                <img src="/image/Dashborad/edit.png" alt="" srcset="" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -584,7 +584,7 @@ const DashboardLayout = () => {
                                                     {item.resident.profilePhoto ? (
                                                         <img src={item.resident.profilePhoto} className="h-10 w-10 rounded-full object-cover border" />
                                                     ) : (
-                                                        <img src="src/assets/path/to/default-logo.png" alt="Not Found" className="h-10 w-10 rounded-full border" />
+                                                        <img src="/path/to/default-logo.png" alt="Not Found" className="h-10 w-10 rounded-full border" />
                                                     )}
                                                     <div>
                                                         <p className="font-medium">{item.resident.fullName}</p>
@@ -694,13 +694,13 @@ const DashboardLayout = () => {
                                                                 <td className="whitespace-nowrap px-6 py-4 text-right">
                                                                     <div className="flex justify-end space-x-2">
                                                                         <button onClick={() => handleEditModel(complaint)} className="rounded  text-green-600 hover:bg-green-50">
-                                                                            <img src="src/assets/image/Dashborad/edit.png" alt="" srcset="" />
+                                                                            <img src="/image/Dashborad/edit.png" alt="" srcset="" />
                                                                         </button>
                                                                         <button onClick={() => handleViewModel(complaint._id)} className="rounded  text-blue-600 hover:bg-blue-50">
-                                                                            <img src="src/assets/image/Dashborad/view.png" alt="" srcset="" />
+                                                                            <img src="/image/Dashborad/view.png" alt="" srcset="" />
                                                                         </button>
                                                                         <button onClick={() => handleDeleteModel(complaint._id)} className="rounded  text-red-600 hover:bg-red-50">
-                                                                            <img src="src/assets/image/Dashborad/delete.png" alt="" srcset="" />
+                                                                            <img src="/image/Dashborad/delete.png" alt="" srcset="" />
                                                                         </button>
                                                                     </div>
                                                                 </td>

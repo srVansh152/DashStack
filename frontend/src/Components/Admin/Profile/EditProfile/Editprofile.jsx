@@ -87,7 +87,7 @@ const Editprofile = () => {
       <div className="main">
         <Navbar />
         <div className="w-full">
-          <img src="src/assets/image/blacnk.png" alt="Background" className="w-full" />
+          <img src="/image/blacnk.png" alt="Background" className="w-full" />
         </div>
         <div className="w-full max-w-[1000px] mx-auto mt-[-100px] flex justify-center p-4">
           <div className="w-full max-w-5xl bg-white rounded-lg shadow-lg">

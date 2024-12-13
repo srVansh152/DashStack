@@ -119,7 +119,7 @@ function AddMaintain() {
                                                     {/* Avatar or Icon */}
                                                     {notification.type !== 'event' && (
                                                         <img
-                                                            src='src/assets/image/3504bec22d3fe96515e7c73aeadb9d13.jpg'
+                                                            src='/image/3504bec22d3fe96515e7c73aeadb9d13.jpg'
                                                             alt=""
                                                             className="w-10 h-10 rounded-full"
                                                         />

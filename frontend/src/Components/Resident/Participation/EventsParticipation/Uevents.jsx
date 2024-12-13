@@ -95,7 +95,7 @@ const Uevents = () => {
                                     {events.map((event, index) => (
                                         <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-6 px-4 py-5 items-center  transition-colors">
                                             <div className="flex items-center gap-2">
-                                                <img src="src/assets/image/image.jpg" alt="Participator" className="w-10 h-10 rounded-full border border-gray-300" />
+                                                <img src="/image/image.jpg" alt="Participator" className="w-10 h-10 rounded-full border border-gray-300" />
                                                 <span className="font-medium">{event.title}</span>
                                             </div>
                                             <div className="text-gray-600">{event.description}</div>
@@ -134,7 +134,7 @@ const Uevents = () => {
                                         {eventssecond.map((event, index) => (
                                             <div key={index} className="grid grid-cols-1 sm:grid-cols-5 gap-4 px-4 py-5 items-center">
                                                 <div className="flex items-center gap-2">
-                                                    <img src="src/assets/image/image.jpg" alt="Participator" className="w-10 h-10 rounded-full border border-gray-300" />
+                                                    <img src="/image/image.jpg" alt="Participator" className="w-10 h-10 rounded-full border border-gray-300" />
                                                     <span className="font-medium">{event.title}</span>
                                                 </div>
                                                 <div className="text-gray-600">{event.description}</div>
